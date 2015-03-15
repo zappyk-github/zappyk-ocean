@@ -1,0 +1,58 @@
+#!/bin/env bash
+
+BASENAME=`basename $0`
+
+NO_TRIM_LEFT=true
+NO_TRIM_RIGHT=true
+DEF_TRIM_LEFT='\s*'
+DEF_TRIM_RIGHT='\s*'
+DEF_FILE_INPUT=/dev/stdin
+OLD_FIELD_SPLIT='|'
+OLD_FIELD_DELIM=''
+NEW_FIELD_SPLIT=','
+NEW_FIELD_DELIM='"'
+HELP_STRING="Usage:
+        $BASENAME
+                [ -h   | --help ]
+                [ -ntl | --no-trim-left ]
+                [ -ntr | --no-trim-right ]
+                [ -fi  | --file-input <file-name> ]     (default is '$DEF_FILE_INPUT')
+                [ -osf | --old-field-split <char> ]     (default is '$OLD_FIELD_SPLIT')
+                [ -odf | --old-field-delim <char> ]     (default is '$OLD_FIELD_DELIM')
+                [ -nsf | --nld-field-split <char> ]     (default is '$NEW_FIELD_SPLIT')
+                [ -ndf | --nld-field-delim <char> ]     (default is '$NEW_FIELD_DELIM')
+
+Note:
+    If <file-name> not specified, set '--'.
+    If <file-name>='--' read from STDIN."
+
+while test -n "$1"; do
+    case "$1" in
+        -h   | --help            ) echo "$HELP_STRING" && exit ;;
+        -ntl | --no-trim-left    ) NO_TRIM_LEFT=false ;;
+        -ntr | --no-trim-right   ) NO_TRIM_RIGHT=false ;;
+        -fi  | --file-input      ) shift ; FILE_INPUT=$1 ;;
+        -osf | --old-field-split ) shift ; OLD_FIELD_SPLIT=$1 ;;
+        -odf | --old-field-delim ) shift ; OLD_FIELD_DELIM=$1 ;;
+        -nsf | --new-field-split ) shift ; NEW_FIELD_SPLIT=$1 ;;
+        -ndf | --new-field-delim ) shift ; NEW_FIELD_DELIM=$1 ;;
+        *                        ) echo "$HELP_STRING" && exit 1 ;;
+    esac
+    shift
+done
+
+[ -z "$FILE_INPUT" ] && FILE_INPUT=$DEF_FILE_INPUT
+
+( ! $NO_TRIM_LEFT  ) && DEF_TRIM_LEFT=''
+( ! $NO_TRIM_RIGHT ) && DEF_TRIM_RIGHT=''
+
+OLD_FIELD_EXTREME="$DEF_TRIM_RIGHT$OLD_FIELD_DELIM$DEF_TRIM_LEFT"
+OLD_FIELD_MID="$DEF_TRIM_RIGHT$OLD_FIELD_DELIM$OLD_FIELD_SPLIT$OLD_FIELD_DELIM$DEF_TRIM_LEFT"
+NEW_FIELD_MID="$NEW_FIELD_DELIM$NEW_FIELD_SPLIT$NEW_FIELD_DELIM"
+
+cat "$FILE_INPUT" \
+| sed "s/^$OLD_FIELD_EXTREME/$NEW_FIELD_DELIM/" \
+| sed "s/$OLD_FIELD_EXTREME$/$NEW_FIELD_DELIM/" \
+| sed "s/$OLD_FIELD_MID/$NEW_FIELD_MID/g"
+
+exit

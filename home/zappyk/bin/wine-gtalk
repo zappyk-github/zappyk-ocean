@@ -1,0 +1,24 @@
+#!/bin/env bash
+
+WINE_BASE="$HOME/.gtalk"
+WINE_PROG="drive_c/Programmi/Google/Google Talk"
+WINE_PROG_EXECUTE="$WINE_PROG/googletalk.exe"
+WINE_PROG_UNINSTALL="$WINE_PROG/uninstall.exe"
+
+DOWNLOAD_PATH="$HOME/Installazioni/google"
+DOWNLOAD_NAME="googletalk-setup-it.exe"
+DOWNLOAD_FILE="http://dl.google.com/googletalk/$DOWNLOAD_NAME"
+
+WINETRICKS_INSTALL="allfonts riched20 riched30"
+
+wine-detached \
+ "$WINE_BASE" \
+ "$WINE_PROG_EXECUTE" \
+ "$WINE_PROG_UNINSTALL" \
+ "$DOWNLOAD_PATH" \
+ "$DOWNLOAD_NAME" \
+ "$DOWNLOAD_FILE" \
+ "$WINETRICKS_INSTALL" \
+ "$@"
+
+# ref.: http://penguininside.blogspot.com/2009/05/installing-google-talk-on-wine.html

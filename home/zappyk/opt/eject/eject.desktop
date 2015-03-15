@@ -1,0 +1,12 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=eject
+Name[it_IT]=eject
+GenericName=Eject CD/DVD
+Comment=Eject CD or DVD disc support
+Exec=eject %U
+Terminal=false
+MultipleArgs=false
+Type=Application
+Icon=/home/zappyk/Programmi/eject/eject.png
+Categories=Application;System

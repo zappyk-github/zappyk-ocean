@@ -1,0 +1,14 @@
+#!/bin/env bash
+
+URL=$1
+ICO=$2
+
+[ -z "$URL" ] && echo "$THIS: specific URL to load" && exit 1
+
+CMD="google-chrome --incognito --app=\"$URL\""
+
+[ -r "$ICO" ] && CMD="alltray --sticky --icon \"$ICO\" $CMD"
+
+eval "$CMD"
+
+exit

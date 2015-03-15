@@ -1,0 +1,16 @@
+#!/usr/bin/env xdg-open
+
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Name=Eastern Time
+Name[it_IT]=Eastern Time
+Comment=Eastern Time watch
+#Exec=google-chrome-apps "file:///home/zappyk/Programmi/Eastern-Time/ET-Time.html"
+Exec=uzbl-browser -n "Eastern Time" -g 320x200 "file:///home/zappyk/Programmi/Eastern-Time/ET-Time.html"
+Icon=/home/zappyk/Programmi/Eastern-Time/ET-Time.png
+Icon[it_IT]=/home/zappyk/Programmi/Eastern-Time/ET-Time.png
+Terminal=false
+Type=Application
+GenericName=Eastern Time
+GenericName[it_IT]=Eastern Time

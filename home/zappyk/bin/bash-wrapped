@@ -1,0 +1,28 @@
+#!/bin/env bash
+
+COMMAND="$*"
+
+_echo() {
+    local string=$*
+    echo "+-${string//?/-}-+"
+    echo "| ${string} |"
+    echo "+-${string//?/-}-+"
+}
+
+_eval() {
+    local command=$*
+    eval "$command"
+}
+
+_wait() {
+    local string=$*
+    read -p "$string"
+}
+
+_echo "$COMMAND"
+_eval "$COMMAND"
+_echo 'Esecuzione terminata.'
+
+_wait '(premi un tasto per continuare...)'
+
+exit

@@ -1,0 +1,26 @@
+#!/bin/env bash
+
+FROM_DIR=$1
+SAVE_PWD=$PWD
+
+for DIR in `find "$FROM_DIR" -type d`; do
+
+    DIRECTORY="$SAVE_PWD/$DIR"
+    cd "$DIRECTORY"
+
+    HERE="./"
+    for FILE_NAME in `find "$HERE" -maxdepth 1`; do
+
+        [ "$FILE_NAME" == "$HERE" ] && continue
+        FILE_LINK=`echo "$FILE_NAME" | tr [a-z] [A-Z]`
+        COMMAND="ln -fs '$FILE_NAME' '$FILE_LINK'"
+
+pwd
+        [ ! -e "$FILE_LINK" ] && echo "$DIRECTORY: $COMMAND"
+       #[ ! -e "$FILE_LINK" ] && echo "$DIRECTORY: $COMMAND" && eval "$COMMAND"
+
+    done
+
+done
+
+exit

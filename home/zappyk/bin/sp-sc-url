@@ -1,0 +1,26 @@
+#!/bin/env bash
+
+url="$1" ; shift
+
+#[ -z "$url" ] && echo "Go to http://www.myp2p.eu/ and get URL to view TV streaming..." && exit 1
+ [ -z "$url" ] && echo "Go to http://livetv.sx/it/ and get URL to view TV streaming..." && exit 1
+
+base="$HOME/Programmi/sopcast/sp-auth"
+prog="$base/sp-sc-auth"
+
+prog='sp-sc-auth'
+port='3908 8908'
+http='http://localhost:8908/tv.asf'
+http='http://localhost:8908'
+goto='Start cache thread.'
+
+cat << _EOD_ >&2
+Open VLC and connect to: $http
+Execute start streaming...
+Waiting <$goto> before connect...
+_EOD_
+
+#eval "$prog \"$url\" $port $* >/dev/null 2>&1"
+ eval "$prog \"$url\" $port $* 2>&1 | grep \"$goto\""
+
+exit

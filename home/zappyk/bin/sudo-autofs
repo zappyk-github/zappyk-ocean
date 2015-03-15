@@ -1,0 +1,20 @@
+#!/bin/env bash
+
+AUTOFS_COMMAND=$1
+UNISON_PROFILE=$2
+
+UNISON_SYNC_INIT=false
+UNISON_SYNC_DONE=false
+
+case "$AUTOFS_COMMAND" in
+    start ) UNISON_SYNC_DONE=true ;;
+    stop  ) UNISON_SYNC_INIT=true ;;
+esac
+
+( $UNISON_SYNC_INIT ) && unison-batch-sync $UNISON_PROFILE
+
+sudo-wrapped /etc/init.d/autofs $AUTOFS_COMMAND
+
+( $UNISON_SYNC_DONE ) && unison-batch-sync $UNISON_PROFILE
+
+exit

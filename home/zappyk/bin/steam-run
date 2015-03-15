@@ -1,0 +1,36 @@
+#!/bin/env bash
+
+PROG_RUN='steam'
+
+################################################################################
+_log() {
+    local string=$1
+    echo "#==${string//?/=}==#"
+    echo "#  ${string}  #"
+    echo "#==${string//?/=}==#"
+}
+
+################################################################################
+_eval() {
+    local string=$1
+    _log "$string"
+    eval "$string"
+}
+
+################################################################################
+_main() {
+    _log "Init $PROG_RUN at $(date)..."
+    _execute_steam
+    _log "...at $(date) $PROG_RUN done"
+}
+
+################################################################################
+_execute_steam() {
+    _eval 'setsebool -P allow_execheap on'
+    $PROG_RUN
+    _eval 'setsebool -P allow_execheap off'
+}
+
+_main
+
+exit

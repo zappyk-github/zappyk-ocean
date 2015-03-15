@@ -1,0 +1,21 @@
+#!/bin/env bash
+
+PROGRAM=$1
+COMMAND=$*
+
+export PAYROLL_HOME='/opt/payroll'
+export PAYROLL_JOBS="$PAYROLL_HOME/jobs"
+export PAYROLL_BIN="$PAYROLL_HOME/bin"
+export PAYROLL_LIB="$PAYROLL_HOME/lib"
+
+export PATH="$PATH:$PAYROLL_BIN:$PAYROLL_JOBS"
+
+FILLDIR=$(which $PROGRAM 2>&1)
+
+ echo "${FILLDIR}"
+ echo "${FILLDIR//?/-}"
+ echo "${COMMAND}"
+ echo "${COMMAND//?/-}"
+ eval "$COMMAND"
+
+exit

@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+
+debug=false
+
+this=$(basename $0)
+prog=$(echo "$0" | sed 's/-gui$//')
+load=$(ps -e | grep "truecrypt$")
+loop=true
+
+iconv=$(which iconv 2>/dev/null)
+iconv=${iconv:+| $iconv --from-code=ISO-8859-1 --to-code=UTF-8 -}
+
+zenity='zenity --display=:0.0'
+zenity='zenity'
+
+actions_mount='TRUE mount FALSE umount FALSE search'
+actions_umount='FALSE mount TRUE umount FALSE search'
+actions_search='FALSE mount FALSE umount TRUE search'
+
+[ -n "$load" ] && actions=$actions_search \
+               || actions=$actions_mount
+
+while ($loop); do
+    _opts_=$($zenity --list --radiolist --column "Seleziona" --column "azione" $actions)
+    ( $debug ) && echo "_opts_=[$_opts_]"
+
+    if [ "$_opts_" == 'search' ]; then
+        search=$($zenity --entry --text='Inserisci la stringa da cercare')
+        ( $debug ) && echo "search=[$search]"
+
+    #CZ#[ -z "$search" ] && exit
+        [ -z "$search" ] && continue
+
+        _eval_="$prog \"$_opts_\" \"$search\""
+        ( $debug ) && echo "_eval_=[$_eval_]"
+        result=$(eval "$_eval_ 2>&1 $iconv"); ok=$?
+        ( $debug ) && echo "result=[$result]"
+
+        [ -z "$result" ] && result='(nessun dato trovato)'
+
+        founds=$result
+    #CZ#founds=$(echo "$founds" | sed -r 's/(.)/\\\1/g')
+        founds=$(echo "$founds" | sed -r 's/(["%!])/\\\1/g')
+        founds=$(echo "$founds" | sed -r 's/(&)/&amp;/g')
+        founds="<span color='green'>Risultao ricerca \"<span color='red'>$search</span>\"</span>\n<span font-family='mono'>$founds</span>"
+
+    #CZ#[ $ok -eq 0 ] && { ( $zenity --text-info --filename=<(echo "$founds") --width=1000 --height=700 & ); test 1; } \
+    #CZ#[ $ok -eq 0 ] && { ( $zenity --text="$founds" --info & ); test 1; } \
+        [ $ok -eq 0 ] &&   ( $zenity --text="$founds" --info & ) \
+                      ||     $zenity --text="${result:+$result\n\n}rescue $_opts_ error!" --error
+
+        actions=$actions_search
+    else
+        [ "$_opts_" == 'mount'  ] && actions=$actions_search
+        [ "$_opts_" == 'umount' ] && actions=$actions_mount
+    #CZ#[ "$_opts_" == 'search' ] && actions=$actions_search
+    #CZ#loop=false
+        if [ -n "$_opts_" ]; then
+            _eval_="$prog \"$_opts_\""
+            ( $debug ) && echo "_eval_=[$_eval_]"
+            result=$(eval "$_eval_ 2>&1"); ok=$?
+
+        #CZ#$zenity --text="${result:+$result\n\n}rescue $_opts_ done!" --info
+        #CZ#[ $ok -eq 0 ] \
+        #CZ#&& $zenity --text="${result:+$result\n\n}rescue $_opts_ ok" --info \
+        #CZ#|| $zenity --text="${result:+$result\n\n}rescue $_opts_ error!" --error
+        else
+            break
+        fi
+    fi
+done
+
+exit

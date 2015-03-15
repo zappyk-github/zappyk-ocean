@@ -1,0 +1,42 @@
+#!/bin/env bash
+
+#CZ#DISC=$1
+
+first=true
+IFS=$'\n'
+#CZ#for row in `df -h|grep -iv Filesystem`; do
+for row in `df "$@"|grep -iv Filesystem`; do
+    IFS=$' ' read PARTITION TOTALSIZE USEDSPACE FREESPACE FREEPERCE MOUNPOINT < <(echo $row)
+
+    if ( ! $first ) \
+    && [ -z "$TOTALSIZE_old" ]; then
+        MOUNPOINT=$FREEPERCE
+        FREEPERCE=$FREESPACE
+        FREESPACE=$USEDSPACE
+        USEDSPACE=$TOTALSIZE
+        TOTALSIZE=$PARTITION
+        PARTITION=$PARTITION_old
+    fi
+
+    view=true
+#CZ#[ -n "$DISC" ]              && view=false
+    [ -z "$TOTALSIZE" ]         && view=false
+#CZ#[ "$DISC" == "$PARTITION" ] && view=true
+
+    if ( $view ); then
+        ( ! $first ) && echo
+        echo "Partition : $PARTITION"
+        echo "Total size: $TOTALSIZE"
+        echo "Used space: $USEDSPACE"
+        echo "Free space: $FREESPACE"
+        echo "Free   %  : $FREEPERCE"
+        echo "Moun.point: $MOUNPOINT"
+
+        first=false
+    fi
+
+    PARTITION_old=$PARTITION
+    TOTALSIZE_old=$TOTALSIZE
+done
+
+exit

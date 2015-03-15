@@ -1,0 +1,87 @@
+#!/bin/env bash
+
+IP_ALL=$1
+
+IP_SEP='.'
+BASE_N=16
+_NULL_='2>/dev/null'
+
+DEBUG=true
+DEBUG=false
+
+( $DEBUG ) && _NULL_=''
+
+CALC_ip2decimal() {
+    ip_num=$1
+    ip_num=`ping -c 1 -q -n "$ip_num" | head -n 1 | cut -d'(' -f2 | cut -d')' -f1`
+    ip_hex=''
+    ip_dec=''
+
+    IFS=$IP_SEP
+    for num in $ip_num; do
+        hex=`echo "obase=$BASE_N; $num" | bc`
+        [ ${#hex} -eq 1 ] && hex="0$hex"
+
+        ( $DEBUG ) && printf "\t(%3s) --> (%3s)\n" "$num" "$hex"
+
+        ip_hex="$ip_hex$hex"
+    done
+
+    [ -z "$ip_hex" ] && return 1
+
+    ( $DEBUG ) && echo '+--------------+'
+    ( $DEBUG ) && echo '| IP 2 decimal |'
+    ( $DEBUG ) && echo '+--------------+'
+    ( $DEBUG ) && echo "IP num [$ip_num]"
+    ( $DEBUG ) && echo "IP hex [$ip_hex]"
+
+    ip_dec=`echo "ibase=$BASE_N; $ip_hex" | eval "bc $_NULL_"`
+
+    echo "IP dec {$ip_dec}"
+
+    return 0
+}
+
+CALC_decimal2ip() {
+    ip_dec=$1
+    ip_hex=`echo "obase=$BASE_N; $ip_dec" | eval "bc $_NULL_"`
+
+    [ -z "$ip_hex" ] && return 1
+
+    ( $DEBUG ) && echo '+--------------+'
+    ( $DEBUG ) && echo '| decimal 2 IP |'
+    ( $DEBUG ) && echo '+--------------+'
+    ( $DEBUG ) && echo "IP dec [$ip_dec]"
+    ( $DEBUG ) && echo "IP hex [$ip_hex]"
+
+    ip_hex_1=${ip_hex:0:2}
+    ip_hex_2=${ip_hex:2:2}
+    ip_hex_3=${ip_hex:4:2}
+    ip_hex_4=${ip_hex:6:2}
+
+    ip_num_1=`echo "ibase=$BASE_N; $ip_hex_1" | eval "bc $_NULL_"`
+    ip_num_2=`echo "ibase=$BASE_N; $ip_hex_2" | eval "bc $_NULL_"`
+    ip_num_3=`echo "ibase=$BASE_N; $ip_hex_3" | eval "bc $_NULL_"`
+    ip_num_4=`echo "ibase=$BASE_N; $ip_hex_4" | eval "bc $_NULL_"`
+
+    ( $DEBUG ) && printf "\t(%2s) --> (%3s)\n" "$ip_hex_1" "$ip_num_1"
+    ( $DEBUG ) && printf "\t(%2s) --> (%3s)\n" "$ip_hex_2" "$ip_num_2"
+    ( $DEBUG ) && printf "\t(%2s) --> (%3s)\n" "$ip_hex_3" "$ip_num_3"
+    ( $DEBUG ) && printf "\t(%2s) --> (%3s)\n" "$ip_hex_4" "$ip_num_4"
+
+    ip_num="$ip_num_1$IP_SEP$ip_num_2$IP_SEP$ip_num_3$IP_SEP$ip_num_4"
+
+    echo "IP num {$ip_num}"
+
+    return 0
+}
+
+echo "IP ==> {$IP_ALL}"
+
+LOG_ip2decimal=`CALC_ip2decimal "$IP_ALL"`; RETURN_ip2decimal=$?
+LOG_decimal2ip=`CALC_decimal2ip "$IP_ALL"`; RETURN_decimal2ip=$?
+
+[ $RETURN_decimal2ip -eq 0 ] && echo "$LOG_decimal2ip" \
+                             || echo "$LOG_ip2decimal"
+
+exit

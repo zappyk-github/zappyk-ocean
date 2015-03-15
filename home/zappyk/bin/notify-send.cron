@@ -1,0 +1,37 @@
+DN=$(date +'%R, %A %d %B %Y')
+DS=$(date +'%R, %A %d %B %Y' | sed 's/./_/g')
+DH0=$(date +%H)
+DH1=$(date --date='+1 hours' +%H)
+
+################################# 150000 millisecondi = 2.5 minuti
+NSP='/home/pes0zap/bin/notify-send.sh -u pes0zap -s 150000 -t "A T T E N Z I O N E"'
+NSL='-l low'
+NSN='-l normal'
+NSC='-l critical'
+NBS='-bs /usr/share/sounds/freedesktop/stereo/bell.oga'
+
+DxL='p r a n z o'
+DSC='per Centrale'
+DPG='per P.ta Garibaldi'
+
+LF='\n'
+LFF='\n\n'
+
+###############################################################################################################################################
+#      *    *   *   *     *   root su -s /bin/bash -c "$NSP $NSC $NBS -m \"$DH1:00 -($DH1:00)- $DH1:00$LFF$DSC $DH1:00$LFF$DS$LF$DN\"" - pes0zap
+###############################################################################################################################################
+
+ 20-26/3   12   *   *   1-5   pes0zap /bin/bash -c "$NSP $NSL $NBS -m \"$LFF$DxL\"" 2>&1 >/tmp/crond-pes0zap.log
+
+ 50-59/3   15   *   *     5   pes0zap /bin/bash -c "$NSP $NSC $NBS -m \"$DH1:11 -($DH1:22)- $DH1:29$LFF$DPG $DH1:49$LFF$DS$LF$DN\"" 2>&1 >/tmp/crond-pes0zap.log
+
+ 50-59/3   16   *   *   1-4   pes0zap /bin/bash -c "$NSP $NSN $NBS -m \"$DH1:05 -($DH1:11)- $DH1:17$LFF$DSC $DH1:50$LFF$DS$LF$DN\"" 2>&1 >/tmp/crond-pes0zap.log
+ 50-59/3   16   *   *     5   pes0zap /bin/bash -c "$NSP $NSC $NBS -m \"$DH1:05 -($DH1:11)- $DH1:17$LFF$DSC $DH1:50$LFF$DS$LF$DN\"" 2>&1 >/tmp/crond-pes0zap.log
+ 50-59/3   16   *   *   1-4   pes0zap /bin/bash -c "$NSP $NSN $NBS -m \"$DH1:05 -($DH1:11)- $DH1:17$LFF$DPG $DH1:49$LFF$DS$LF$DN\"" 2>&1 >/tmp/crond-pes0zap.log
+ 50-59/3   16   *   *     5   pes0zap /bin/bash -c "$NSP $NSC $NBS -m \"$DH1:05 -($DH1:11)- $DH1:17$LFF$DPG $DH1:49$LFF$DS$LF$DN\"" 2>&1 >/tmp/crond-pes0zap.log
+
+ 20-29/3   17   *   *   1-4   pes0zap /bin/bash -c "$NSP $NSN $NBS -m \"$DH0:34 -($DH0:40)- $DH0:45$LFF$DPG $DH1:19$LFF$DS$LF$DN\"" 2>&1 >/tmp/crond-pes0zap.log
+ 20-29/3   17   *   *     5   pes0zap /bin/bash -c "$NSP $NSC $NBS -m \"$DH0:34 -($DH0:40)- $DH0:45$LFF$DPG $DH1:19$LFF$DS$LF$DN\"" 2>&1 >/tmp/crond-pes0zap.log
+
+ 50-59/3   17   *   *   1-4   pes0zap /bin/bash -c "$NSP $NSN $NBS -m \"$DH1:08 -($DH1:13)- $DH1:19$LFF$DSC $DH1:50$LFF$DS$LF$DN\"" 2>&1 >/tmp/crond-pes0zap.log
+ 50-59/3   17   *   *     5   pes0zap /bin/bash -c "$NSP $NSC $NBS -m \"$DH1:08 -($DH1:13)- $DH1:19$LFF$DSC $DH1:50$LFF$DS$LF$DN\"" 2>&1 >/tmp/crond-pes0zap.log

@@ -1,0 +1,10 @@
+#!/bin/env bash
+
+DIR=$1
+
+IFS=$'\n'
+for FILE in `find "$DIR" -type f -print0 | xargs -0 -i echo "{}"`; do
+    md5sum "$FILE"
+done
+
+exit

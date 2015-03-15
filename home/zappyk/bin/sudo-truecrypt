@@ -1,0 +1,33 @@
+#!/bin/env bash
+
+debug=false
+
+opts=$*
+
+truecrypt=$(which truecrypt)
+looppatch='/root/bin/truecrypt-create-loop-patch.sh'
+
+##################
+#   DETECT GUI   #
+################################################################################
+tty=$(tty | grep tty)
+dmb=$([ "$TERM" == 'dumb' ] && echo 'kde')
+dsi=$DESKTOP_STARTUP_ID
+gui=false
+[ -z "$tty" ] && gui=true
+[ -n "$dmb" ] && gui=true
+[ -n "$dsi" ] && gui=true
+################################################################################
+
+( $gui ) && sudo=$(which beesu 2>/dev/null) \
+         || sudo=$(which sudo  2>/dev/null)
+
+command="$sudo \"$looppatch\""
+( $debug ) && echo "$command"
+              eval "$command"
+
+command="\"$truecrypt\" $opts"
+( $debug ) && echo "$command"
+              eval "$command"
+
+exit

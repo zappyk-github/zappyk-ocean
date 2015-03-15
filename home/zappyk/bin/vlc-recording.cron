@@ -1,0 +1,33 @@
+SHELL=/bin/sh
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
+VLC_RECORDING='/home/zappyk/bin/vlc-recording.sh'
+
+finale1='http://localhost:16900/8.asf    1-Lakers-vs-Celtics.asf'
+finale2='http://localhost:16900/1.asf    2-Lakers-vs-Celtics.asf'
+finale3='http://localhost:8908/tv.asf    3-Celtics-vs-Lakers.asf'
+finale4='http://localhost:16900/1.asf    4-Celtics-vs-Lakers.asf'
+finale5='http://localhost:16900/1.asf    5-Lakers-vs-Celtics.asf'
+finale6='http://localhost:16900/1.asf    6-Celtics-vs-Lakers.asf'
+finale7='http://localhost:16900/1.asf    7-Lakers-vs-Celtics.asf'
+
+00 03 06 06 *   zappyk	$VLC_RECORDING start $finale1
+00 07 06 06 *   zappyk	$VLC_RECORDING stop  $finale1
+
+00 03 09 06 *   zappyk	$VLC_RECORDING start $finale2
+00 07 09 06 *   zappyk	$VLC_RECORDING stop  $finale2
+
+00 03 11 06 *   zappyk	$VLC_RECORDING start $finale3
+00 07 11 06 *   zappyk	$VLC_RECORDING stop  $finale3
+
+00 03 13 06 *   zappyk	$VLC_RECORDING start $finale4
+00 07 13 06 *   zappyk	$VLC_RECORDING stop  $finale4
+
+00 03 06 06 *   zappyk	$VLC_RECORDING start $finale5
+00 07 06 06 *   zappyk	$VLC_RECORDING stop  $finale5
+
+00 03 06 06 *   zappyk	$VLC_RECORDING start $finale6
+00 07 06 06 *   zappyk	$VLC_RECORDING stop  $finale6
+
+00 03 06 06 *   zappyk	$VLC_RECORDING start $finale7
+00 07 06 06 *   zappyk	$VLC_RECORDING stop  $finale7

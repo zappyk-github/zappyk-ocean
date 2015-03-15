@@ -1,0 +1,14 @@
+
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Name=NBA TV
+Name[it_IT]=NBA TV
+Comment=NBA TV watch
+Exec=google-chrome "http://www.nba.tv/nbatv/home"
+Icon=/home/zappyk/Programmi/NBA-TV/nba-tv.png
+Icon[it_IT]=/home/zappyk/Programmi/NBA-TV/nba-tv.png
+Terminal=false
+Type=Application
+GenericName=NBA TV
+GenericName[it_IT]=NBA TV

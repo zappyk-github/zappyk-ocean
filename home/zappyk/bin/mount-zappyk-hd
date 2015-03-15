@@ -1,0 +1,214 @@
+#!/bin/env bash
+
+MOUNT_NAME_NFS_='nfs'
+MOUNT_NAME_CIFS='cifs'
+
+DEFAULT_MOUNT_TYPE=$MOUNT_NAME_CIFS
+
+################################################################################
+
+PATH_SHARE_LIST='Public Download Document'
+NAME_SHARE_HOST='zappyk-hd'
+NAME_SHARE_TYPE="$DEFAULT_MOUNT_TYPE"
+PATH_SHARE_BASE="/nfs"
+PATH_LOCAL_BASE='/mnt'
+
+MOUNT_OPTIONS_NFS="rw,soft,intr,nfsvers=3"
+MOUNT_OPTIONS_NFS="defaults,nfsvers=3"
+MOUNT_OPTIONS_CIFS="defaults,user=guest,pass=guest"
+MOUNT_OPTIONS_CIFS="defaults,user=guest,pass=guest,uid=nfsnobody,gid=nfsnobody,iocharset=utf8,file_mode=0664,dir_mode=0775"
+MOUNT_OPTIONS_CIFS="defaults,user=guest,pass=guest,uid=nfsnobody,gid=nfsnobody,iocharset=utf8,file_mode=0666,dir_mode=0777"
+MOUNT_OPTIONS_CIFS="defaults,user=guest,pass=guest,uid=$(id -nu),gid=$(id -ng),iocharset=utf8,file_mode=0666,dir_mode=0777"
+
+################################################################################
+
+THIS=$(basename "$0")
+
+HELP=false
+TEST=false
+VERBOSE=false
+VIEW_GUI=false
+SUDO_FORCE=false
+SUDO_MOUNT=false ; [ $(id -u) -ne 0 ] && SUDO_MOUNT=true
+WAIT_MOUNT=false
+CMD_UMOUNT=false
+MOUNT_CIFS=false
+MOUNT_TYPE=$NAME_SHARE_TYPE
+MOUNT_PATH=$PATH_SHARE_LIST
+MOUNT_BASE=$PATH_SHARE_BASE
+MOUNT_TIME=1
+
+ZENITY_WRITE=''
+ZENITY_PROGRESS_AUTOCLOSE='--auto-close'
+
+NAME_HOST="$NAME_SHARE_HOST"
+PATH_BASE="$PATH_LOCAL_BASE/$NAME_HOST"
+EXIT_CODE=0
+
+PATH_MNT=''
+while test -n "$1"; do
+    case "$1" in
+        -h | --help    ) HELP=true ;;
+        -t | --test    ) TEST=true ;;
+        -v | --verbose ) VERBOSE=true ;;
+        -g | --gui     ) VIEW_GUI=true ;;
+        -f | --force   ) SUDO_FORCE=true ;;
+        -s | --sudo    ) SUDO_MOUNT=true ;;
+        -w | --wait    ) WAIT_MOUNT=true ;;
+        -u | --umount  ) CMD_UMOUNT=true ;;
+        -c | --cifs    ) MOUNT_TYPE=$MOUNT_NAME_CIFS ;;
+        -n | --nfs     ) MOUNT_TYPE=$MOUNT_NAME_NFS_ ;;
+        *              ) PATH_MNT="$PATH_MNT $1" ;;
+    esac
+    shift
+done
+[ -z "$PATH_MNT" ] && PATH_MNT=$MOUNT_PATH
+
+case "$MOUNT_TYPE" in
+    "$MOUNT_NAME_CIFS" ) MOUNT_CIFS=true  ;;
+    "$MOUNT_NAME_NFS_" ) MOUNT_CIFS=false ;;
+esac
+
+( $VIEW_GUI ) && ZENITY_WRITE='# '
+
+TTY_DETECT=$(tty)
+SUDO_COMMAND=$(which sudo)
+ROOT_COMMAND=$SUDO_COMMAND
+BEESU_COMMAND=$(which beesu)
+MKDIR_COMMAND=$(which mkdir)
+MOUNT_COMMAND=$(which mount)
+UMOUNT_COMMAND=$(which umount)
+ZENITY_COMMAND=$(which zenity)
+MOUNT_OPTIONS="-t $MOUNT_TYPE -o $MOUNT_OPTIONS_NFS"
+MOUNT_CIFSOPT="-t $MOUNT_TYPE -o $MOUNT_OPTIONS_CIFS"
+BEESU_COMMAND_MESSAGE='Programma beesu non installato...'
+ZENITY_COMMAND_MESSAGE='Programma zenity non installato...'
+
+( $HELP ) && cat << _EOD_ && exit
+Use:
+        $THIS [ <options> <mount-point> <mount-point> ... ]
+
+Options:
+        -h | --help         Show this help.
+        -t | --test         Not realy execute.
+        -v | --verbose      Verbose the commands.
+        -g | --gui          Process on Graphics User Interface
+        -f | --force        Forced sudo command.
+        -s | --sudo         Active sudo command.
+        -w | --wait         Wait until alive mount.
+        -u | --umount       Umount devices mounted.
+        -c | --cifs         Use cifs type mount.
+        -n | --nfs          Use nfs  type mount.
+
+Default Mount Type : $DEFAULT_MOUNT_TYPE
+Default Mount Point: $(echo $PATH_MNT | sed -r "s/(^| )/\n/g" | cat -n -b)
+_EOD_
+
+( $VIEW_GUI ) && [ -z "$BEESU_COMMAND"  ] && ( dialogd --msgbox "$BEESU_COMMAND_MESSAGE"  0 0 || echo "$BEESU_COMMAND_MESSAGE"; ) 
+( $VIEW_GUI ) && [ -z "$ZENITY_COMMAND" ] && ( dialogd --msgbox "$ZENITY_COMMAND_MESSAGE" 0 0 || echo "$ZENITY_COMMAND_MESSAGE"; ) 
+( $VIEW_GUI ) && [ -z "$TTY_DETECT" ] && ROOT_COMMAND="$BEESU_COMMAND"
+( $VIEW_GUI ) && ROOT_COMMAND="$BEESU_COMMAND"
+( $SUFO_FORCE ) && ROOT_COMMAND="$SUDO_COMMAND"
+( $SUDO_MOUNT ) && MKDIR_COMMAND="$ROOT_COMMAND $MKDIR_COMMAND"
+( $SUDO_MOUNT ) && MOUNT_COMMAND="$ROOT_COMMAND $MOUNT_COMMAND"
+( $SUDO_MOUNT ) && UMOUNT_COMMAND="$ROOT_COMMAND $UMOUNT_COMMAND"
+
+_ping_alive() { [ -n "$1" ] && ping -c 1 -w 3 "$1" &>/dev/null; }
+_echo_STDIN() { while read line; do echo "$line"; done; }
+_echo_write() { echo "$ZENITY_WRITE$*"; }
+_echo() { _echo_write "$MOUNT_TIME | $MOUNT_TYPE | $*"; MOUNT_TIME=$(($MOUNT_TIME +1)); }
+_eval() {
+    local command=$*
+    ( $VERBOSE ) && echo "$command"
+    if ( ! $TEST  ); then
+        eval "$command"
+        [ $? -ne 0 ] && EXIT_CODE=1
+    fi
+}
+_exit() {
+    [ $EXIT_CODE -ne 0 ] && _gui_error
+    exit "$EXIT_CODE"
+}
+_die() {
+    local message=$*
+    echo "$THIS: $message"
+    exit "$EXIT_CODE"
+}
+
+_zenity_error()    { $ZENITY_COMMAND --error "$@"; }
+_zenity_progress() { $ZENITY_COMMAND --progress --pulsate --auto-kill "$@"; }
+
+_gui_sleep()    { ( $VIEW_GUI ) && sleep 1; return 0; }
+_gui_error()    { ( $VIEW_GUI ) && _zenity_error "$@"; EXIT_CODE=1; }
+_gui_progress() { ( $VIEW_GUI ) && _zenity_progress "$@" || _echo_STDIN; }
+_gui_die() {
+    local message=$*
+    _gui_error --text="$message"
+    _die "$message"
+}
+
+_alive_process() {
+    local name_host=$1
+    local loop_wait=$2
+    _echo_write "test [$name_host] is alive$loop_wait..."
+    _ping_alive "$name_host"
+}
+
+_until_process() {
+    local name_host=$1
+    while ( true ); do
+    _alive_process "$name_host" ', waiting' && return
+    done
+}
+
+_check_process() {
+    local name_host=$1
+    if ( $WAIT_MOUNT ); then _until_process "$name_host"
+                        else _alive_process "$name_host"
+    fi
+}
+
+_mount_process() {
+    for path_mnt in $PATH_MNT; do
+        local command=''
+        local execute=false
+        for mount_path in $MOUNT_PATH; do
+            [ "$path_mnt" == "$mount_path" ] && execute=true
+        done
+
+        if ( $execute ); then
+            local nomount=true
+            local base_point="$PATH_BASE/$path_mnt"
+            ( ! $CMD_UMOUNT ) && [ -n "$(mount | grep "$base_point")" ] && nomount=false
+            if ( $nomount ); then
+                if [ ! -d "$base_point" ]; then
+                    command="$MKDIR_COMMAND -p \"$base_point\""
+                    _echo "create path [$base_point]"
+                    _eval "$command"
+                    _gui_sleep
+                fi
+                ( $MOUNT_CIFS ) && command="$MOUNT_COMMAND $MOUNT_CIFSOPT //$NAME_HOST/$path_mnt $base_point" \
+                                || command="$MOUNT_COMMAND $MOUNT_OPTIONS $NAME_HOST:$MOUNT_BASE/$path_mnt $base_point"
+                ( $CMD_UMOUNT ) && command="$UMOUNT_COMMAND $base_point"
+                ( $CMD_UMOUNT ) && _echo "umount path [$base_point]..." \
+                                || _echo "mount path [$path_mnt] on [$base_point]..."
+                _eval "$command"
+            else
+                _echo "path [$path_mnt] is alredy mount!"
+            fi
+        else
+            ( $CMD_UMOUNT ) && _echo "umount path [$path_mnt] is not exists, skip!" \
+                            || _echo "mount path [$path_mnt] is not valid, skip!"
+        fi
+        _gui_sleep
+    done
+}
+
+_exec_alive_process() { _check_process "$NAME_HOST" | _gui_progress --auto-close || _gui_die "$host <i><b>$NAME_HOST</b></i> is not alive, turn it on!"; }
+_exec_mount_process() { _mount_process              | _gui_progress              || _gui_die 'mount/umount process failed!'; }
+
+set -o pipefail
+_exec_alive_process
+_exec_mount_process
+
+_exit

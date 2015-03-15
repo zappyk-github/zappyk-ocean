@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+#OWNER=$1 ; shift
+OWNER=zappyk
+PASSWORD=$1
+
+mount.gmailfs none /mnt/gmailfs/$OWNER/ -o username=$OWNER@gmail.com,password=$PASSWORD,fsname=$OWNER

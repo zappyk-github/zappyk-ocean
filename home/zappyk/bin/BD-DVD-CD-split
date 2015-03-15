@@ -1,0 +1,145 @@
+#!/bin/env bash
+
+PATH_BASE=$1
+PART_SIZE=$2
+PART_ADJU=$3
+PATH_WORK=$4
+INIT_DVDS=$5
+
+PART_CONT=1
+PART_UNIT='KB'
+PART_KILO=1024       #KB ==   1MB
+PART_KILO=245760     #KB == 240MB
+PART_KILO=1048576    #KB ==     1  GB
+PART_KILO=4404019.2  #KB ==     4.2GB
+PART_KILO=4508876.8  #KB ==     4.3GB
+PART_KILO=4613734.4  #KB ==     4.4GB
+PART_KILO=4928307.2  #KB ==     4.7GB
+PART_KILO=4823449.6  #KB ==     4.6GB
+PART_KILO=4718592    #KB ==     4.5GB
+PART_KILO=24117248   #KB ==    23  GB
+PART_KILO=24431820.8 #KB ==    23.3GB
+PART_NAME='CD-'
+PART_NAME='DVD-'
+PART_NAME='BD-'
+PROG_SIZE='du --max-depth 0'
+PROG_SORT='sort -n'
+PROG_SORT='sort -h'
+
+_die() {
+    local string=$1
+    echo "$THIS: $string"
+    exit 1
+}
+
+_wait() {
+    read -t 5 -p '...premi invio tasto per continuare...'
+    echo
+}
+
+_write() {
+    local string=$1
+    echo "**${string//?/*}**"
+    echo "* ${string} *"
+    echo "**${string//?/*}**"
+}
+
+_sort() {
+    eval "$PROG_SORT $*"
+}
+
+_size() {
+    eval "$PROG_SIZE $*" | cut -f1
+}
+
+_mkdir() {
+    local number=$1
+    local path_name=$(printf "$PART_NAME%02d" "$number")
+    mkdir -p "$path_name"
+    echo "$path_name"
+}
+
+_next() {
+    local number=$1
+    number=$(($number +1))
+    [ $number -gt $DVDNUMBER ] && number=1
+    echo "$number"
+}
+
+_check() {
+    local file_size=$1
+    local path_file=$2
+    local path_size=$(_size "-L \"$path_file\"")
+    local totalsize=$(echo "$path_size + $file_size" | bc)
+    echo "$totalsize"
+}
+
+THIS=$(basename "$0")
+BASE=$(basename "$PATH_BASE")
+DATE=$(date +%Y%m%d)
+
+[ ! -d "$PATH_BASE" ] && _die "specifica una directory..."
+[ ! -n "$PART_SIZE" ] && PART_SIZE=$PART_KILO || PART_KILO=$PART_SIZE
+[ ! -n "$PART_ADJU" ] && PART_ADJU=1
+[ ! -d "$PATH_WORK" ] && PATH_WORK="$THIS-$DATE-[ $BASE ].d" && mkdir -p "$PATH_WORK"
+[ ! -n "$INIT_DVDS" ] && INIT_DVDS=0
+[   -d "$PATH_WORK" ] && PATH_WORK=$(cd -P "$PATH_WORK" && pwd)
+[   -d "$PATH_WORK" ] && echo "Cancellazione contenuto directory \"$PATH_WORK\"..." && rm -Rfv "$PATH_WORK"/*
+
+PART_SIZE=$(echo "$PART_SIZE / 1" | bc)
+PART_KILO=$(echo "$PART_KILO / 1" | bc)
+
+[ $PART_SIZE -lt 1024 ] && PART_ADJU=$PART_SIZE && PART_SIZE=$PART_KILO
+
+PATH_BASE=$(cd -P "$PATH_BASE" && pwd)
+BASE_SIZE=$(_size \""$PATH_BASE\"")
+DVDNUMBER=$(echo "($BASE_SIZE / $PART_KILO) +$PART_ADJU" | bc)
+WORK_LIST=$(find "$PATH_BASE" -maxdepth 1 -mindepth 1 -print0 | xargs -0 -i $PROG_SIZE "{}" | _sort -r)
+
+[ $INIT_DVDS -eq 0 ] && INIT_DVDS=$DVDNUMBER
+
+[ $INIT_DVDS -eq $PART_ADJU ] && _die "il numero dei DVD calcolati inizialmente ($INIT_DVDS) eguaglia il numero dei DVD rettificatori ($PART_ADJU)!" 
+
+_write "$BASE_SIZE $PART_UNIT per $DVDNUMBER DVD ($PART_KILO $PART_UNIT singola unita' DVD)!"
+
+cd "$PATH_WORK" || _die "non posso entrare nella directory '$PATH_WORK'"
+
+IFS=$'\n'
+for WORK_FILE in $WORK_LIST; do
+    FILE_SIZE=$(echo "$WORK_FILE" | cut -f1)
+    FILE_PATH=$(echo "$WORK_FILE" | cut -f2)
+    FILE_NAME=$(basename "$FILE_PATH")
+
+    PATH_NAME=$(_mkdir "$PART_CONT")
+    PATH_INIT=$PATH_NAME
+
+    if [ $FILE_SIZE -gt $PART_KILO ]; then
+        _write "Il file $FILE_NAME ($FILE_SIZE $PART_UNIT) e' troppo grande per un solo DVD ($PART_KILO $PART_UNIT), skippato!"
+        _wait
+    else
+        TOTALSIZE=$(_check "$FILE_SIZE" "$PATH_NAME")
+        while [ $TOTALSIZE -ge $PART_KILO ]; do
+            printf "adj.%2s) %s : il DVD $PART_CONT e' pieno per \"%s\", tento il prossimo...\n" "$PART_ADJU" "$PATH_NAME" "$FILE_NAME"
+            PART_CONT=$(_next "$PART_CONT")
+            PATH_NAME=$(_mkdir "$PART_CONT")
+            TOTALSIZE=$(_check "$FILE_SIZE" "$PATH_NAME")
+
+            [ "$PATH_INIT" == "$PATH_NAME" ] && { eval "$0 '$PATH_BASE' '$PART_SIZE' '$(($PART_ADJU +1))' '$PATH_WORK' '$INIT_DVDS'"; exit; }
+        done
+
+        printf "adj.%2s) %s | %10s $PART_UNIT totali per %10s $PART_UNIT \"%s\"\n" "$PART_ADJU" "$PATH_NAME" "$TOTALSIZE" "$FILE_SIZE" "$FILE_NAME"
+
+        ( cd "$PATH_NAME" && ln -fs "$FILE_PATH" . )
+
+        PART_CONT=$(_next "$PART_CONT")
+    fi
+done
+
+PLUS_DVDS=$(($DVDNUMBER - $INIT_DVDS))
+
+_write "Operazione completata, $DVDNUMBER (+$PLUS_DVDS dal conto iniziale) DVD totali calcolati"
+echo "Directory link \"$PATH_WORK\":"
+eval "$PROG_SIZE --max-depth 1 -h -L \"$PATH_WORK\" | _sort"
+_write "Operazione completata, $DVDNUMBER (+$PLUS_DVDS dal conto iniziale) DVD totali calcolati"
+
+exit

@@ -1,0 +1,15 @@
+#!/usr/bin/env xdg-open
+
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Name=World Time
+Name[it_IT]=World Time
+Comment=World Time watch
+Exec=google-chrome-apps "http://www.timeanddate.com/"
+Icon=/home/zappyk/Programmi/World-Time/World-Time.png
+Icon[it_IT]=/home/zappyk/Programmi/World-Time/World-Time.png
+Terminal=false
+Type=Application
+GenericName=World Time
+GenericName[it_IT]=World Time

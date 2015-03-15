@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+
+debug=false
+
+opt1=$1 ; shift
+opts=$*
+
+this=$(basename $0)
+help="Usage:\n\t$this [ mount | umount | search <string> ]"
+
+path_tag='Rescues'
+work_dir="$HOME/Documenti"
+nameprog='truecrypt'
+nameprog='sudo-truecrypt'
+
+path_tcv="$work_dir/$path_tag"
+base_tcv="$path_tcv/$path_tag"
+file_tcv=$(ls    "$base_tcv"*.tcv 2>/dev/null)
+file_tcv=$(ls -r "$base_tcv"*.tcv 2>/dev/null | head -n 1)
+many_tcv=$(echo "$file_tcv" | wc -l)
+fileprog=$(which "$nameprog" 2>/dev/null)
+
+command=''
+helptag=true
+retcode=0
+
+_die() { [ -n "$*" ] && echo "$this: $*"; exit 1; }
+
+_view_search() {
+    local filename=$1
+
+    local fileview=$(echo "$filename" | sed "s#$base_tcv#...#")
+    local headfoot=${fileview//?/_}
+
+    echo "$fileview"
+    echo "$headfoot"
+    cat "$filename"
+    echo "$headfoot"
+}
+
+_search_string() {
+    local directory=$1 ; shift
+    local string=$*
+
+    IFS=$'\n'
+    for filename in $(find "$directory" -iname "$string" -print0 | xargs -0i echo "{}"); do
+        _view_search "$filename"
+    done
+}
+
+################################################################################
+
+[ -z "$fileprog" ] && _die "program '$nameprog' not found!"
+
+if   [ -z "$file_tcv"  ]; then _die "file mancanti in $path_tcv"
+elif [ $many_tcv -gt 1 ]; then _die "troppi file in $path_tcv"
+else
+     mkdir -p "$base_tcv"
+     case "$opt1" in
+     m|mount  ) helptag=false ; command="$fileprog -v --keyfiles= --protect-hidden=no '$file_tcv' '$base_tcv'" ;;
+     u|umount ) helptag=false ; command="$fileprog -v -d '$file_tcv'" ;;
+     s|search ) helptag=false ; _search_string "$base_tcv" "$opts" ;;
+     *        ) help="$help\n\nOption '$opt1' not valid!\n" ;;
+     esac
+
+     [ -n "$command" ] && ( $debug ) && echo "$command"
+     [ -n "$command" ] &&               eval "$command"
+
+     case "$opt1" in
+     m|mount  ) helptag=false ; [ -n "$opts" ] && _search_string "$base_tcv" "$opts" ;;
+     esac
+fi
+
+( $helptag ) && echo -e "$help" && _die
+
+exit $retcode
+
+################################################################################
+
+_ask_password() {
+    local zenity='zenity --display=:0.0'
+    local zenity='zenity'
+
+    $zenity --entry --title="$this $opt1" --text='Enter your user password:' --hide-text --entry-text ''
+}

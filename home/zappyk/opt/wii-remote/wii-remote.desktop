@@ -1,0 +1,13 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Name=Wii Remote
+Name[it_IT]=Wii Remote
+Comment=Wii Remote Control
+Exec=/home/zappyk/Programmi/wii-remote/wii-remote.sh
+Icon=/home/zappyk/Programmi/wii-remote/wii-remote.png
+Terminal=false
+Type=Application
+GenericName=Wii Remote
+StartupNotify=true

@@ -1,0 +1,98 @@
+#!/bin/env bash
+
+WINE_PROGRAM_NAME='wine-run'
+
+WINE_PROGRAM_HOME=$1
+WINE_PROGRAM_EXECUTE="$WINE_PROGRAM_HOME/$2"
+WINE_PROGRAM_UNINSTALL="$WINE_PROGRAM_HOME/$3"
+
+DOWNLOAD_PATH=$4
+
+PROGRAM_NAME=$5
+PROGRAM_DOWNLOAD=$6
+
+WINETRICKS_PROGRAM_INSTALL=$7
+WINETRICKS_PATH="$HOME/Installazioni"
+WINETRICKS_NAME="winetricks"
+WINETRICKS_DOWNLOAD="http://www.kegel.com/wine/$WINETRICKS_NAME"
+
+shift 7
+
+PARAMETER=$1
+
+_log() {
+    echo "$@"
+}
+
+_die() {
+    _log "$@"
+    exit 1
+}
+
+_usage() {
+    _log -e "Usage:\n\t$THIS ( install | install-force | uninstall | <program> )\n"
+}
+
+_wine_program_home() {
+#CZ#[ ! -d "$WINE_PROGRAM_HOME" ] && winepath "$WINE_PROGRAM_HOME"
+    _log "WINEPREFIX=$WINE_PROGRAM_HOME $*"
+    env WINEPREFIX=$WINE_PROGRAM_HOME "$@"
+}
+
+_install() {
+    [ -d "$WINE_PROGRAM_HOME" ] && _die "$THIS: path $WINE_PROGRAM_HOME already in use!"
+
+    _install_force
+}
+
+_install_force() {
+    wget -c "$WINETRICKS_DOWNLOAD" -O "$WINETRICKS_PATH/$WINETRICKS_NAME" && chmod +x "$WINETRICKS_PATH/$WINETRICKS_NAME"
+    _wine_program_home "$WINETRICKS_PATH/$WINETRICKS_NAME" $WINETRICKS_PROGRAM_INSTALL
+
+    if [ -n "$DOWNLOAD_PATH" ]; then
+        [ ! -d "$DOWNLOAD_PATH" ] && mkdir -p "$DOWNLOAD_PATH"
+
+        if [ -n "$PROGRAM_NAME" ]; then
+            wget -c "$PROGRAM_DOWNLOAD" -O "$DOWNLOAD_PATH/$PROGRAM_NAME"
+            _wine_program_home "$WINE_PROGRAM_NAME" "$DOWNLOAD_PATH/$PROGRAM_NAME" 
+        fi
+    fi
+}
+
+_execute() {
+    if [ -r "$WINE_PROGRAM_EXECUTE" ]; then
+        _log "Executing $THIS program..."
+        _wine_program_home "$WINE_PROGRAM_NAME" "$WINE_PROGRAM_EXECUTE"
+    else
+        _die "$THIS: $WINE_PROGRAM_EXECUTE not installed!"
+    fi
+}
+
+_execute_all() {
+    _wine_program_home "$@"
+}
+
+_uninstall() {
+    if [ -r "$WINE_PROGRAM_UNINSTALL" ]; then
+        _log "Uninstall $THIS program..."
+        _wine_program_home wine "$WINE_PROGRAM_UNINSTALL"
+    else
+        _die "$THIS: $WINE_PROGRAM_UNINSTALL not find!"
+    fi
+}
+
+THIS=`basename "$0" '.sh'`
+
+if [ -z "$PARAMETER" ]; then
+    _usage
+    _execute
+else
+    case "$PARAMETER" in
+        install       ) _install ;; 
+        install-force ) _install_force ;; 
+        uninstall     ) _uninstall ;; 
+        *             ) _execute_all "$@" ;;
+    esac
+fi
+
+exit

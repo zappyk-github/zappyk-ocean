@@ -1,0 +1,11 @@
+[Unit]
+Description=Deluge Bittorrent Client Web Interface
+After=network.target
+
+[Service]
+User=deluge
+#ExecStart=/usr/bin/deluge --ui web
+ExecStart=/usr/bin/deluge-web -p 8112 --no-ssl -L info
+
+[Install]
+WantedBy=multi-user.target

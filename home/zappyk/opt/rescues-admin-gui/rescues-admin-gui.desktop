@@ -1,0 +1,13 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Name=rescues admin gui
+Name[it_IT]=rescues admin gui
+Type=Application
+Terminal=false
+#CZ#Exec=/home/zappyk/bin/rescues-admin-gui+tty
+Exec=/home/zappyk/bin/rescues-admin-gui
+Icon=/home/zappyk/Programmi/rescues-admin-gui/rescues-admin-gui.png
+GenericName=
+StartupNotify=true

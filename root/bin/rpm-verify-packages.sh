@@ -1,0 +1,1 @@
+../../home/zappyk/bin/rpm-verify-packages.sh

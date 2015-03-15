@@ -1,0 +1,29 @@
+#!/bin/env bash
+
+MESSAGES=$1 ; shift
+
+HOSTXMPP='talk.google.com'
+USERXMPP='zappyk.notice'
+PSWDXMPP='z4pp1k@n0t1c3'
+NAMEXMPP='gmail.com'
+
+SENDXMPP=$(which sendxmpp 2>/dev/null)
+CONFXMPP='/etc/sendxmpprc'
+OPTSXMPP="-t -u $USERXMPP"
+OPTSXMPP="-t -u $USERXMPP -f '$CONFXMPP' -p $PSWDXMPP -j $HOSTXMPP -o $NAMEXMPP"
+
+[ -z "$SENDXMPP" ] && echo "Attenzione, programma sendxmpp non installato!" && exit 1
+[ -z "$MESSAGES" ] && echo "Specifica un messaggio da inviare o un file..." && exit 1
+
+_sendxmpp() { perl -X "$SENDXMPP" $OPTSXMPP "$@"; }
+_sxnotify() {
+    if [ -r "$MESSAGES" ]; then
+        _sendxmpp -m "$MESSAGES" "$@"
+    else
+        echo -e "$MESSAGES" | _sendxmpp "$@"
+    fi
+}
+
+_sxnotify "$@"
+
+exit

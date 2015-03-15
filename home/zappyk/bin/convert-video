@@ -1,0 +1,63 @@
+#!/bin/env bash
+
+NAME=$1
+
+VIDEO_avi="$NAME.avi"
+VIDEO_m2v="$NAME.m2v"
+#CZ#AUDIO_nst="$NAME.no-std"
+#CZ#AUDIO_wav="$NAME.wav"
+AUDIO_mp2="$NAME.mp2"
+VIDEO_vob="$NAME.vob"
+
+EXITCODE=0
+
+################################################################################
+write() {
+################################################################################
+    local string=$1
+    local date=`date`
+    echo "#**${date//?/*}**#"
+    echo "#  ${date}  #"
+    echo "+--${string//?/-}--+"
+    echo "|  ${string//?/ }  |"
+    echo "|  ${string}  |"
+    echo "|  ${string//?/ }  |"
+    echo "+--${string//?/-}--+"
+}
+
+################################################################################
+run() {
+################################################################################
+    local date=`date`
+    if [ $EXITCODE -eq 0 ]; then
+
+        write "$COMMAND"
+        [ -n "$NAME" ] && eval "$COMMAND"
+        EXITCODE=$?
+        echo "#**${date//?/*}**#"
+        echo "#  ${date}  # ($EXITCODE)"
+        echo "#**${date//?/*}**#"
+    fi
+}
+
+#********************************#
+# Estrazione della traccia video #
+#********************************#
+#CZ#COMMAND="ffmpeg -i \"$VIDEO_avi\" -f mpeg2video -hq -sameq -r 25 -s 720x576 \"$VIDEO_m2v\"" ; run
+COMMAND="ffmpeg -i \"$VIDEO_avi\" -f mpeg2video -sameq -r 25 -s 720x576 \"$VIDEO_m2v\"" ; run
+
+#********************************#
+# Estrazione della traccia audio #
+#********************************#
+COMMAND="ffmpeg -i \"$VIDEO_avi\" -acodec mp2 \"$AUDIO_mp2\"" ; run
+#CZ#COMMAND="ffmpeg -i \"$VIDEO_avi\" -f wav \"$AUDIO_nst\"" ; run
+#CZ#COMMAND="sox \"$AUDIO_nst\" -r 4800 -c 2 \"$AUDIO_wav\" resample" ; run
+#CZ#COMMAND="twolame -b 192 \"$AUDIO_wav\" \"$AUDIO_mp2\"" ; run
+#CZ#COMMAND="sox \"$AUDIO_nst\" -r 4800 -c 2 -t raw - resample | twolame -b 192 -r - \"$AUDIO_mp2\"" ; run
+
+#**********************************#
+# Associazione del "pacchetto" vob #
+#**********************************#
+COMMAND="mplex -f 8 -V -o \"$VIDEO_vob\" \"$VIDEO_m2v\" \"$AUDIO_mp2\"" ; run
+
+exit $EXITCODE

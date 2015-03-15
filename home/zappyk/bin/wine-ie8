@@ -1,0 +1,22 @@
+#!/bin/env bash
+
+WINE_BASE="$HOME/.ie8"
+WINE_PROG="drive_c/Programmi/Internet Explorer"
+WINE_PROG_EXECUTE="$WINE_PROG/iexplore.exe"
+WINE_PROG_UNINSTALL=""
+
+DOWNLOAD_PATH=""
+DOWNLOAD_NAME=""
+DOWNLOAD_FILE=""
+
+WINETRICKS_INSTALL=""
+
+wine-detached \
+ "$WINE_BASE" \
+ "$WINE_PROG_EXECUTE" \
+ "$WINE_PROG_UNINSTALL" \
+ "$DOWNLOAD_PATH" \
+ "$DOWNLOAD_NAME" \
+ "$DOWNLOAD_FILE" \
+ "$WINETRICKS_INSTALL" \
+ "$@"

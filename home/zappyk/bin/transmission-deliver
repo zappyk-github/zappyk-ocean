@@ -1,0 +1,113 @@
+#!/bin/env bash
+
+# $TR_APP_VERSION    # TR_APP_VERSION=2.42
+# $TR_TIME_LOCALTIME # TR_TIME_LOCALTIME='Fri Dec  9 09:49:26 2011'
+# $TR_TORRENT_DIR    # TR_TORRENT_DIR=/home/zappyk/Scaricati/_COMPLETE_
+# $TR_TORRENT_HASH   # TR_TORRENT_HASH=82bed65250eda294f9c42019ebe08c085da0257d
+# $TR_TORRENT_ID     # TR_TORRENT_ID=1
+# $TR_TORRENT_NAME   # TR_TORRENT_NAME=$'Ivan.Cicconi.Libro.Nero.Alta.Velocit\303\240.Pdf.Ita-M4V3'
+
+BASE_INCOMING="$HOME/Scaricati/_COMPLETE_"
+SAVE_INCOMING="$HOME/Scaricati/_INCOMING_"
+NAME_INCOMING=$(dirname "$SAVE_INCOMING")
+
+PATH_INCOMING="$TR_TORRENT_DIR"
+FILE_INCOMING="$TR_TORRENT_DIR/$TR_TORRENT_NAME"
+FIND_INCOMING="$BASE_INCOMING/$TR_TORRENT_NAME"
+
+THIS_NAME=$(basename "$0")
+THIS_PATH=$(dirname "$0")
+THIS_PATH=$(cd -P "$THIS_PATH" && pwd)
+THIS_FILE="$THIS_PATH/$THIS_NAME"
+
+FILE_ICON='/usr/share/pixmaps/transmission.png'
+FILE_ICON="$THIS_FILE.png"
+PATH_LOGS="$HOME"
+PATH_LOGS="$HOME/tmp"
+FILE_LOGS="$THIS_FILE.log"
+FILE_LOGS="$PATH_LOGS/$THIS_NAME.log"
+FILE_SOUND='/usr/share/sounds/gnome/default/alerts/glass.ogg'
+SENT_TITLE="on $TR_TIME_LOCALTIME"
+SENT_BODY="incoming torrentd id(<b><i>$TR_TORRENT_ID</i></b>) dir(<b><i>$TR_TORRENT_DIR/</i></b>) name(<b><i>$TR_TORRENT_NAME</i></b>)"
+
+DATE_LOGS=$(date)
+
+_log() {
+    local string=$1
+    local rowsep=$2 ; [ -z "$rowsep" ] && rowsep=false
+    ( $rowsep ) && _log "${string//?/=}"
+    echo "$DATE_LOGS | $string"
+}
+
+_die() {
+    local string=$1
+    _notify_send "$string"
+    _done
+    exit
+}
+
+_notify_send() {
+    local more_body=$1
+    [ -n "$more_body" ] && more_body="<u><b>$more_body</b></u> "
+#CZ#local noty_cmmd="notify-send -t 0 -u 'critical' -i \"$FILE_ICON\" \"$SENT_TITLE\" \"$more_body$SENT_BODY\""
+    local noty_cmmd="notify-send.sh -s 0 -l 'critical' -bs \"$FILE_SOUND\" -i \"$FILE_ICON\" -t \"$SENT_TITLE\" -m \"$more_body$SENT_BODY\""
+
+#CZ#_log "eval [$noty_cmmd]"    ; eval "$noty_cmmd"
+#CZ#_log "exec [$noty_cmmd]"    ; exec "$noty_cmmd"
+    _log "bash -c [$noty_cmmd]" ; bash -c "$noty_cmmd"
+}
+
+_check() {
+    _log "check if [$BASE_INCOMING] =?= [$PATH_INCOMING]"
+#CZ#[ "$BASE_INCOMING" != "$PATH_INCOMING" ] && _die "EXIT: skip move [$FILE_INCOMING] because [$BASE_INCOMING] != [$PATH_INCOMING]"
+    if [ "$BASE_INCOMING" != "$PATH_INCOMING" ]; then
+        sleep 3
+        if [ -e "$FIND_INCOMING" ]; then
+            _log "check find [$FIND_INCOMING] exists!"
+            PATH_INCOMING="$BASE_INCOMING"
+            FILE_INCOMING="$FIND_INCOMING"
+        else
+            _die "EXIT: skip move [$FILE_INCOMING] because [$BASE_INCOMING] != [$PATH_INCOMING]"
+        fi
+    fi
+
+    _log "check if [$SAVE_INCOMING] not exists"
+    [ ! -e "$SAVE_INCOMING" ] && mkdir -vp "$SAVE_INCOMING" && _log "directory [$SAVE_INCOMING] is create!"
+
+    _log "check if [$SAVE_INCOMING] not is directory"
+    [ ! -d "$SAVE_INCOMING" ] && _die "EXIT: not move [$FILE_INCOMING] on [$SAVE_INCOMING], not is directory"
+}
+
+_init() {
+    _log '==============================================================================='
+    _log "TR_TORRENT_ID     = [$TR_TORRENT_ID]"
+    _log "TR_TORRENT_DIR    = [$TR_TORRENT_DIR]"
+    _log "TR_TORRENT_NAME   = [$TR_TORRENT_NAME]"
+    _log "TR_TORRENT_HASH   = [$TR_TORRENT_HASH]"
+    _log "TR_TIME_LOCALTIME = [$TR_TIME_LOCALTIME]"
+    _log '-------------------------------------------------------------------------------'
+
+    [ -z "$HOME" ] && _die "EXIT: user($USER)"
+}
+
+_done() {
+    _log '==============================================================================='
+}
+
+_save() {
+    _check
+
+    _log "exec mv [$FILE_INCOMING] --> [$SAVE_INCOMING]"
+    mv -v "$FILE_INCOMING" "$SAVE_INCOMING" && _notify_send \
+                                            || _notify_send 'NOT'
+}
+
+_main() {
+    _init
+    _save
+    _done
+}
+
+_main &>>"$FILE_LOGS"
+
+exit

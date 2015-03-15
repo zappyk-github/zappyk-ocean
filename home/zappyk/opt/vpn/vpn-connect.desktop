@@ -1,0 +1,14 @@
+#!/usr/bin/env xdg-open
+
+[Desktop Entry]
+Encoding=UTF-8
+Version=1.0
+Type=Application
+Terminal=false
+Icon[it_IT]=/home/zappyk/Programmi/vpn/vpn-lock.png
+Name[it_IT]=VPN connect
+Exec=/home/zappyk/bin/zenity-vpnc.sh
+Comment[it_IT]=Script for VPN connect
+Name=VPN connect
+Comment=Script for VPN connect
+Icon=/home/zappyk/Programmi/vpn/vpn-lock.png

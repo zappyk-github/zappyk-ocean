@@ -1,0 +1,26 @@
+#!/bin/env bash
+
+file_in=$1
+file_out=$2
+
+die() {
+    local message=$1
+    echo "$0: $message"
+    exit 1
+}
+
+convert_utf8_to_latin1() {
+    local file_in=$1
+    [ -z "$file_in" ] && die "file to convert?"
+    #cat "$file_in" | perl -C1 -pe1
+    cat "$file_in" | perl -C1 -MEncode -pe '$_=encode("i+so-latin-1",$_);'
+}
+
+if [ "$file_out" == '-' ]; then
+    convert_utf8_to_latin1 "$file_in"
+else
+    [ -z "$file_out" ] && file_out="$file_in-latin1"
+    convert_utf8_to_latin1 "$file_in" > "$file_out"
+fi
+
+exit

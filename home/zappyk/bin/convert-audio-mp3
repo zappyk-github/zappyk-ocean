@@ -1,0 +1,33 @@
+#!/bin/env bash
+
+files_flv=$*
+
+[ -z "$files_flv" ] && echo "Specifica almeno un file .flv da convertire in .mp3" && exit 1
+
+_convert_audio_mp3() {
+    local file_flv=$1
+    local exitcode=0
+
+    [ ! -r "$file_flv" ] && echo "Il file '$file_flv' non esiste o non puo' essere letto!" && return 1
+
+    path_mp3=`dirname  "$file_flv"`
+    name_mp3=`basename "$file_flv" '.flv'`
+    file_mp3="$path_mp3/$name_mp3.mp3"
+
+    echo   '==========================================================================================================================================='
+    printf "Convert %-50s --> %s\n" "'$file_flv'" "'$file_mp3'"
+    echo   '==========================================================================================================================================='
+#CZ#ffmpeg -i "$file_flv" -ac 2 -ab 128 -vn -y "$file_mp3" ; exitcode=$?
+    ffmpeg -i "$file_flv" -ac 2 -ab 256 -vn -y "$file_mp3" ; exitcode=$?
+    echo
+
+    return $exitcode
+}
+
+if [ -r "$files_flv" ]; then
+    _convert_audio_mp3 "$files_flv"
+else
+    for file in $files_flv; do _convert_audio_mp3 "$file"; done
+fi
+
+exit

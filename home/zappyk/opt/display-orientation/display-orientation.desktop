@@ -1,0 +1,13 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Type=Application
+Terminal=false
+Name[it_IT]=Orienta display
+Name=Display orientation
+Exec=xrandr-orientation.sh
+Path=/home/zappyk/Programmi/display-orientation/
+Icon=/home/zappyk/Programmi/display-orientation/display-orientation.png
+GenericName=Orientation the display
+StartupNotify=true

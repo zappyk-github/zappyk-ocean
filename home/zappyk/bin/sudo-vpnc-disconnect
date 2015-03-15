@@ -1,0 +1,5 @@
+#!/bin/env bash
+
+sudo-wrapped /usr/sbin/vpnc-disconnect
+
+exit

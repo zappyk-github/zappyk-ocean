@@ -1,0 +1,33 @@
+#!/bin/env bash
+
+NAME_1=$1
+NAME_2=$2
+NAME_3=$3
+NAME_4=$4
+NAME_5=$5
+NAME=$6
+
+VIDEO_1_vob="$NAME_1.vob"
+VIDEO_2_vob="$NAME_2.vob"
+VIDEO_3_vob="$NAME_3.vob"
+VIDEO_4_vob="$NAME_4.vob"
+VIDEO_5_vob="$NAME_5.vob"
+
+VIDEO_dir='/tmp'
+VIDEO_dvd="$VIDEO_dir/dvd"
+VIDEO_iso="$VIDEO_dir/$NAME.iso"
+
+mkdir -p "$VIDEO_dvd"
+
+# Creazione cartella DVD
+#dvdauthor -o "$VIDEO_dvd" -T
+dvdauthor -o "$VIDEO_dvd" "$VIDEO_1_vob" \
+                      "$VIDEO_2_vob" \
+                      "$VIDEO_3_vob" \
+                      "$VIDEO_4_vob" \
+                      "$VIDEO_5_vob"
+
+# Creazione ISO DVD
+mkiso -dvd-video -o "$VIDEO_iso" "$VIDEO_dvd"
+
+# Masterizzazione con k3b...

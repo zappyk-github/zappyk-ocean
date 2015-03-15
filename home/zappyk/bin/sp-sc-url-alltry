@@ -1,0 +1,17 @@
+#!/bin/env bash
+
+url="$1"
+tit="$2"
+
+[ -z "$url" ] && echo "Go to http://www.myp2p.eu/ and get URL to view TV streaming..." && exit 1
+[ -z "$tit" ] && tit=$url
+
+base="$HOME/Programmi/SopCast"
+prog="$base/sp-auth/sp-sc-auth"
+icon="$base/sopcast.png"
+
+prog='sp-sc-url'
+
+alltray -i "$icon" "gnome-terminal -e \"$prog '$url' >/dev/null\" -t \"$tit\""&
+
+exit

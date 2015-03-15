@@ -1,0 +1,14 @@
+#!/usr/bin/env xdg-open
+
+[Desktop Entry]
+Encoding=UTF-8
+Version=1.0
+Type=Application
+Terminal=false
+Icon[it_IT]=/home/zappyk/Programmi/vpn/vpn-unlock.png
+Name[it_IT]=VPN disconnect
+Exec=/home/zappyk/bin/zenity-vpnc-disconnect.sh
+Comment[it_IT]=Script for VPN disconnect
+Name=VPN disconnect
+Comment=Script for VPN disconnect
+Icon=/home/zappyk/Programmi/vpn/vpn-unlock.png

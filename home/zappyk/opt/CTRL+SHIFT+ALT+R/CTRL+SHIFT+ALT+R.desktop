@@ -1,0 +1,15 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Type=Application
+Terminal=false
+Name[it_IT]=Recording Desktop
+Name=Recording Desktop
+Exec=zenity --notification --text="CTRL + SHIFT + ALT + R"
+Path=/home/pes0zap/Programmi/CTRL+SHIFT+ALT+R/
+Icon=/home/pes0zap/Programmi/CTRL+SHIFT+ALT+R/CTRL+SHIFT+ALT+R.png
+GenericName[it_IT]=Recording Desktop
+GenericName=Recording Desktop
+Comment[it_IT]=
+Comment=

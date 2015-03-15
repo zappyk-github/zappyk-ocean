@@ -1,0 +1,5 @@
+#!/bin/env bash
+
+ssh -t -t -X $USER@$HOSTNAME $HOME/bin/mount-zappyk-hd "$@"
+
+exit

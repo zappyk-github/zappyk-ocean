@@ -1,0 +1,14 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Type=Application
+Terminal=false
+Name[it_IT]=Touchpad off
+Name=Touchpad off
+Exec=/home/zappyk/Programmi/switch-touchpad/switch-touchpad-4-zappyk-nb.sh 0
+Path=/home/zappyk/Programmi/switch-touchpad/
+Icon=/home/zappyk/Programmi/switch-touchpad/switch-touchpad-off.png
+GenericName[it_IT]=
+GenericName=
+#StartupNotify=true

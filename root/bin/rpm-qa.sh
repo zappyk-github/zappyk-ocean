@@ -1,0 +1,1 @@
+../../home/zappyk/bin/rpm-qa.sh

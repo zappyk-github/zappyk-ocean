@@ -1,0 +1,47 @@
+#!/bin/env bash
+
+action=$1
+suffix='.img'
+shift
+
+extract() {
+	for elem in $*; do
+		mkdir $elem.d
+		(cd $elem.d && gunzip -c -S $suffix ../$elem | cpio -i)
+	done
+}
+
+create() {
+	for elem in $*; do
+		find $elem.d/ -printf "%P\n" | grep -v ^$ > $elem.txt
+        	(cd $elem.d && cpio -o < ../$elem.txt > ../$elem.new)
+		gzip -S $suffix $elem.new
+	done
+}
+
+clean() {
+	for elem in $*; do
+		rm -Rf $elem.d/ $elem.txt && mv -f $elem.new$suffix $elem
+	done
+}
+
+case "$action" in
+	-i  ) extract "$*" ;;
+	-o  ) create "$*" ;;
+	-c  ) clean "$*" ;;
+	-oc ) create "$*" && clean "$*" ;;
+	*   ) cat << _EOD_ && exit 1 ;;
+usage:
+	$0 <action> <name>$suffix
+
+action:
+	[ -i  ]	Estract <name>$suffix to <name> directory
+	[ -o  ]	Create <name>.new$suffix from <name> directory
+	[ -c  ]	Clean file: remove <name>.txt and move <name>.new$suffix to <name>$suffix
+	[ -oc ]	Select -o and -c option
+
+$0: $action unknown!
+_EOD_
+esac
+
+exit

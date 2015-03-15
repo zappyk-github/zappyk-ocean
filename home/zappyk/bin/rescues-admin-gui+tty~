@@ -1,0 +1,8 @@
+#!/bin/env bash
+
+ssh_hostname="$USERNAME@$HOSTNAME"
+rescue_admin="$HOME/bin/rescues-admin-gui"
+
+ssh -t -t -X "$ssh_hostname" "$rescue_admin" "$@"
+
+exit

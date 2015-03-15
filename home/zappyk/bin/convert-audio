@@ -1,0 +1,230 @@
+#!/bin/env bash
+
+TEST=false
+CONVERT=false
+VERBOSE=false
+COPY_SAME=false
+REPLACE_NAME=false
+REPLACE_PATH=false
+DIR_SAVE=''
+DIR_READ='./'
+DECODE_LIST='wav ogg m4a wma mp3'
+ENCODE_TO='mp3'
+FILE_NAME=''
+
+DECODE_FLAG='-af volume=0,resample=44100:0:1'
+DECODE_FLAG='-af volume=0,resample=44100:1:2,volnorm=2'
+DECODE_FLAG='-af volume=0,resample=44100:1:2'
+
+ENCODE_FLAG='-m s'
+ENCODE_FLAG='-m s -b 160'
+ENCODE_FLAG='-m j -b 160'
+ENCODE_FLAG=''
+
+while test -n "$1"; do
+    case "$1" in
+        -h  | --help ) cat << _EOD_
+Usage:
+    `basename $0`
+        -t  | --test
+        -c  | --convert
+        -v  | --verbose
+        -cs | --copy-same
+        -rf | --replace-file                                (equivalent to set -rp and -rn)
+        -rn | --replace-name                                (default is '$REPLACE_NAME')
+        -rp | --replace-path                                (default is '$REPLACE_PATH')
+        -ds | --dir-save <directory>                        (default is '$DIR_SAVE')
+        -dr | --dir-read <directory>                        (default is '$DIR_READ')
+        -dl | --decode-list <ext-1> <ext-2> ... <ext-n>     (default is '$DECODE_LIST')
+        -df | --decode-flag <params>                        (default is '$DECODE_FLAG')
+        -et | --encode-to <ext>                             (default is '$ENCODE_TO')
+        -ef | --encode-flag <params>                        (default is '$ENCODE_FLAG')
+        -fn | --file-name <file-name>
+        -h  | --help
+
+Note:
+Set --convert for convert file audio.
+When --dir-save unset, crate encoding file where the original file exist.
+
+Flag decode: '$DECODE_FLAG'
+Flag encode: '$ENCODE_FLAG'
+_EOD_
+            exit 1
+            ;;
+        -t  | --test         ) TEST=true ;;
+        -c  | --convert      ) CONVERT=true ;;
+        -v  | --verbose      ) VERBOSE=true ;;
+        -cs | --copy-same    ) COPY_SAME=true ;;
+        -rf | --replace-file ) REPLACE_NAME=true
+                               REPLACE_PATH=true ;;
+        -rn | --replace-name ) REPLACE_NAME=true ;;
+        -rp | --replace-path ) REPLACE_PATH=true ;;
+        -ds | --dir-save     ) shift ; DIR_SAVE="$1" ;;
+        -dr | --dir-read     ) shift ; DIR_READ="$1" ;;
+        -dl | --decode-list  ) shift ; DECODE_LIST="$1" ;;
+        -df | --decode-flag  ) shift ; DECODE_FLAG="$1" ;;
+        -et | --encode-to    ) shift ; ENCODE_TO="$1" ;;
+        -ef | --encode-flag  ) shift ; ENCODE_FLAG="$1" ;;
+        -fn | --file-name    ) shift ; FILE_NAME="$1" ;;
+        *)
+            echo "Unknown argument '$1'"
+            exit 1
+            #CZ#OPTIONS="$OPTIONS $1"
+            ;;
+    esac
+    shift
+done
+
+TAB='        '
+TMP_FILE="/tmp/$USER-pcmaudiodump.wav"
+
+insert_before() {
+    while read line; do
+        [ -z "$line" ] && continue
+        echo "$line" | sed "s/^/$TAB/"
+    done
+}
+
+decode_mplayer() {
+    file_old="$1"
+    mplayer='mplayer -quiet -vo null -vc dummy -nojoystick -nolirc -nortc'
+    ( ! $VERBOSE ) && mplayer="$mplayer -really-quiet"
+    command="$mplayer $DECODE_FLAG -ao pcm:waveheader  -ao pcm:file=\"$TMP_FILE\" -playlist \"$url\""
+    command="$mplayer $DECODE_FLAG -ao pcm -waveheader -aofile      \"$TMP_FILE\" \"$file_old\""
+    command="$mplayer $DECODE_FLAG -ao pcm:waveheader  -aofile      \"$TMP_FILE\" \"$file_old\""
+    command="$mplayer $DECODE_FLAG -ao pcm:waveheader:file=\"$TMP_FILE\"          \"$file_old\""
+    command="$mplayer $DECODE_FLAG -ao pcm:waveheader:file=\"$TMP_FILE\"          \"$file_old\""
+    command="$mplayer $DECODE_FLAG -ao pcm:waveheader:file=\"$TMP_FILE\"          \"$file_old\""
+
+    eval $command | insert_before &
+}
+
+encode_lame() {
+    file_new="$1"
+    lame='lame --quiet -h --vbr-new -V0'
+    command="$lame $ENCODE_FLAG \"$TMP_FILE\" -o \"$file_new\""
+
+    eval $command
+}
+
+join() {
+    union_char="$1" ; shift
+    list_value="$*"
+
+    join_string=''
+    for value in $list_value; do
+        [ -z "$join_string" ] && join_string="$value" || join_string="$join_string$union_char$value"
+    done
+
+    echo "$join_string"
+}
+
+get_exte() {
+    string_old="$1"
+    find_exte=''
+    IFS=$' \t\n'
+    for exte in $DECODE_LIST; do
+        string_new=`echo "$string_old" | sed "s/$exte$//i"`
+        [ "$string_old" != "$string_new" ] && find_exte=$exte
+    done
+    echo "$find_exte"
+}
+
+replace_exte() {
+    string="$1"
+    echo "$string" | sed "s/$DECODE_FROM$/$ENCODE_TO/"
+}
+
+replace_space() {
+    string="$1"
+    echo "$string" | tr ' ' '_'
+}
+
+replace_lower() {
+    string="$1"
+    echo "$string" | tr '[A-Z]' '[a-z]'
+}
+
+replace_all() {
+    string="$1"
+    string=`replace_space "$string"`
+    string=`replace_lower "$string"`
+    echo "$string"
+}
+
+replacement() {
+    file_old="$1"
+
+    file_name=`basename "$file_old"`
+    file_path=`dirname  "$file_old"`
+
+    ( $REPLACE_NAME ) && file_name=`replace_all "$file_name"`
+    ( $REPLACE_PATH ) && file_path=`replace_all "$file_path"`
+
+    [ -n "$DIR_SAVE" ] && file_path="$DIR_SAVE/$file_path" && REPLACE_PATH=true
+    ( $REPLACE_PATH ) && ( ! $TEST ) && mkdir -p "$file_path"
+echo "00--------------"
+replace_exte "$file_name"
+echo "11--------------"
+    file_name=`replace_exte "$file_name"`
+
+    file_new="$file_path/$file_name"
+    echo "$file_new"
+}
+
+convert() {
+    file_old="$1"
+
+    [ -n "$FILE_NAME" ] && [ "$FILE_NAME" != "$file_old" ] && EXECUTE=false || EXECUTE=true
+
+    if ( $EXECUTE ); then
+echo "0-----------------"
+replacement "$1"
+echo "1-----------------"
+        file_new=`replacement "$1"`
+        echo "[FROM] \"$file_old\""
+        echo "[ TO ] \"$file_new\""
+        if [ "$DECODE_FROM" != "$ENCODE_TO" ]; then
+            if ( ! $TEST ); then
+            	echo "[CONV] '$DECODE_FROM' TO '$ENCODE_TO' ..."
+                decode_mplayer "$file_old" && \
+                encode_lame "$file_new"
+            	[ $? -eq 0 ] \
+                && echo "[DONE]" \
+                || echo "[NOT!]"
+            fi
+        else
+            if ( $COPY_SAME ); then
+                echo "[COPY]"
+                ( ! $TEST ) && cp "$file_old" "$file_new" 
+            else
+                echo "[SKIP] Decode from ($DECODE_FROM) and encode to ($ENCODE_TO) are same."
+            fi
+        fi
+        echo "******"
+    else
+        echo "[SKIP] File name ($FILE_NAME) is different to file find ($file_old)."
+    fi
+}
+
+#CZ# lame
+#CZ#   --tt "$title"
+#CZ#   --ty "$year"
+#CZ#   --ta "$artist"
+#CZ#   --tc "$comment"
+#CZ#   --tg "$genre"
+#CZ#   --tl "$album"
+#CZ#   --quiet -h - "$mp3file"
+
+( $CONVERT ) && ( ! $TEST ) && rm -f "$TMP_FILE" && mkfifo "$TMP_FILE"
+( $CONVERT ) && file_exte=`join "\" -or -iname \"*\." $DECODE_LIST`
+( $CONVERT ) && file_list=`find "$DIR_READ" -type f -print0 -iname "$file_exte" | xargs -0 -i echo {} | sort`
+IFS=$'\n'
+for file in $file_list; do
+    file_name=`basename "$file"`
+    DECODE_FROM=`get_exte "$file_name"`
+    ( $CONVERT ) && convert "$file"
+done
+( $CONVERT ) && ( ! $TEST ) && rm -f "$TMP_FILE"
+
+exit

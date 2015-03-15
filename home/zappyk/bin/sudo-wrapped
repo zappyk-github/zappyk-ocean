@@ -1,0 +1,5 @@
+#!/bin/env bash
+
+bash-wrapped "sudo $*"
+
+exit
