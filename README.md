@@ -1,4 +1,4 @@
 zappyk-ocean
 =============
 
-Zappyk Ocean Project
+Zappyk's ocean project
