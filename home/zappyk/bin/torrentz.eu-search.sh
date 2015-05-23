@@ -10,13 +10,22 @@ _EXCLUDE_="$HTML_PATH/$THIS_NAME.exclude"
 _EXCLUDE_="$THIS_PATH/$THIS_NAME.exclude"
 #_______________________________________________________________________________
 #
-__MM__=$(date +'%_m')
-_AAAA_=$(date +'%Y'); [ $__MM__ -lt 6 ] &&  _AAAA_=$(($_AAAA_ -1))
-SEARCH='movie+ita'
-SEARCH='movie+ita+'$_AAAA_
+ _YEAR_=''
+ _FIND_='movie+ita'
+#SEARCH="$_FIND_"
+ 
+#__MM__=$(date +'%_m')
+#_AAAA_=$(date +'%Y'); [ $__MM__ -lt 6 ] &&  _AAAA_=$(($_AAAA_ -1))
+#SEARCH="$_FIND_+$_AAAA_"
+ 
+ AAAA_0=$(date +'%Y');
+ AAAA_1=$(($AAAA_0 -1))
+ AAAA_S="+$AAAA_0 +$AAAA_1"
+ SEARCH="$_FIND_%s"
 #_______________________________________________________________________________
 #
- URL_WWW='http://torrentz.eu'
+#URL_WWW='http://torrentz.eu'
+ URL_WWW='https://torrentz.eu'
  URL_CSS="$URL_WWW/style.33.css"
 
  URL_SAFETY_QUALITY='any'
@@ -28,15 +37,17 @@ SEARCH='movie+ita+'$_AAAA_
 #URL_ORDER='S' # by Size
 #URL_ORDER=''  # by Peers
 
+ ULR_FINDS=$_FIND_
+
  URL_ORDER_NAME=''
  URL_ORDER_NAME="sort -t '>' -k 2"
 
  URL_SEARCHING_PAGES='0'
  URL_SEARCHING_PAGES='0 1'
  URL_SEARCHING_PAGES='0 1 2'
- URL_SEARCHING_PAGES='0 1 2 3'
- URL_SEARCHING_PAGES='0 1 2 3 4'
- URL_SEARCHING_PAGES='0 1 2 3 4 5'
+#URL_SEARCHING_PAGES='0 1 2 3'
+#URL_SEARCHING_PAGES='0 1 2 3 4'
+#URL_SEARCHING_PAGES='0 1 2 3 4 5'
 #URL_SEARCHING_PAGES='0 1 2 3 4 5 6'
 #URL_SEARCHING_PAGES='0 1 2 3 4 5 6 7'
 #URL_SEARCHING_PAGES='0 1 2 3 4 5 6 7 8'
@@ -49,7 +60,7 @@ SEARCH='movie+ita+'$_AAAA_
 #URL_SEARCHING_PAGES='0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15'
 #_______________________________________________________________________________
 #
- URL_BASE="$URL_WWW/$URL_SAFETY_QUALITY$URL_ORDER?f=$SEARCH&p="
+ URL_BASE="$URL_WWW/$URL_SAFETY_QUALITY$URL_ORDER?f=$SEARCH&p=%s"
 #_______________________________________________________________________________
 #
  CMD_WGET='wget --quiet --output-document=-'
@@ -61,15 +72,17 @@ SEARCH='movie+ita+'$_AAAA_
 #
 #ROW_HTML="sed 's#^.*<dl><dt>##' | sed 's#</dt><dd>.*##' | grep '^<a href=' | sed 's#^\(<a href=\"\)#\\1$URL_WWW#'"
 ##########
+ FIELDSEP='<i>\|</i>'
  ROW_HTML="sed 's#^.*<dl><dt>##'"
  ROW_HTML="$ROW_HTML | sed 's#<span class=\"v\" style=\"color:\#fff;background-color:\#A2EB80\">[0-9,]*</span>##'"
  ROW_HTML="$ROW_HTML | sed 's#<span class=\"v\" style=\"color:\#fff;background-color:\#8DDD69\">[0-9,]*</span>##'"
- ROW_HTML="$ROW_HTML | sed 's#\(<span class=\"a\">\)#\\1 \| #'"
- ROW_HTML="$ROW_HTML | sed 's#\(<span class=\"s\">\)#\\1 \| #'"
+ ROW_HTML="$ROW_HTML | sed 's#\(<span class=\"a\">\)#\\1 $FIELDSEP #'"
+ ROW_HTML="$ROW_HTML | sed 's#\(<span class=\"s\">\)#\\1 $FIELDSEP #'"
  ROW_HTML="$ROW_HTML | sed 's#<span class=\"u\">[0-9,]*</span>##'"
  ROW_HTML="$ROW_HTML | sed 's#<span class=\"d\">[0-9,]*</span>##'"
  ROW_HTML="$ROW_HTML | sed 's#<dd>##' | sed 's#</dd>##'"
  ROW_HTML="$ROW_HTML | grep '^<a href=' | sed 's#^\(<a href=\"\)#\\1$URL_WWW#'"
+ ROW_HTML="$ROW_HTML | grep -v ' TELESYNC'"
 ##########
  ROW_CHAR='\&#187;'
  ROW_INIT="<div class=\"row\"><span class=\"left\">"
@@ -215,7 +228,7 @@ _font_color "$_EXCLUDE_"
 _html_style() {
 cat << _EOD_
 <head>
-  <title>$URL_WWW | $URL_SAFETY_QUALITY | $URL_ORDER | $SEARCH</title>
+  <title>$URL_WWW | $URL_SAFETY_QUALITY | $URL_ORDER | $ULR_FINDS</title>
   <meta http-equiv="refresh" content="$PAG_REFRESH">
 </head>
 <style>
@@ -249,7 +262,7 @@ _wget_table() { eval "$ROW_HTML"; }
 _wget_order() { eval "$URL_ORDER_NAME"; }
 #_______________________________________________________________________________
 #
-_wget_page() { eval "sed 's/^/Pag.$1 /'"; }
+_wget_page() { eval "sed 's/^/$_YEAR_ Pag.$1 /'"; }
 #_______________________________________________________________________________
 #
 _wget_grep() { eval "$ROW_GREP"; }
@@ -263,10 +276,12 @@ _wget_rows() { eval "sed 's/^/$ROW_INIT/' | sed 's/$ROW_CHAR/$ROW_MIDD/' | sed '
 #
 _html_wget() {
  IFS=$' '
- for page in $URL_SEARCHING_PAGES; do URL="$URL_BASE$page"
+ for year in $AAAA_S; do _YEAR_=$year
+ for page in $URL_SEARCHING_PAGES; do URL=$(printf "$URL_BASE" "$year" "$page")
   wget="$CMD_WGET \"$URL\""
   echo "$wget" >&2
   eval "$wget" | _wget_table | _wget_page $page | _wget_order
+ done
  done
 }
 #_______________________________________________________________________________
