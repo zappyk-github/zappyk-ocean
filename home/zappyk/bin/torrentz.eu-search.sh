@@ -17,6 +17,7 @@ SEARCH='movie+ita+'$_AAAA_
 #_______________________________________________________________________________
 #
  URL_WWW='http://torrentz.eu'
+ URL_CSS="$URL_WWW/style.33.css"
 
  URL_SAFETY_QUALITY='any'
  URL_SAFETY_QUALITY='search'
@@ -58,7 +59,18 @@ SEARCH='movie+ita+'$_AAAA_
  PAG_REFRESH=10
 #_______________________________________________________________________________
 #
- ROW_HTML="sed 's#^.*<dl><dt>##' | sed 's#</dt><dd>.*##' | grep '^<a href=' | sed 's#^\(<a href=\"\)#\\1$URL_WWW#'"
+#ROW_HTML="sed 's#^.*<dl><dt>##' | sed 's#</dt><dd>.*##' | grep '^<a href=' | sed 's#^\(<a href=\"\)#\\1$URL_WWW#'"
+##########
+ ROW_HTML="sed 's#^.*<dl><dt>##'"
+ ROW_HTML="$ROW_HTML | sed 's#<span class=\"v\" style=\"color:\#fff;background-color:\#A2EB80\">[0-9,]*</span>##'"
+ ROW_HTML="$ROW_HTML | sed 's#<span class=\"v\" style=\"color:\#fff;background-color:\#8DDD69\">[0-9,]*</span>##'"
+ ROW_HTML="$ROW_HTML | sed 's#\(<span class=\"a\">\)#\\1 \| #'"
+ ROW_HTML="$ROW_HTML | sed 's#\(<span class=\"s\">\)#\\1 \| #'"
+ ROW_HTML="$ROW_HTML | sed 's#<span class=\"u\">[0-9,]*</span>##'"
+ ROW_HTML="$ROW_HTML | sed 's#<span class=\"d\">[0-9,]*</span>##'"
+ ROW_HTML="$ROW_HTML | sed 's#<dd>##' | sed 's#</dd>##'"
+ ROW_HTML="$ROW_HTML | grep '^<a href=' | sed 's#^\(<a href=\"\)#\\1$URL_WWW#'"
+##########
  ROW_CHAR='\&#187;'
  ROW_INIT="<div class=\"row\"><span class=\"left\">"
  ROW_MIDD="<\/span><span class=\"right\">$ROW_CHAR"
@@ -227,6 +239,7 @@ cat << _EOD_
 .right { float : right }
 </style>
 _EOD_
+#echo '<style>' ; wget "$URL_CSS" -O - 2>/dev/null ; echo '</style>'
 }
 #_______________________________________________________________________________
 #
