@@ -11,11 +11,11 @@ SUDOCOMMAND='sudo '
 SU_USER_CMD="su - $DELUGE_USER -c"
 
 ################################################################################
-                    SYSTEM_INIT_LOG=''
-                    SYSTEM_INIT_CMD='init 3'
-                    SYSTEM_INIT_RUN="$SUDOCOMMAND$SYSTEM_INIT_CMD"
-( $CMDRUN_ROOT ) && SYSTEM_INIT_RUN="$SYSTEM_INIT_CMD"
-
+#                    SYSTEM_INIT_LOG=''
+#                    SYSTEM_INIT_CMD='init 3'
+#                    SYSTEM_INIT_RUN="$SUDOCOMMAND$SYSTEM_INIT_CMD"
+#( $CMDRUN_ROOT ) && SYSTEM_INIT_RUN="$SYSTEM_INIT_CMD"
+#
 ################################################################################
                     SYSTEM_IFCONFIG_LOG=''
                     SYSTEM_IFCONFIG_CMD='ifconfig wlan0 down'
