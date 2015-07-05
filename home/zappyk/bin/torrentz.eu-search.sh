@@ -12,6 +12,7 @@ _EXCLUDE_="$THIS_PATH/$THIS_NAME.exclude"
 #
  _YEAR_=''
  _FIND_='movie+ita'
+ _FNOT_="-e ' TELESYNC'"
 #SEARCH="$_FIND_"
  
 #__MM__=$(date +'%_m')
@@ -82,7 +83,7 @@ _EXCLUDE_="$THIS_PATH/$THIS_NAME.exclude"
  ROW_HTML="$ROW_HTML | sed 's#<span class=\"d\">[0-9,]*</span>##'"
  ROW_HTML="$ROW_HTML | sed 's#<dd>##' | sed 's#</dd>##'"
  ROW_HTML="$ROW_HTML | grep '^<a href=' | sed 's#^\(<a href=\"\)#\\1$URL_WWW#'"
- ROW_HTML="$ROW_HTML | grep -v ' TELESYNC'"
+ ROW_HTML="$ROW_HTML | grep -v $_FNOT_"
 ##########
  ROW_CHAR='\&#187;'
  ROW_INIT="<div class=\"row\"><span class=\"left\">"
@@ -259,31 +260,33 @@ _EOD_
 _wget_table() { eval "$ROW_HTML"; }
 #_______________________________________________________________________________
 #
+_wget_pages() { eval "sed 's/^/$_YEAR_ Pag.$1 /'"; }
+#_______________________________________________________________________________
+#
 _wget_order() { eval "$URL_ORDER_NAME"; }
 #_______________________________________________________________________________
 #
-_wget_page() { eval "sed 's/^/$_YEAR_ Pag.$1 /'"; }
+_html_wget() {
+ IFS=$' '
+ echo "# wget init..." >&2
+ for year in $AAAA_S; do _YEAR_=$year
+ for page in $URL_SEARCHING_PAGES; do URL=$(printf "$URL_BASE" "$year" "$page")
+  wget="$CMD_WGET \"$URL\""
+  echo "$wget" >&2
+  eval "$wget" | _wget_table | _wget_pages $page | _wget_order
+ done
+ done
+ echo "# ...done wget" >&2
+}
 #_______________________________________________________________________________
 #
 _wget_grep() { eval "$ROW_GREP"; }
 #_______________________________________________________________________________
 #
-_wget_font() { eval "$ROW_FONT"; }
-#_______________________________________________________________________________
-#
 _wget_rows() { eval "sed 's/^/$ROW_INIT/' | sed 's/$ROW_CHAR/$ROW_MIDD/' | sed 's/$/$ROW_DONE/'"; }
 #_______________________________________________________________________________
 #
-_html_wget() {
- IFS=$' '
- for year in $AAAA_S; do _YEAR_=$year
- for page in $URL_SEARCHING_PAGES; do URL=$(printf "$URL_BASE" "$year" "$page")
-  wget="$CMD_WGET \"$URL\""
-  echo "$wget" >&2
-  eval "$wget" | _wget_table | _wget_page $page | _wget_order
- done
- done
-}
+_wget_font() { eval "$ROW_FONT"; }
 #_______________________________________________________________________________
 #
 _html_line() { echo "<span class=\"left\">$1</span><span class=\"right\">$2</span>"; }
