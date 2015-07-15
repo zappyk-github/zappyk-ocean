@@ -78,7 +78,7 @@ execute_command() {
     [ -n "$rep" ] && tag=$(printf "$sep" "$ope repo: $rep")
                local cmd="$yum_cmd $yum_opt $ope"
 #CZ#[ -n "$rep" ] && cmd="$yum_cmd $yum_opt $yum_exc $yum_rep=$rep $ope"
-    [ -n "$rep" ] && cmd="$yum_cmd $yum_opt repo-pkgs $rep $operations"
+    [ -n "$rep" ] && cmd="$yum_cmd $yum_opt repo-pkgs $rep $ope"
 
     ( $vie ) && exc="[ -s "$log" ] && echo '$tag+' && cat '$log' | grep -v '^$' | tail -$num | sed 's/^/| /' && echo '+${tag//?/-}' && echo"
 
