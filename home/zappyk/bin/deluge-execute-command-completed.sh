@@ -8,6 +8,12 @@ THIS_PATH=$(dirname  "$THIS_FILE")
 THIS_PATH=$(cd "$THIS_PATH" && pwd)
 THIS_FILE="$THIS_PATH/$THIS_NAME"
 
+CMMD_MAIL=$(which mail)     # mailx.x86_64.rpm
+CMMD_XMPP=$(which sendxmpp) # sendxmpp.noarch.rpm
+
+[ -z "$CMMD_MAIL" ] && echo "Pacchetto mailx.x86_64.rpm non installato..." && exit 1
+[ -z "$CMMD_XMPP" ] && echo "Pacchetto sendxmpp.noarch.rpm non installato..." && exit 1
+
 ################################################################################
     FILE_tID_=$1                              # f28c4e754f19816a7a61d42ac30b2b6bb90a820f
     FILE_NAME=$2                              # Jobs.2013.BDRip.x264-COCAIN[rarbg]
@@ -18,18 +24,18 @@ if [ -n "$FILE_tID_" ] \
 && [ -n "$FILE_NAME" ] \
 && [ -n "$FILE_PATH" ] \
 && [ -e "$PATH_NAME" ]; then
-    PATH_BASE_DOWNLOADS=$(dirname "$FILE_PATH")
+    PATH_BASE_DELUGEDIR=$(dirname "$FILE_PATH")
     PATH_BASE_COMPLETED=$FILE_PATH
-    PATH_BASE_INCOMINGS=$PATH_BASE_DOWNLOADS/incomings
-    FILE_LOGS_COMPLETED=$PATH_BASE_DOWNLOADS/$THIS_NAME.log
+    PATH_BASE_INCOMINGS=$PATH_BASE_DELUGEDIR/incomings
+    FILE_LOGS_COMPLETED=$PATH_BASE_DELUGEDIR/log/$THIS_NAME.log
     FILE_FIND_COMPLETED="ls -d \"$PATH_NAME\" 2>/dev/null"
     TIME_FIND_COMPLETED=180
     TIME_FIND_TRY_AGAIN=1
     LOOP_FIND_TRY_AGAIN=false
 else
-    PATH_BASE_DOWNLOADS=${1-${DELUGE_BASE-.}} ; PATH_BASE_DOWNLOADS=$(cd -P "$PATH_BASE_DOWNLOADS" && pwd)
-    PATH_BASE_COMPLETED=${2-$PATH_BASE_DOWNLOADS/completed}
-    PATH_BASE_INCOMINGS=${3-$PATH_BASE_DOWNLOADS/incomings}
+    PATH_BASE_DELUGEDIR=${1-${DELUGE_BASE-.}} ; PATH_BASE_DELUGEDIR=$(cd -P "$PATH_BASE_DELUGEDIR" && pwd)
+    PATH_BASE_COMPLETED=${2-$PATH_BASE_DELUGEDIR/completed}
+    PATH_BASE_INCOMINGS=${3-$PATH_BASE_DELUGEDIR/incomings}
     FILE_LOGS_COMPLETED=/dev/null
     FILE_FIND_COMPLETED="ls -d \"$PATH_BASE_COMPLETED\"/* 2>/dev/null | xargs -0 -i echo \"{}\""
     TIME_FIND_COMPLETED=${4-60}
@@ -65,7 +71,8 @@ _nsm() { ( $test ) && return
     local mail_mssg=$string
     local mail_subj="Deluge $count files completed download [$tdate]"
     local mail_from="zappyk@zappyk-rp"
-    local mail_cmmd="mail"
+    local mail_cmmd=$CMMD_XMPP
+    local mail_cmmd="$(which $mail_cmmd)"
 
     echo -e "$mail_mssg" | eval "$mail_cmmd -s \"$mail_subj\" -r $mail_from  $mail__to_"
     #___________________________________________________________________________
@@ -73,7 +80,7 @@ _nsm() { ( $test ) && return
     local xmpp__to_=$notify
     local xmpp_mssg=$string
     local xmpp_from="zappyk.notice"
-    local xmpp_cmmd="sendxmpp"
+    local xmpp_cmmd=$CMMD_XMPP
     local xmpp_cmmd="perl -X $(which $xmpp_cmmd)"
 
     echo -e "$xmpp_mssg" | eval "$xmpp_cmmd -t -u $xmpp_from $xmpp__to_"
