@@ -7,10 +7,12 @@ USERXMPP='zappyk.notice'
 PSWDXMPP='z4pp1k@n0t1c3'
 NAMEXMPP='gmail.com'
 
+RESOURCE=$(uname -n)
 SENDXMPP=$(which sendxmpp 2>/dev/null)
 CONFXMPP='/etc/sendxmpprc'
 OPTSXMPP="-t -u $USERXMPP"
 OPTSXMPP="-t -u $USERXMPP -f '$CONFXMPP' -p $PSWDXMPP -j $HOSTXMPP -o $NAMEXMPP"
+OPTSXMPP="-t -u $USERXMPP -f '$CONFXMPP' -p $PSWDXMPP -j $HOSTXMPP -o $NAMEXMPP -r $RESOURCE"
 
 [ -z "$SENDXMPP" ] && echo "Attenzione, programma sendxmpp non installato!" && exit 1
 [ -z "$MESSAGES" ] && echo "Specifica un messaggio da inviare o un file..." && exit 1
