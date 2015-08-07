@@ -196,10 +196,12 @@ _space() { sed 's/^  *//' | sed 's/  *$//' | sed 's/  */.\*/g'; }
 _grep_exclude() {
  local file=$1
  if [ -s "$file" ]; then [ -n "$ROW_GREP" ] && ROW_GREP="$ROW_GREP |"
- ROW_GREP="$ROW_GREP grep -v -i"
+#ROW_GREP="$ROW_GREP grep -v -i"
+ ROW_GREP="$ROW_GREP grep-v-i.pl"
   IFS=$'\n'
   for row in $(cat $file); do [ "${row:0:1}" == '#' ] && continue || string=$(echo "$row" | _space)
- ROW_GREP="$ROW_GREP -e '$string'"
+#ROW_GREP="$ROW_GREP -e '$string'"
+ ROW_GREP="$ROW_GREP '$string'"
   done
  fi
 }
