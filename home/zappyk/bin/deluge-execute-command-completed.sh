@@ -9,10 +9,11 @@ THIS_PATH=$(cd "$THIS_PATH" && pwd)
 THIS_FILE="$THIS_PATH/$THIS_NAME"
 
 CMMD_MAIL=$(which mail)     # mailx.x86_64.rpm
+CMMD_MAIL=$(which mailsend) #
 CMMD_XMPP=$(which sendxmpp) # sendxmpp.noarch.rpm
 
-[ -z "$CMMD_MAIL" ] && echo "Pacchetto mailx.x86_64.rpm non installato..." && exit 1
-[ -z "$CMMD_XMPP" ] && echo "Pacchetto sendxmpp.noarch.rpm non installato..." && exit 1
+#[ -z "$CMMD_MAIL" ] && echo "Pacchetto mailx.x86_64.rpm non installato..." && exit 1
+ [ -z "$CMMD_XMPP" ] && echo "Pacchetto sendxmpp.noarch.rpm non installato..." && exit 1
 
 ################################################################################
     FILE_tID_=$1                              # f28c4e754f19816a7a61d42ac30b2b6bb90a820f
@@ -74,7 +75,8 @@ _nsm() { ( $test ) && return
     local mail_cmmd=$CMMD_MAIL
     local mail_cmmd="$(which $mail_cmmd)"
 
-    echo -e "$mail_mssg" | eval "$mail_cmmd -s \"$mail_subj\" -r $mail_from  $mail__to_"
+#CZ#echo -e "$mail_mssg" | eval "$mail_cmmd -s \"$mail_subj\" -r $mail_from    $mail__to_"
+    echo -e "$mail_mssg" | eval "$mail_cmmd -s \"$mail_subj\" -f $mail_from -t $mail__to_"
     #___________________________________________________________________________
     #
     local xmpp__to_=$notify
