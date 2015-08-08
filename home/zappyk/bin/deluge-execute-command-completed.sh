@@ -71,7 +71,7 @@ _nsm() { ( $test ) && return
     local mail_mssg=$string
     local mail_subj="Deluge $count files completed download [$tdate]"
     local mail_from="zappyk@zappyk-rp"
-    local mail_cmmd=$CMMD_XMPP
+    local mail_cmmd=$CMMD_MAIL
     local mail_cmmd="$(which $mail_cmmd)"
 
     echo -e "$mail_mssg" | eval "$mail_cmmd -s \"$mail_subj\" -r $mail_from  $mail__to_"
