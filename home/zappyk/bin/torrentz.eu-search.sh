@@ -15,13 +15,13 @@ _EXCLUDE_="$THIS_PATH/$THIS_NAME.exclude"
  _FNOT_="-e ' TELESYNC'"
 #SEARCH="$_FIND_"
  
-#__MM__=$(date +'%_m')
+ __MM__=$(date +'%_m')
 #_AAAA_=$(date +'%Y'); [ $__MM__ -lt 6 ] &&  _AAAA_=$(($_AAAA_ -1))
 #SEARCH="$_FIND_+$_AAAA_"
  
- AAAA_0=$(date +'%Y');
+ AAAA_0=$(date +'%Y')
  AAAA_1=$(($AAAA_0 -1))
- AAAA_S="+$AAAA_0 +$AAAA_1"
+ AAAA_S="+$AAAA_0 +$AAAA_1"; [ $__MM__ -ge 6 ] && AAAA_S="+$AAAA_0"
  SEARCH="$_FIND_%s"
 #_______________________________________________________________________________
 #
