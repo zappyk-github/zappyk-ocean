@@ -1,9 +1,11 @@
 #!/bin/env bash
 
-HOST_NAME=$1
-USER_NAME=$2
+USER_NAME=$1
+HOST_NAME=$2
 _COMMAND_=''
 
+SSH_HOST_NAME='sipert'
+SSH_USER_NAME='pes0zap'
 #--------+------------+
 # HOSTs  | IP ADDRESS |
 #--------+------------+
@@ -15,18 +17,19 @@ _COMMAND_=''
 # test   | 10.0.3.22  |
 # win01  | 10.0.3.23  |
 #--------+------------+
-HOST_NAME='sipert'
-USER_NAME='pes0zap'
-case "$HOST_NAME" in
-    pls | vls ) HOST_NAME='10.0.3.5' ;;
-    sipert    ) HOST_NAME='10.0.3.64' ;;
-    *         ) echo "Usage:\n\t$(basename "$0") [ [ HOST ] [ USER ] ]\nHost '$HOST_NAME' non configurato..." && exit 1
+
+[ -n "$HOST_NAME" ] && SSH_HOST_NAME=$HOST_NAME
+
+case "$SSH_HOST_NAME" in
+    pls | vls ) SSH_HOST_NAME='10.0.3.5' ;;
+    sipert    ) SSH_HOST_NAME='10.0.3.64' ;;
+    *         ) echo -e "Usage:\n\t$(basename "$0") [ [ USER ] [ HOST ] ]\nHost '$SSH_HOST_NAME' non configurato..." && exit 1
 esac
 
-[ $(id -u) -eq 0  ] && USER_NAME='root'
-[ -n "$USER_NAME" ] && USER_NAME="$USER_NAME@"
+[ $(id -u) -eq 0  ] && SSH_USER_NAME='root'
+[ -n "$USER_NAME" ] && SSH_USER_NAME="$USER_NAME@"
 
-_COMMAND_="ssh -X $USER_NAME$HOST_NAME"
+_COMMAND_="ssh -X $SSH_USER_NAME$SSH_HOST_NAME"
 
 echo "$_COMMAND_"
 eval "$_COMMAND_"
