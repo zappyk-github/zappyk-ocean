@@ -5,7 +5,7 @@ HOST_NAME=$2
 _COMMAND_=''
 
 SSH_HOST_NAME='sipert'
-SSH_USER_NAME='pes0zap'
+SSH_USER_NAME='pes0zap@'
 #--------+------------+
 # HOSTs  | IP ADDRESS |
 #--------+------------+
@@ -26,7 +26,7 @@ case "$SSH_HOST_NAME" in
     *         ) echo -e "Usage:\n\t$(basename "$0") [ [ USER ] [ HOST ] ]\nHost '$SSH_HOST_NAME' non configurato..." && exit 1
 esac
 
-[ $(id -u) -eq 0  ] && SSH_USER_NAME='root'
+[ $(id -u) -eq 0  ] && SSH_USER_NAME='root@'
 [ -n "$USER_NAME" ] && SSH_USER_NAME="$USER_NAME@"
 
 _COMMAND_="ssh -X $SSH_USER_NAME$SSH_HOST_NAME"
