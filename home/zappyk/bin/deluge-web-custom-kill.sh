@@ -1,6 +1,7 @@
 #!/bin/env bash
 
 PID=${1:-$$}
+ECN=0
 
 PID_deluge_W=$(pgrep 'deluge-web' | grep -v $PID)
 PID_deluge_D=$(pgrep 'deluged' | grep -v $PID)
@@ -11,7 +12,7 @@ PID_deluge_D=$(pgrep 'deluged' | grep -v $PID)
 [ -n "$PID_deluge_W" ] && printf "# %5s = %s\n" "$PID_deluge_W" "$PSC_deluge_W"
 [ -n "$PID_deluge_D" ] && printf "# %5s = %s\n" "$PID_deluge_D" "$PSC_deluge_D"
 
-[ -n "$PID_deluge_W" ] && echo "kill $PID_deluge_W"
-[ -n "$PID_deluge_D" ] && echo "kill $PID_deluge_D"
+[ -n "$PID_deluge_W" ] && echo "kill $PID_deluge_W" && ECN=1
+[ -n "$PID_deluge_D" ] && echo "kill $PID_deluge_D" && ECN=1
 
-exit
+exit $ECN
