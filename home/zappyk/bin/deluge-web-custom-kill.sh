@@ -5,6 +5,7 @@ ECN=0
 
 PID_deluge_W=$(pgrep 'deluge-web' | grep -v $PID)
 PID_deluge_D=$(pgrep 'deluged' | grep -v $PID)
+TWONKY_EXEC_="$HOME/Programmi/twonky/twonky.sh stop"
 
 [ -n "$PID_deluge_W" ] && PSC_deluge_W=$(ps -efj | grep "$PID_deluge_W " | grep -v grep)
 [ -n "$PID_deluge_D" ] && PSC_deluge_D=$(ps -efj | grep "$PID_deluge_D " | grep -v grep)
@@ -14,5 +15,7 @@ PID_deluge_D=$(pgrep 'deluged' | grep -v $PID)
 
 [ -n "$PID_deluge_W" ] && echo "kill $PID_deluge_W" && ECN=1
 [ -n "$PID_deluge_D" ] && echo "kill $PID_deluge_D" && ECN=1
+
+eval "$TWONKY_EXEC_"
 
 exit $ECN
