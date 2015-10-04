@@ -13,14 +13,18 @@ port='3908 8908'
 http='http://localhost:8908/tv.asf'
 http='http://localhost:8908'
 goto='Start cache thread.'
+grep="grep -e '$goto' -e 'GLOBAL'"
 
 cat << _EOD_ >&2
+#
+# $prog "$url" $port $*
+#_______________________
 Open VLC and connect to: $http
 Execute start streaming...
 Waiting <$goto> before connect...
 _EOD_
 
 #eval "$prog \"$url\" $port $* >/dev/null 2>&1"
- eval "$prog \"$url\" $port $* 2>&1 | grep \"$goto\""
+ eval "$prog \"$url\" $port $* 2>&1 | $grep"
 
 exit
