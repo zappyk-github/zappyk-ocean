@@ -1,0 +1,10 @@
+#!/bin/env bash
+
+REMOTE_HOST=$1 ; [ -z "$REMOTE_HOST" ] && REMOTE_HOST=$(basename "$0")
+                 [ "$REMOTE_HOST" == 'ssh@ocean.sh' ] && echo "$REMOTE_HOST <remote-host>" && exit
+REMOTE_HOST=${REMOTE_HOST/ssh-/}
+
+echo "ssh $REMOTE_HOST"
+eval "ssh $REMOTE_HOST"
+
+exit
