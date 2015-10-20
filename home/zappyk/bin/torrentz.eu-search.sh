@@ -12,7 +12,8 @@ _EXCLUDE_="$THIS_PATH/$THIS_NAME.exclude"
 #_______________________________________________________________________________
 #
  _YEAR_=''
- _FIND_='movie+ita'
+ _FIND_='ita+movie'
+ _FIND_='italian+movies'
  _FNOT_="-e ' TELESYNC'"
 #SEARCH="$_FIND_"
  
@@ -39,7 +40,7 @@ _EXCLUDE_="$THIS_PATH/$THIS_NAME.exclude"
 #URL_ORDER='S' # by Size
 #URL_ORDER=''  # by Peers
 
- ULR_FINDS=$_FIND_
+ URL_FINDS=$_FIND_
 
  URL_ORDER_NAME=''
  URL_ORDER_NAME="sort -t '>' -k 2"
@@ -232,7 +233,7 @@ _font_color "$_EXCLUDE_"
 _html_style() {
 cat << _EOD_
 <head>
-  <title>$URL_WWW | $URL_SAFETY_QUALITY | $URL_ORDER | $ULR_FINDS</title>
+  <title>$URL_WWW | $URL_SAFETY_QUALITY | $URL_ORDER | $URL_FINDS</title>
   <meta http-equiv="refresh" content="$PAG_REFRESH">
 </head>
 <style>
