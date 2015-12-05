@@ -21,6 +21,7 @@ SU_USER_CMD="su - $DELUGE_USER -c"
 ################################################################################
                     SYSTEM_IFCONFIG_LOG=''
                     SYSTEM_IFCONFIG_CMD='ifconfig wlan0 down'
+                    SYSTEM_IFCONFIG_CMD='ifconfig wlp3s0 down'
                     SYSTEM_IFCONFIG_RUN="$SUDOCOMMAND$SYSTEM_IFCONFIG_CMD"
 ( $CMDRUN_ROOT ) && SYSTEM_IFCONFIG_RUN="$SYSTEM_IFCONFIG_CMD"
 
@@ -65,7 +66,7 @@ _systemctl() {
 ##==============================================================================
  #_eval "$SYSTEM_INIT_RUN"
 ##------------------------------------------------------------------------------
- #_eval "$SYSTEM_IFCONFIG_RUN"
+  _eval "$SYSTEM_IFCONFIG_RUN"
 ##------------------------------------------------------------------------------
   _systemctl firewalld stop status
 ##------------------------------------------------------------------------------
