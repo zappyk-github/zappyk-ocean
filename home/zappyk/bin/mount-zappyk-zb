@@ -4,8 +4,18 @@ HOST_MOUNT='zappyk-zb'
 PATH_MOUNT='/home/zappyk/Programmi/twonky/twonky-shared/Public/'
 BASE_MOUNT='/mnt/zappyk-zb@twonky/'
 
+CMD__MOUNT="mount $HOST_MOUNT:\"$PATH_MOUNT\" \"$BASE_MOUNT\""
+CMD_UMOUNT="umount \"$BASE_MOUNT\""
+CHECKMOUNT=$(mount | grep "^$HOST_MOUNT:$PATH_MOUNT")
+
 [ ! -d "$BASE_MOUNT" ] && sudo mkdir "$BASE_MOUNT"
 
-sudo mount $HOST_MOUNT:"$PATH_MOUNT" "$BASE_MOUNT"
+if [ -z "$CHECKMOUNT" ]; then
+    echo "$CMD__MOUNT"
+    eval "sudo $CMD__MOUNT"
+else
+    echo "$CMD_UMOUNT"
+    eval "sudo $CMD_UMOUNT"
+fi
 
 exit
