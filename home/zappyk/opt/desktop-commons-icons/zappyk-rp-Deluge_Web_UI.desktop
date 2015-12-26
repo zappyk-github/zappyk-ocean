@@ -1,6 +1,6 @@
 [Desktop Entry]
 Version=1.0
-Name=zappyk-rp (Deluge Web UI)
+Name=zappyk-rp (DelugeWeb UI)
 Exec=google-chrome-apps "http://zappyk-rp:8112/"
 Terminal=false
 Icon=google-chrome
