@@ -10,10 +10,14 @@ use File::Basename;
 
 my $this = basename($0);
 
+my @list_ext   = ('.avi', '.mkv', '.mp4');
+my @list_canc  = ('.CD1', '.CD2');
+
 my $film_found = 0;
 my $film_movie = $ARGV[0] || die("use: $this \"<title|film-movie>\"\n");
-my $film_title = basename($film_movie, ('.avi', '.mkv', '.mp4'));
-my $film_dir   = dirname($film_title);
+my $file_movie = basename($film_movie, @list_ext);
+my $film_title = basename($file_movie, @list_canc);
+my $film_dir   = dirname($film_movie);
 my $film_uri   = _uriEscape($film_title);
 my $debug      = $ARGV[1] || 0;
 
@@ -39,7 +43,7 @@ foreach my $url_page (@url_pages) {
     my $url_image          = _getURLImage(@url_media_contents);
     my $get_image          = ($url_image eq '')?$rem_bash:'';
 
-    my $wget = sprintf($cmd_wget, $get_image, $url_image, $film_title);
+    my $wget = sprintf($cmd_wget, $get_image, $url_image, $file_movie);
 
     if ($get_image ne $rem_bash) {
         $film_found = 1;
@@ -47,7 +51,7 @@ foreach my $url_page (@url_pages) {
     }
 }
 
-printf("echo 'Title|Film-Movie:  %-40s  poster not found!'\n", "\"$film_movie\"") if (! $film_found);
+printf("echo 'Title|Film-Movie:  %-40s  poster not found! (%s)'\n", "\"$film_title\"", $film_movie) if (! $film_found);
 
 exit;
 
