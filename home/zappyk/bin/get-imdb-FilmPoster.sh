@@ -1,6 +1,6 @@
 #!/bin/env bash
 
-LIST_EXT='.avi .mkv'
+LIST_EXT='.avi .mkv .mp4'
 FILE_EXT='.jpg'
 
 PATH_BASE=${1:-./}
