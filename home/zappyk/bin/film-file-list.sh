@@ -1,6 +1,6 @@
 #!/bin/env bash
 
-PATH_BASE="$HOME/mnt-zappyk-hd/Public/Shared Videos"
+PATH_BASE="$HOME/mnt-zappyk-hd/Public/Videos"
 PATH_FILM='Films'
 
 FILE_SAVE="$HOME/mnt-zappyk-hd-Films.csv"
