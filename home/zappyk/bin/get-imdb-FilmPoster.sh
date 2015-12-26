@@ -27,7 +27,8 @@ _wget_make() {
 
         file_img="$file_path/$file_name$FILE_EXT"
 
-        [ ! -e "$file_img" ] && get-imdb-FilmPoster.pl "$file_name" "$file_path/"
+    #CZ#[ ! -e "$file_img" ] && get-imdb-FilmPoster.pl "$file_name" "$file_path/"
+        [ ! -e "$file_img" ] && get-imdb-FilmPoster.pl "$file"
     done
 }
 

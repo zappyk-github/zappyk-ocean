@@ -10,16 +10,18 @@ use File::Basename;
 
 my $this = basename($0);
 
-my $film_title = $ARGV[0] || die("use: $this \"<film-title>\"\n");
+my $film_found = 0;
+my $film_movie = $ARGV[0] || die("use: $this \"<title|film-movie>\"\n");
+my $film_title = basename($film_movie, ('.avi', '.mkv', '.mp4'));
+my $film_dir   = dirname($film_title);
 my $film_uri   = _uriEscape($film_title);
-my $film_dir   = $ARGV[1] || '';
-my $debug      = $ARGV[2] || 0;
+my $debug      = $ARGV[1] || 0;
 
 my $url_base = 'http://www.imdb.com';
 my $url_find = $url_base.'/find?q=';
 my $row_find = 'class="primary_photo"';
 my $ext_name = '.jpg';
-my $cmd_wget = "%1swget -cq \"%s\" -O \"$film_dir%s$ext_name\"";
+my $cmd_wget = "%1swget -cq \"%s\" -O \"$film_dir/%s$ext_name\"";
 my $rem_bash = '#';
 
 my $mech = WWW::Mechanize->new();
@@ -27,6 +29,8 @@ my $url  = $url_find.$film_uri;
 
 my @url_pages = _getURLPages(1, _getContent($url));
 foreach my $url_page (@url_pages) {
+    _debug("url_page: $url_page");
+
     my @url_page_contents  = _getContent($url_page);
 
     my $url_media          = _getURLMedia(@url_page_contents);
@@ -37,14 +41,21 @@ foreach my $url_page (@url_pages) {
 
     my $wget = sprintf($cmd_wget, $get_image, $url_image, $film_title);
 
-    if ($get_image eq $rem_bash) {
-        printf("echo 'Film:  %-40s  poster not found!'\n", "\"$film_title\"");
-    } else {
+    if ($get_image ne $rem_bash) {
+        $film_found = 1;
         printf("%s\n", $wget);
     }
 }
 
+printf("echo 'Title|Film-Movie:  %-40s  poster not found!'\n", "\"$film_movie\"") if (! $film_found);
+
 exit;
+
+################################################################################
+sub _debug {
+    my $string = shift;
+    printf("$rem_bash %s\n", $string) if ($debug);
+}
 
 ################################################################################
 sub _uriEscape {
@@ -58,6 +69,7 @@ sub _uriEscape {
 sub _getContent {
     my $url = shift;
 
+    _debug("get url: $url");
     $mech->get($url);
 
     my $content  = $mech->content();
