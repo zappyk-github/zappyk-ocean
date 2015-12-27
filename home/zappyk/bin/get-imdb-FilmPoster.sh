@@ -1,5 +1,11 @@
 #!/bin/env bash
 
+THIS=$(basename "$0" '.sh')
+PROG="$THIS.pl"
+CMMD=$(which "$PROG" 2>/dev/null)
+
+[ -z "$CMMD" ] && echo "$THIS: error, related command '$PROG' not found!" && exit 1
+
 LIST_EXT='.avi .mkv .mp4'
 FILE_EXT='.jpg'
 
@@ -28,8 +34,7 @@ _wget_make() {
 
         file_img="$file_path/$file_name$FILE_EXT"
 
-    #CZ#[ ! -e "$file_img" ] && get-imdb-FilmPoster.pl "$file_name" "$file_path/"
-        [ ! -e "$file_img" ] && get-imdb-FilmPoster.pl "$file"
+        [ ! -e "$file_img" ] && $CMMD "$file"
     done
 }
 

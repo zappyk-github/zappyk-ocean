@@ -21,21 +21,23 @@ my $debug      = $ARGV[1] || 0;
 
 my $url_base = 'http://www.imdb.com';
 my $url_find = $url_base.'/find?q=';
-my $row_find = 'class="primary_photo"';
+my $pag_find = 'class="primary_photo"';
+my $row_find = ' id="primary-img" title="';
 my $ext_name = '.jpg';
 my $rem_bash = '#';
-my $cmd_wget = "%1swget -cq \"%s\" -O \"$film_dir/%s$ext_name\"";
-my $cmd_echo = "echo 'Title|Film-Movie:  %-50s  poster not found! (%s)'";
+my $cmd_wget = 'wget -cq';
+my $log_wget = "%1s $cmd_wget \"%s\" -O \"$film_dir/%s$ext_name\"";
+my $log_echo = 'the url Title|Film-Movie %-50s not found! (%s)';
 my $www_mech = WWW::Mechanize->new();
 
 my @url_images = _getImages2Try($film_title);
 
 if (scalar(@url_images) == 0) {
-    printf("$cmd_echo\n", "\"$film_title\"", $film_movie);
+    _log(sprintf($log_echo, "\"$film_title\"", $film_movie));
 } else {
     foreach my $url_image (@url_images) {
-        my $get_image = ($url_image eq '')?$rem_bash:'';
-        printf("$cmd_wget\n", $get_image, $url_image, $file_movie);
+        my $rem_shell = ($url_image eq '')?$rem_bash:'';
+        printf("$log_wget\n", $rem_shell, $url_image, $file_movie);
     }
 }
 
@@ -47,14 +49,18 @@ sub _getImages2Try {
     my @url_images = _getImages($film_title);
 
     if (scalar(@url_images) == 0) {
-        _log("get url image not found=[ $film_title ]");
+        _debug("get url image not found=[ $film_title ]", 1);
 
         my $film_title_new = $film_title;
            $film_title_new =~ s/\s+\(\d\d\d\d\)//;
 
-        _log("try url image change to=[ $film_title_new ]");
+        if ($film_title ne $film_title_new) {
 
-        @url_images = _getImages($film_title_new);
+            _debug("try url image change to=[ $film_title_new ], 1");
+
+            @url_images = _getImages($film_title_new);
+
+        }
     }
 
     return(@url_images);
@@ -68,18 +74,18 @@ sub _getImages {
 
     my @url_images = ();
 
-    _debug("get url: $url");
+    _debug("get url: $url", 1);
     my @url_pages = _getURLPages(1, _getContent($url));
     foreach my $url_page (@url_pages) {
-        _debug("url_page: $url_page");
+        _debug("url_page: $url_page", 2);
         my @url_page_contents  = _getContent($url_page);
 
         my $url_media          = _getURLMedia(@url_page_contents);
         my @url_media_contents = _getContent($url_media);
-        _debug("url_media: $url_media");
+        _debug("url_media: $url_media", 2);
 
         my $url_image          = _getURLImage(@url_media_contents);
-        _debug("url_image: $url_image");
+        _debug("url_image: $url_image", 2);
 
     #CZ#push(@url_images, $url_image);
         push(@url_images, $url_image) if ($url_image);
@@ -116,7 +122,7 @@ sub _getURLPages {
     my @url_pages = ();
 
     foreach my $row (@contents) {
-        if ($row =~ m/$row_find/) {
+        if ($row =~ m/$pag_find/) {
             if ($row =~ m/<a href="(.*)"\s+><img src="/) {
                 my $url_page = $1;
                 push(@url_pages, $url_base.$url_page);
@@ -151,7 +157,7 @@ sub _getURLImage {
     my $row_image = '';
 
     foreach my $row (@contents) {
-        if ($row =~ m/ id="primary-img" title="/) {
+        if ($row =~ m/$row_find/) {
             if ($row =~ m/ src="(.*)"\s+\/>/) {
                 $row_image = $1;
                 last;
@@ -165,7 +171,8 @@ sub _getURLImage {
 ################################################################################
 sub _debug {
     my $string = shift;
-    _log($string) if ($debug);
+    my $levels = shift || 1;
+    _log($string) if ($debug && ($debug >= $levels));
 }
 
 ################################################################################
