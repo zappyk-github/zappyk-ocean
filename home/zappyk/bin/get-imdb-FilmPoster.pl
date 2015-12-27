@@ -25,8 +25,9 @@ my $url_base = 'http://www.imdb.com';
 my $url_find = $url_base.'/find?q=';
 my $row_find = 'class="primary_photo"';
 my $ext_name = '.jpg';
-my $cmd_wget = "%1swget -cq \"%s\" -O \"$film_dir/%s$ext_name\"";
 my $rem_bash = '#';
+my $cmd_wget = "%1swget -cq \"%s\" -O \"$film_dir/%s$ext_name\"";
+my $cmd_echo = "echo 'Title|Film-Movie:  %-50s  poster not found! (%s)'";
 
 my $mech = WWW::Mechanize->new();
 my $url  = $url_find.$film_uri;
@@ -43,15 +44,13 @@ foreach my $url_page (@url_pages) {
     my $url_image          = _getURLImage(@url_media_contents);
     my $get_image          = ($url_image eq '')?$rem_bash:'';
 
-    my $wget = sprintf($cmd_wget, $get_image, $url_image, $file_movie);
-
     if ($get_image ne $rem_bash) {
         $film_found = 1;
-        printf("%s\n", $wget);
+        printf("$cmd_wget\n", $get_image, $url_image, $file_movie);
     }
 }
 
-printf("echo 'Title|Film-Movie:  %-40s  poster not found! (%s)'\n", "\"$film_title\"", $film_movie) if (! $film_found);
+printf("$cmd_echo\n", "\"$film_title\"", $film_movie) if (! $film_found);
 
 exit;
 
