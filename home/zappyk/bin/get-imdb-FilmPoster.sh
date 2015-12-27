@@ -9,6 +9,7 @@ FIND_NAME=$(echo "$LIST_EXT" | sed 's/  */" -o -iname "\*/g')
 FIND_NAME="\( -iname \"*$FIND_NAME\" \)"
 FIND_FILE="find \"$PATH_BASE\" $FIND_NAME -print0 | xargs -0 -i echo \"{}\""
 
+################################################################################
 _wget_make() {
     local path_base=$1
     local find_files=$2
