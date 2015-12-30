@@ -1,0 +1,1 @@
+../../home/zappyk/bin/ssh-remote-commands.sh
