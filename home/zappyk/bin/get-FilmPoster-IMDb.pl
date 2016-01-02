@@ -19,6 +19,7 @@ my $film_title = basename($file_movie, @list_canc);
 my $film_dir   = dirname($film_movie);
 my $debug      = $ARGV[1] || 0;
 
+my $fix_find = 'locandina';
 my $url_base = 'http://www.imdb.com';
 my $url_find = $url_base.'/find?q=';
 my $pag_find = 'class="primary_photo"';
@@ -107,6 +108,11 @@ sub _getContent {
     my $url = shift;
 
     $www_mech->get($url);
+
+   #              = map { $_->text } $www_mech->links();
+   #my @url_links = map { $_->url  } $www_mech->links();
+   #my @url_links =                  $www_mech->links();
+   #printf("url_link=[%s]\n", join("]\nurl_link=[", @url_links));
 
     my $content  = $www_mech->content();
     my @contents = split("\n", $content, -1);
