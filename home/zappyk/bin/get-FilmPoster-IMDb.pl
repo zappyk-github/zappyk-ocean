@@ -33,7 +33,9 @@ my $www_mech = WWW::Mechanize->new();
 
 my @url_images = _getImages2Try($film_title);
 
+my $retcode = 0;
 if (scalar(@url_images) == 0) {
+    $retcode = 1;
     _log(sprintf($log_echo, "\"$film_title\"", $film_movie));
 } else {
     foreach my $url_image (@url_images) {
@@ -42,7 +44,7 @@ if (scalar(@url_images) == 0) {
     }
 }
 
-exit;
+exit($retcode);
 
 ################################################################################
 sub _getImages2Try {

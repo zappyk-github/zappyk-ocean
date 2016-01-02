@@ -10,18 +10,40 @@ LIST_EXT='.avi .mkv .mp4'
 FILE_EXT='.jpg'
 
 PATH_BASE=${1:-./}
+WWW_IMAGE=${2}
+URL_EMPTY='-'
 
 FIND_NAME=$(echo "$LIST_EXT" | sed 's/  */" -o -iname "\*/g')
 FIND_NAME="\( -iname \"*$FIND_NAME\" \)"
 FIND_FILE="find \"$PATH_BASE\" $FIND_NAME -print0 | xargs -0 -i echo \"{}\""
 
-FILE_BASH=$(basename "$0")
-FILE_BASH="$FILE_BASH-$(date +'%Y%m%d').sh"
+FILE_BASH="$THIS-$(date +'%Y%m%d').sh"
+
+[ -n "$WWW_IMAGE" ] && FILE_BASH='/dev/null'
+
+################################################################################
+_echo_recursive() {
+    local file=$1
+
+    echo "##$THIS.sh \"$file\" \"$URL_EMPTY\""
+}
+
+################################################################################
+_wget_echo() {
+    local www_image=$1
+    local file_img=$2
+    local wget_tag=' '
+
+    [ "$www_image" == "$URL_EMPTY" ] && wget_tag='#'
+
+    echo "$wget_tag wget -cq \"$www_image\" -O \"$file_img\""
+}
 
 ################################################################################
 _wget_make() {
     local path_base=$1
-    local find_files=$2
+    local www_image=$2
+    local find_files=$3
 
     path_base=$(dirname "$path_base")
 
@@ -37,10 +59,16 @@ _wget_make() {
 
         file_img="$file_path/$file_name$FILE_EXT"
 
-        [ ! -e "$file_img" ] && $CMMD "$file"
+        if [ ! -e "$file_img" ]; then
+            if [ -n "$www_image" ]; then
+                _wget_echo "$www_image" "$file_img"
+            else
+                $CMMD "$file" || _echo_recursive "$file"
+            fi
+        fi
     done
 }
 
-_wget_make "$PATH_BASE" "$FIND_FILE" 2>&1 | tee "$FILE_BASH"
+_wget_make "$PATH_BASE" "$WWW_IMAGE" "$FIND_FILE" 2>&1 | tee "$FILE_BASH"
 
 exit
