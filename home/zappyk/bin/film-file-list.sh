@@ -5,6 +5,6 @@ PATH_FILM='Films'
 
 FILE_SAVE="$HOME/mnt-zappyk-hd-Films.csv"
 
-(cd "$PATH_BASE" && film-file-list.pl "$PATH_FILM" >"$FILE_SAVE-" && mv -f "$FILE_SAVE" "$FILE_SAVE~" && mv -f "$FILE_SAVE-" "$FILE_SAVE")
+( cd "$PATH_BASE" && film-file-list.pl "$PATH_FILM" >"$FILE_SAVE-" && ( [ -e "$FILE_SAVE" ] && mv -f "$FILE_SAVE" "$FILE_SAVE~" || cp -f "$FILE_SAVE-" "$FILE_SAVE~" ) && mv -f "$FILE_SAVE-" "$FILE_SAVE" )
 
 exit

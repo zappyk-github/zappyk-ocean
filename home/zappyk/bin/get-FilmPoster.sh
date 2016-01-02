@@ -15,6 +15,9 @@ FIND_NAME=$(echo "$LIST_EXT" | sed 's/  */" -o -iname "\*/g')
 FIND_NAME="\( -iname \"*$FIND_NAME\" \)"
 FIND_FILE="find \"$PATH_BASE\" $FIND_NAME -print0 | xargs -0 -i echo \"{}\""
 
+FILE_BASH=$(basename "$0")
+FILE_BASH="$FILE_BASH-$(date +'%Y%m%d').sh"
+
 ################################################################################
 _wget_make() {
     local path_base=$1
@@ -38,6 +41,6 @@ _wget_make() {
     done
 }
 
-_wget_make "$PATH_BASE" "$FIND_FILE"
+_wget_make "$PATH_BASE" "$FIND_FILE" 2>&1 | tee "$FILE_BASH"
 
 exit
