@@ -88,7 +88,8 @@ $iMAIL_HEADERS = join( "\n", split( /\\n/, $iMAIL_HEADERS ) );
     auth            => 'LOGIN',
 #CZ#auth            => 'PLAIN',
     authid          => 'zappyk.notice@gmail.com',
-    authpwd         => 'z4pp1k@n0t1c3',
+#CZ#authpwd         => 'z4pp1k@n0t1c3',
+    authpwd         => 'z4pp1k@n0t1c3s',
     authdomain      => 'gmail.com',
 #CZ#port            => 587,
 ####=================

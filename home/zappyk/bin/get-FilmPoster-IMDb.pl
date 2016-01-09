@@ -19,7 +19,6 @@ my $film_title = basename($file_movie, @list_canc);
 my $film_dir   = dirname($film_movie);
 my $debug      = $ARGV[1] || 0;
 
-my $fix_find = 'locandina';
 my $url_base = 'http://www.imdb.com';
 my $url_find = $url_base.'/find?q=';
 my $pag_find = 'class="primary_photo"';
