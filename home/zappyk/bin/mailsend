@@ -12,10 +12,10 @@ my $THIS          = basename( $0 );
 
 my $iEXIT_CODE    = 0;
 
-my $iMAIL_SMTP    = 'smtp.gmail.com';
-my $iMAIL_FROM    = 'zappyk.notice@gmail.com';
+my $iMAIL_SMTP    = 'smtp.gmail.com'         ; $iMAIL_SMTP = 'smtp.ngi.it';
+my $iMAIL_FROM    = 'zappyk.notice@gmail.com'; $iMAIL_FROM = 'zappyk@ngi.it';
 my $iMAIL_SUBJECT = '';
-my @vMAIL_HEADERS = ('X-ZappykNotice: true');
+my @vMAIL_HEADERS = ("X-ZappykNotice: $iMAIL_SMTP");
 my @vMAIL_TO      = ();
 my @vMAIL_CC      = ();
 my @vMAIL_BCC     = ();
@@ -75,19 +75,22 @@ $iMAIL_MSG     = join( "\n", split( /\\n/, $iMAIL_MSG     ) );
 $iMAIL_HEADERS = join( "\n", split( /\\n/, $iMAIL_HEADERS ) );
 %iMAIL_COMMONS =
 (
-####=================
+#_______________________________________________________________________________
+#
+'smtp.gmail.com' => { 
+#_______________________________________________________________________________
 #CZ#debug           => '/dev/stderr',
 #CZ#debug_level     => 4,
-####-----------------
+####=================
 #CZ#SSL_ca_file     => '/etc/ssl/certs/smtp.gmail.com.crt.pem',
 #CZ#SSL_version     => 'TLSv1',
     SSL_version     => 'SSLv23:!SSLv2',
     SSL_verify_mode => 0,
 #CZ#TLS_allowed     => 1,
     TLS_required    => 1,
-    auth            => 'LOGIN',
 #CZ#auth            => 'PLAIN',
-    authid          => 'zappyk.notice@gmail.com',
+    auth            => 'LOGIN',
+    authid          => $iMAIL_FROM,
 #CZ#authpwd         => 'z4pp1k@n0t1c3',
     authpwd         => 'z4pp1k@n0t1c3s',
     authdomain      => 'gmail.com',
@@ -100,7 +103,29 @@ $iMAIL_HEADERS = join( "\n", split( /\\n/, $iMAIL_HEADERS ) );
     to              => $iMAIL_TO,
     cc              => $iMAIL_CC,
     bcc             => $iMAIL_BCC,
-);
+},
+#_______________________________________________________________________________
+#
+'smtp.ngi.it' => {
+#_______________________________________________________________________________
+    esmtp           => { 'NOTIFY' => ''
+                       , 'RET'    => ''
+                       , 'ORCPT'  => ''
+                       , 'ENVID'  => '' },
+####=================
+    auth            => 'LOGIN',
+    authid          => $iMAIL_FROM,
+    authpwd         => 'Z4pp1kW3bm',
+    authdomain      => 'ngi.it',
+####=================
+    smtp            => $iMAIL_SMTP,
+    from            => $iMAIL_FROM,
+    subject         => $iMAIL_SUBJECT,
+    headers         => $iMAIL_HEADERS,
+    to              => $iMAIL_TO,
+    cc              => $iMAIL_CC,
+    bcc             => $iMAIL_BCC,
+});
 
 $iMAIL_SEND = new Mail::Sender() || die( "$THIS: non posso creare l'oggetto Mail::Sender ($Mail::Sender::Error)\n" );
 
@@ -120,7 +145,7 @@ if ( scalar(@vMAIL_FILES) > 0 ) {
                                    #to        => $iMAIL_TO,
                                    #cc        => $iMAIL_CC,
                                    #bcc       => $iMAIL_BCC,
-                                    %iMAIL_COMMONS,
+                                    %{$iMAIL_COMMONS{$iMAIL_SMTP}},
                                     multipart => 'mixed',
                             })->Part({ ctype => 'multipart/alternative' })
                               ->Part({ ctype => 'text/plain', disposition => 'NONE', msg => $iMAIL_MSG_BODY })
@@ -140,7 +165,7 @@ if ( scalar(@vMAIL_FILES) > 0 ) {
                                    #to        => $iMAIL_TO,
                                    #cc        => $iMAIL_CC,
                                    #bcc       => $iMAIL_BCC,
-                                    %iMAIL_COMMONS,
+                                    %{$iMAIL_COMMONS{$iMAIL_SMTP}},
                                     multipart => 'mixed',
                             })->Part({ ctype => 'multipart/alternative' })
                               ->Part({ ctype => 'text/plain', disposition => 'NONE', msg => $iMAIL_MSG_BODY })
@@ -163,7 +188,7 @@ if ( scalar(@vMAIL_FILES) > 0 ) {
                                    #to      => $iMAIL_TO,
                                    #cc      => $iMAIL_CC,
                                    #bcc     => $iMAIL_BCC,
-                                    %iMAIL_COMMONS,
+                                    %{$iMAIL_COMMONS{$iMAIL_SMTP}},
                                     msg     => $iMAIL_MSG,
                                     file    => \@vMAIL_FILES
                             }) >= 0 );
@@ -179,7 +204,7 @@ if ( scalar(@vMAIL_FILES) > 0 ) {
                                    #to      => $iMAIL_TO,
                                    #cc      => $iMAIL_CC,
                                    #bcc     => $iMAIL_BCC,
-                                    %iMAIL_COMMONS,
+                                    %{$iMAIL_COMMONS{$iMAIL_SMTP}},
                                     msg     => $iMAIL_MSG
                             }) >= 0 );
 
