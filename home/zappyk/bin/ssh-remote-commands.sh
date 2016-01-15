@@ -9,8 +9,8 @@ LOCALE_CMMDS="$LOCALE_PROGR $LOCALE_PARAM"
 REMOTE_CMMDS="source .bash_profile ; $LOCALE_CMMDS"
 REMOTE_USERS=$USER
 
-[ -z "$LOCALE_CMMDS" ] && echo -e "Specifica un comando da eseguire in remoto\n come utente ( $REMOTE_USERS )\n sugli hosts [ $REMOTE_HOSTS ]" && exit 1
-[ -z "$LOCALE_PARAM" ] && echo '...nessun parametro...?' && read
+    [ -z "$LOCALE_CMMDS" ] && echo -e "Specifica un comando da eseguire in remoto\n come utente ( $REMOTE_USERS )\n sugli hosts [ $REMOTE_HOSTS ]" && exit 1
+#CZ#[ -z "$LOCALE_PARAM" ] && echo '...nessun parametro...?' && read
 
 for remote_host in $REMOTE_HOSTS; do
     remote_user="$REMOTE_USERS@$remote_host"

@@ -1,6 +1,6 @@
 #!/bin/env bash
 
-ssh-remote-commands.sh 'dnf-update.sh' -
+ssh-remote-commands.sh 'dnf-update.sh'
 
 exit
 
