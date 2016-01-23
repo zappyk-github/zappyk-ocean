@@ -78,7 +78,8 @@ _nsm() { ( $test ) && return
     local mail_cmmd="$(which $mail_cmmd)"
 
 #CZ#echo -e "$mail_mssg" | eval "$mail_cmmd -s \"$mail_subj\" -r $mail_from    $mail__to_"
-    echo -e "$mail_mssg" | eval "$mail_cmmd -s \"$mail_subj\" -f $mail_from -t $mail__to_"
+#CZ#echo -e "$mail_mssg" | eval "$mail_cmmd -s \"$mail_subj\" -f $mail_from -t $mail__to_"
+    echo -e "$mail_mssg" | eval "$mail_cmmd -s \"$mail_subj\"               -t $mail__to_"
     #___________________________________________________________________________
     #
     local xmpp__to_=$notify

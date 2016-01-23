@@ -5,7 +5,10 @@ ECN=0
 
 PID_deluge_W=$(pgrep 'deluge-web' | grep -v $PID)
 PID_deluge_D=$(pgrep 'deluged' | grep -v $PID)
-STOP_twonky_="$HOME/Programmi/twonky/twonky.sh stop"
+
+PATH_twonky_="$HOME"
+PATH_twonky_="/home/zappyk"
+STOP_twonky_="$PATH_twonky_/Programmi/twonky/twonky.sh stop"
 
 printf '#%.0s' {1..120} ; echo
 

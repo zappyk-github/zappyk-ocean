@@ -5,7 +5,9 @@ CMDRUN_ROOT=true ; [ $(id -u) -ne 0 ] && CMDRUN_ROOT=false
 DELUGE_USER='zappyk'
 DELUGE_BASE='/var/opt/deluge'
 DELUGE_LOGS="$DELUGE_BASE/log"
-TWONKY_EXEC="$HOME/Programmi/twonky/twonky.sh start"
+TWONKY_PATH="$HOME"
+TWONKY_PATH="/home/zappyk"
+TWONKY_EXEC="$TWONKY_PATH/Programmi/twonky/twonky.sh start"
 
 export DELUGE_USER DELUGE_BASE
 
