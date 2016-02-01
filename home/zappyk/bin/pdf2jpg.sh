@@ -9,6 +9,6 @@ path_jpg=$(dirname  "$file_pdf")
 name_jpg=$(basename "$file_pdf" ".pdf")
 file_jpg="$path_jpg/$name_jpg.jpg"
 
-echo convert -density 300 "$file_pdf" "$file_jpg"
+convert -density 300 "$file_pdf" "$file_jpg"
 
 exit
