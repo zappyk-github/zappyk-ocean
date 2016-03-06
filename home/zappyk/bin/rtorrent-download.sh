@@ -4,8 +4,8 @@ path_file=$1
 name_exte='.torrent'
 
 path_download="$HOME/Scaricati"
-path_torrents="$path_download/downloads/torrents"
-path_incoming="$path_download/downloads/_INCOMINGS_"
+path_torrents="$path_download/_TORRENTS_"
+path_incoming="$path_download/_INCOMINGS_"
 
 memGB=3
 memMB=$(($memGB * 1024))

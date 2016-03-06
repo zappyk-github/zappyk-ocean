@@ -1,0 +1,15 @@
+[Unit]
+Description=rTorrent
+After=network.target
+
+[Service]
+#CZ#User=zappyk
+Type=forking
+KillMode=none
+ExecStart=/usr/bin/screen -d -m -fa -S rtorrent /usr/bin/rtorrent
+#CZ#ExecStop=/usr/bin/killall -w -s 2 /usr/bin/rtorrent
+ExecStop=/usr/bin/killall -w -s 9 /usr/bin/rtorrent
+WorkingDirectory=%h/Scaricati
+
+[Install]
+WantedBy=default.target
