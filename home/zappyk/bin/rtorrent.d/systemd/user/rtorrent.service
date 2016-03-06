@@ -1,15 +1,27 @@
 [Unit]
-Description=rTorrent
+Description=rTorrent Daemon
 After=network.target
 
 [Service]
 #CZ#User=zappyk
 Type=forking
 KillMode=none
+#____________
+#            |
+#   screen   |
+#____________|
 ExecStart=/usr/bin/screen -d -m -fa -S rtorrent /usr/bin/rtorrent
 #CZ#ExecStop=/usr/bin/killall -w -s 2 /usr/bin/rtorrent
 ExecStop=/usr/bin/killall -w -s 9 /usr/bin/rtorrent
+#__________
+#          |
+#   tmux   |
+#__________|
+#ExecStart=/usr/bin/tmux new-session -c /usr/bin/rtorrent
+#ExecStop=/usr/bin/bash -c "/usr/bin/tmux send-keys -t rtorrent C-q && while pidof rtorrent > /dev/null; do sleep 0.5; echo rtorrent still running...; done; echo rtorrent stopped."
+#
 WorkingDirectory=%h/Scaricati
+Restart=on-failure
 
 [Install]
 WantedBy=default.target
