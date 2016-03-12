@@ -13,7 +13,7 @@ _EXCLUDE_="$THIS_PATH/$THIS_NAME.exclude"
 #
  _YEAR_=''
  _FIND_='ita+movie'
- _FIND_='italian+movies'
+#_FIND_='italian+movies'
  _FNOT_="-e ' TELESYNC'"
 #SEARCH="$_FIND_"
  
