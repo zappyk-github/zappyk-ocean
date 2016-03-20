@@ -71,4 +71,6 @@ _wget_make() {
 
 _wget_make "$PATH_BASE" "$WWW_IMAGE" "$FIND_FILE" 2>&1 | tee "$FILE_BASH"
 
+[ ! -s "$FILE_BASH" ] && rm -f "$FILE_BASH" && echo "...nessuna locandina da trovare..."
+
 exit
