@@ -206,6 +206,7 @@ _grep_exclude() {
  ROW_GREP="$ROW_GREP '$string'"
   done
  fi
+ [ -z "$ROW_GREP" ] && ROW_FONT="grep '.'"
 }
 _grep_exclude "$_EXCLUDE_"
 #_______________________________________________________________________________
@@ -226,6 +227,7 @@ _font_color() {
  ROW_FONT="$ROW_FONT sed \"s#\(<a .*>\)\(.*$string.*\)</a>#\\1<font color='$COLOR'>\\2</font></a>#i\""
   done
  fi
+ [ -z "$ROW_FONT" ] && ROW_FONT="grep '.'"
 }
 _font_color "$_EXCLUDE_"
 #_______________________________________________________________________________
