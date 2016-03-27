@@ -18,8 +18,9 @@ FIND_NAME="\( -iname \"*$FIND_NAME\" \)"
 FIND_FILE="find \"$PATH_BASE\" $FIND_NAME -print0 | xargs -0 -i echo \"{}\""
 
 FILE_BASH="$THIS-$(date +'%Y%m%d').sh"
+FILE_null='/dev/null'
 
-[ -n "$WWW_IMAGE" ] && FILE_BASH='/dev/null'
+[ -n "$WWW_IMAGE" ] && FILE_BASH=$FILE_null
 
 ################################################################################
 _echo_recursive() {
@@ -71,6 +72,6 @@ _wget_make() {
 
 _wget_make "$PATH_BASE" "$WWW_IMAGE" "$FIND_FILE" 2>&1 | tee "$FILE_BASH"
 
-[ ! -s "$FILE_BASH" ] && rm -f "$FILE_BASH" && echo "...nessuna locandina da trovare..."
+[ ! -s "$FILE_BASH" ] && [ "$FILE_BASH" != "$FILE_null" ] && rm -f "$FILE_BASH" && echo "...nessuna locandina da trovare..."
 
 exit
