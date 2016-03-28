@@ -194,7 +194,7 @@ _space() { sed 's/^  *//' | sed 's/  *$//' | sed 's/  */.\*/g'; }
 # Queste sigle indicano quindi la provenienza e danno un certo livello di sicurezza sulla qualità del prodotto.
 #_______________________________________________________________________________
 #
- ROW_GREP="grep -v -e ' [LM]D ' -e ' porn '"
+ ROW_GREP="grep -v -e ' [LM]D ' -e ' HDCAM ' -e ' porn '"
 _grep_exclude() {
  local file=$1
  if [ -s "$file" ]; then [ -n "$ROW_GREP" ] && ROW_GREP="$ROW_GREP |"
