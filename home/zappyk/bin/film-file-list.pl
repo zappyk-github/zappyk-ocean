@@ -6,8 +6,8 @@ use warnings;
 use File::Basename;
 
 my $path_base = $ARGV[0] || die("Specifica il PATH di ricerca...\n");
-my $list_file = "find \"$path_base\" -type f -print0 | xargs -0 -i bash -c 'basename \"{}\"'";
-   $list_file = "find \"$path_base\" -type f -print0 | xargs -0 -i bash -c 'echo \"{}\"'";
+my $list_file = "find -L \"$path_base\" -type f -print0 | xargs -0 -i bash -c 'basename \"{}\"'";
+   $list_file = "find -L \"$path_base\" -type f -print0 | xargs -0 -i bash -c 'echo \"{}\"'";
 
 my $file_skip = '(jpg|png)$';
 

@@ -1,0 +1,12 @@
+#_____
+# NFS:
+#Public		-defaults,nfsvers=3	zappyk-hd:/nfs/Public
+#Download	-defaults,nfsvers=3	zappyk-hd:/nfs/Download
+#Document	-defaults,nfsvers=3	zappyk-hd:/nfs/Document
+#______
+# CIFS:
+Public		-defaults,fstype=cifs,user=guest,pass=guest,uid=zappyk,gid=zappyk,iocharset=utf8,file_mode=0666,dir_mode=0777	://zappyk-hd/Public
+Download	-defaults,fstype=cifs,user=guest,pass=guest,uid=zappyk,gid=zappyk,iocharset=utf8,file_mode=0666,dir_mode=0777	://zappyk-hd/Download
+Document	-defaults,fstype=cifs,user=guest,pass=guest,uid=zappyk,gid=zappyk,iocharset=utf8,file_mode=0666,dir_mode=0777	://zappyk-hd/Document
+#
++auto.zappyk-hd
