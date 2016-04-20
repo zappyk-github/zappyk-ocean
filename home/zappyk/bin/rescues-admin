@@ -10,6 +10,7 @@ CMD_ENCFS=$(which encfs)
 CMD_UMOUNT=$(which umount)
 CMD_FIND=$(which find)
 CMD_RAR=$(which rar)
+OPT_RAR='a -hp -r'
 
 _error() { echo "${1//?/_}" ; echo "$1"; }
 _print() { echo "$NAME: execute $1"; }
@@ -56,6 +57,6 @@ ismount=$(ls "$DIR_OFMOUNT/") ; [ -z "$ismount" ] && ( ! $umount ) && mount=true
  ( $umount ) && _print 'umount...' && sudo "$CMD_UMOUNT" "$DIR_OFMOUNT"
 #( $search ) && _print 'search...' && "$CMD_FIND" -L "$DIR_OFMOUNT" -type f -iname $* -print0 | xargs -0i bash -c "echo 'FILE=[ {} ]' && cat '{}'"
  ( $search ) && _print 'search...' && "$CMD_FIND" -L "$DIR_OFMOUNT" -type f -iname $* -print0 | xargs -0i bash -c "$THIS p \"{}\""
- ( $backup ) && _print 'backup...' && "$CMD_RAR" a -hp -r "$TAG_BACKUP_" "$DIR_BACKUP_"
+ ( $backup ) && _print 'backup...' && "$CMD_RAR" $OPT_RAR "$TAG_BACKUP_" "$DIR_BACKUP_"
 
 exit
