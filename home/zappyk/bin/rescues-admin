@@ -55,8 +55,8 @@ ismount=$(ls "$DIR_OFMOUNT/") ; [ -z "$ismount" ] && ( ! $umount ) && mount=true
 
  ( $mount  ) && _print 'mount...'  && "$CMD_ENCFS" "$PATH_SOURCE" "$DIR_OFMOUNT"
  ( $umount ) && _print 'umount...' && sudo "$CMD_UMOUNT" "$DIR_OFMOUNT"
-#( $search ) && _print 'search...' && "$CMD_FIND" -L "$DIR_OFMOUNT" -type f -iname $* -print0 | xargs -0i bash -c "echo 'FILE=[ {} ]' && cat '{}'"
- ( $search ) && _print 'search...' && "$CMD_FIND" -L "$DIR_OFMOUNT" -type f -iname $* -print0 | xargs -0i bash -c "$THIS p \"{}\""
+#( $search ) && _print 'search...' && "$CMD_FIND" -L "$DIR_OFMOUNT" -type f -iname $* -print0 | sort -z | xargs -0i bash -c "echo 'FILE=[ {} ]' && cat '{}'"
+ ( $search ) && _print 'search...' && "$CMD_FIND" -L "$DIR_OFMOUNT" -type f -iname $* -print0 | sort -z | xargs -0i bash -c "$THIS p \"{}\""
  ( $backup ) && _print 'backup...' && "$CMD_RAR" $OPT_RAR "$TAG_BACKUP_" "$DIR_BACKUP_"
 
 exit
