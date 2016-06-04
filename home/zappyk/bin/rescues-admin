@@ -9,8 +9,9 @@ FILE=$1
 CMD_ENCFS=$(which encfs)
 CMD_UMOUNT=$(which umount)
 CMD_FIND=$(which find)
-CMD_RAR=$(which rar)
+CMD_ZIP=$(which 7z)
 OPT_RAR='a -hp -r'
+OPT_ZIP='a -p -r'
 
 _error() { echo "${1//?/_}" ; echo "$1"; }
 _print() { echo "$NAME: execute $1"; }
@@ -29,11 +30,12 @@ PATH_SOURCE="$PATH_COMMON/Dropbox/Private"
 DIR_OFMOUNT="$PATH_COMMON/Dropbox-Private"
 DIR_BACKUP_="$DIR_OFMOUNT/backup/"
 TAG_BACKUP_="$DIR_OFMOUNT.backup_$(date +'%Y%m%d').rar"
+TAG_BACKUP_="$DIR_OFMOUNT.backup_$(date +'%Y%m%d').7z"
 
 [ ! -n "$CMD_ENCFS"  ] && echo "$NAME: Installa il pacchetto encfs!"  && exit 1
 [ ! -n "$CMD_UMOUNT" ] && echo "$NAME: Installa il pacchetto umount!" && exit 1
 [ ! -n "$CMD_FIND"   ] && echo "$NAME: Installa il pacchetto find!"   && exit 1
-[ ! -n "$CMD_RAR"    ] && echo "$NAME: Installa il pacchetto rar!"    && exit 1
+[ ! -n "$CMD_ZIP"    ] && echo "$NAME: Installa il pacchetto zip!"    && exit 1
 
 [ ! -d "$PATH_SOURCE" ] && echo "$NAME: Path di Partenza '$PATH_SOURCE' inesistente..." && exit 1
 [ ! -d "$DIR_OFMOUNT" ] && echo "$NAME: Path di Mount '$DIR_OFMOUNT' inesistente..."    && exit 1
@@ -57,6 +59,7 @@ ismount=$(ls "$DIR_OFMOUNT/") ; [ -z "$ismount" ] && ( ! $umount ) && mount=true
  ( $umount ) && _print 'umount...' && sudo "$CMD_UMOUNT" "$DIR_OFMOUNT"
 #( $search ) && _print 'search...' && "$CMD_FIND" -L "$DIR_OFMOUNT" -type f -iname $* -print0 | sort -z | xargs -0i bash -c "echo 'FILE=[ {} ]' && cat '{}'"
  ( $search ) && _print 'search...' && "$CMD_FIND" -L "$DIR_OFMOUNT" -type f -iname $* -print0 | sort -z | xargs -0i bash -c "$THIS p \"{}\""
- ( $backup ) && _print 'backup...' && "$CMD_RAR" $OPT_RAR "$TAG_BACKUP_" "$DIR_BACKUP_"
+#( $backup ) && _print 'backup...' && "$CMD_RAR" $OPT_RAR "$TAG_BACKUP_" "$DIR_BACKUP_"
+ ( $backup ) && _print 'backup...' && "$CMD_ZIP" $OPT_ZIP "$TAG_BACKUP_" "$DIR_BACKUP_"
 
 exit
