@@ -5,9 +5,10 @@ CMDRUN_ROOT=true ; [ $(id -u) -ne 0 ] && CMDRUN_ROOT=false
 DELUGE_USER='zappyk'
 DELUGE_BASE='/var/opt/deluge'
 DELUGE_LOGS="$DELUGE_BASE/log"
-TWONKY_PATH="$HOME"
-TWONKY_PATH="/home/zappyk"
-TWONKY_EXEC="$TWONKY_PATH/Programmi/twonky/twonky.sh start"
+PROGRAMPATH="$HOME"
+PROGRAMPATH="/home/zappyk"
+TWONKY_EXEC="$PROGRAMPATH/Programmi/twonky/twonky.sh start"
+PLEXMS_EXEC="$PROGRAMPATH/Programmi/plex/plex.sh start"
 
 export DELUGE_USER DELUGE_BASE
 
@@ -83,6 +84,7 @@ _systemctl() {
  #_eval "$DELUGE_MOVE_RUN"
 ##==============================================================================
    eval "$TWONKY_EXEC"
+   eval "$PLEXMS_EXEC"
 ##==============================================================================
 
 exit

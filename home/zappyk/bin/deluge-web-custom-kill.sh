@@ -10,6 +10,10 @@ PATH_twonky_="$HOME"
 PATH_twonky_="/home/zappyk"
 STOP_twonky_="$PATH_twonky_/Programmi/twonky/twonky.sh stop"
 
+PATH_plexms_="$HOME"
+PATH_plexms_="/home/zappyk"
+STOP_plexms_="$PATH_plexms_/Programmi/plex/plex.sh stop"
+
 printf '#%.0s' {1..120} ; echo
 
 [ -n "$PID_deluge_W" ] && PSC_deluge_W=$(ps -efj | grep "$PID_deluge_W " | grep -v grep)
@@ -22,5 +26,6 @@ printf '#%.0s' {1..120} ; echo
 [ -n "$PID_deluge_D" ] && echo "kill $PID_deluge_D" && ECN=1
 
 eval "$STOP_twonky_"
+eval "$STOP_plexms_"
 
 exit $ECN
