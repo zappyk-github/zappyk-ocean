@@ -20,9 +20,11 @@ my $film_dir   = dirname($film_movie);
 my $debug      = $ARGV[1] || 0;
 
 my $url_base = 'http://www.imdb.com';
-my $url_find = $url_base.'/find?q=';
+my $url_find = $url_base.'/find?s=all&q=';
+#Z#$url_find = $url_base.'/find?s=tt&q=';
 my $pag_find = 'class="primary_photo"';
-my $row_find = ' id="primary-img" title="';
+#Z#$row_find = ' id="primary-img" title="';
+my $row_find = "link rel='image_src' href=";
 my $ext_name = '.jpg';
 my $rem_bash = '#';
 my $cmd_wget = 'wget -cq';
@@ -51,6 +53,7 @@ sub _getImages2Try {
     my @url_images = _getImages($film_title);
 
     if (scalar(@url_images) == 0) {
+        _debug("...try second round...", 1);
         _debug("get url image not found=[ $film_title ]", 1);
 
         my $film_title_new = $film_title;
@@ -132,6 +135,7 @@ sub _getURLPages {
         if ($row =~ m/$pag_find/) {
             if ($row =~ m/<a href="(.*)"\s+><img src="/) {
                 my $url_page = $1;
+                _debug("href found=[ $url_page ]", 1);
                 push(@url_pages, $url_base.$url_page);
                 last if ($first);
             }
@@ -148,7 +152,8 @@ sub _getURLMedia {
     my $row_media = '';
 
     foreach my $row (@contents) {
-        if ($row =~ m/<a href="(\/media\/.*)"/) {
+    #CZ#if ($row =~ m/<a href="(\/media\/.*)"/) {
+        if ($row =~ m/<a href="(\/title\/.*)"/) {
             $row_media = $url_base.$1;
             last;
         }
@@ -165,7 +170,8 @@ sub _getURLImage {
 
     foreach my $row (@contents) {
         if ($row =~ m/$row_find/) {
-            if ($row =~ m/ src="(.*)"\s+\/>/) {
+        #CZ#if ($row =~ m/ src="(.*)"\s+\/>/) {
+            if ($row =~ m/ href="(.*)"\s?>/) {
                 $row_image = $1;
                 last;
             }
