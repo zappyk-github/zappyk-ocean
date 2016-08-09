@@ -28,6 +28,7 @@ repositories='
  100:google-talkplugin
  100:google-musicmanager
  100:insync
+ 100:tech-3
 #100:skype
  100:livna
  100:steam
