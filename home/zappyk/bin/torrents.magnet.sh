@@ -1,5 +1,8 @@
 #!/bin/env bash
 
+BASE_PATH=$(dirname "$0")
+BASE_NAME=$(basename "$0" '.sh')
+
 ################################################################################
 rawurlencode() {
     local string="${1}"

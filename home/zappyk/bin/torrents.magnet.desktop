@@ -1,0 +1,13 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Type=Application
+Terminal=true
+Name[it_IT]=TM
+Name=TM
+Exec=/home/zappyk/bin/torrents.magnet.sh
+Path=/home/zappyk/
+Icon=/home/zappyk/bin/torrents.magnet.png
+GenericName=Torrents return Magnetic URI from Info Hash (and Name) 
+StartupNotify=true
