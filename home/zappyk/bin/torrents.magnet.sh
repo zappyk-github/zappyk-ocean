@@ -23,15 +23,34 @@ rawurlencode() {
     REPLY="${encoded}"   #+or echo the result (EASIER)... or both... :p
 }
 
-BitTorrentMagnetic='magnet:?xt=urn:btih:'
-BitTorrentInfoHash=$1 ; shift
-BitTorrentInfoName=$* ; BitTorrentInfoName=$(rawurlencode "$BitTorrentInfoName")
-BitTorrentFileName=
-
+################################################################################
+getBitTorrentMagnet() {
 [ -n "$BitTorrentInfoName" ] && BitTorrentFileName="&dn=$BitTorrentInfoName"
 
 echo "$BitTorrentMagnetic$BitTorrentInfoHash"
 echo "$BitTorrentMagnetic$BitTorrentInfoHash$BitTorrentFileName"
+}
+
+BitTorrentMagnetic='magnet:?xt=urn:btih:'
+BitTorrentInfoHash=$1 ; shift
+BitTorrentInfoName=$*
+
+zenity=false
+
+[ -z "$BitTorrentInfoHash" ] && zenity=true
+
+if ( $zenity ); then
+    loop=true
+    while $loop; do
+    zenity_entry=$(zenity --forms --title="Torrent Magnet" --add-entry="Info hash" --add-entry="Name hash")
+    BitTorrentInfoHash=$(echo "$zenity_entry" | cut -d'|' -f1)
+    BitTorrentInfoName=$(echo "$zenity_entry" | cut -d'|' -f2)
+    zenity --no-wrap --width=800 --height=150 --text-info --filename=<(getBitTorrentMagnet) ; [ $? != 0 ] && loop=false
+    getBitTorrentMagnet
+    done
+else
+    getBitTorrentMagnet
+fi
 
 exit
 ################################################################################
