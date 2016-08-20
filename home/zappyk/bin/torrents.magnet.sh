@@ -42,7 +42,7 @@ zenity=false
 if ( $zenity ); then
     loop=true
     while $loop; do
-    zenity_entry=$(zenity --forms --title="Torrent Magnet" --add-entry="Info hash" --add-entry="Name hash")
+    zenity_entry=$(zenity --forms --title="Torrent Magnet" --add-entry="Info hash" --add-entry="Name hash") ; [ $? != 0 ] && exit
     BitTorrentInfoHash=$(echo "$zenity_entry" | cut -d'|' -f1)
     BitTorrentInfoName=$(echo "$zenity_entry" | cut -d'|' -f2)
     zenity --no-wrap --width=800 --height=150 --text-info --filename=<(getBitTorrentMagnet) ; [ $? != 0 ] && loop=false

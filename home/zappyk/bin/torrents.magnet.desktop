@@ -3,7 +3,7 @@
 Version=1.0
 Encoding=UTF-8
 Type=Application
-Terminal=true
+Terminal=false
 Name[it_IT]=TM
 Name=TM
 Exec=/home/zappyk/bin/torrents.magnet.sh
