@@ -7,8 +7,8 @@ DELUGE_BASE='/var/opt/deluge'
 DELUGE_LOGS="$DELUGE_BASE/log"
 PROGRAMPATH="$HOME"
 PROGRAMPATH="/home/zappyk"
-TWONKY_EXEC="$PROGRAMPATH/Programmi/twonky/twonky.sh start"
-PLEXMS_EXEC="$PROGRAMPATH/Programmi/plex/plex.sh start"
+TWONKY_EXEC="$PROGRAMPATH/Programmi/twonky/twonky.sh"  ; [ -x "$TWONKY_EXEC" ] && TWONKY_EXEC="$TWONKY_EXEC start" || TWONKY_EXEC=""
+PLEXMS_EXEC="$PROGRAMPATH/Programmi/plex/plex.sh"      ; [ -x "$PLEXMS_EXEC" ] && PLEXMS_EXEC="$PLEXMS_EXEC start" || PLEXMS_EXEC=""
 
 export DELUGE_USER DELUGE_BASE
 
@@ -83,8 +83,8 @@ _systemctl() {
   _eval "$DELUGE_WEB_RUN"
  #_eval "$DELUGE_MOVE_RUN"
 ##==============================================================================
-   eval "$TWONKY_EXEC"
-   eval "$PLEXMS_EXEC"
+   [ -n "$TWONKY_EXEC" ] && eval "$TWONKY_EXEC"
+   [ -n "$PLEXMS_EXEC" ] && eval "$PLEXMS_EXEC"
 ##==============================================================================
 
 exit
