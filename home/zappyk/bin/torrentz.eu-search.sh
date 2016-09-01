@@ -28,7 +28,8 @@ _EXCLUDE_="$THIS_PATH/$THIS_NAME.exclude"
 #_______________________________________________________________________________
 #
 #URL_WWW='http://torrentz.eu'
- URL_WWW='https://torrentz.eu'
+#URL_WWW='https://torrentz.eu'
+ URL_WWW='https://torrentz2.eu'
  URL_CSS="$URL_WWW/style.33.css"
 
  URL_SAFETY_QUALITY='any'
