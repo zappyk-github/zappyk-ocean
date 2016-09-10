@@ -30,7 +30,8 @@ _EXCLUDE_="$THIS_PATH/$THIS_NAME.exclude"
 #URL_WWW='http://torrentz.eu'
 #URL_WWW='https://torrentz.eu'
  URL_WWW='https://torrentz2.eu'
- URL_CSS="$URL_WWW/style.33.css"
+ URL_CSS="$URL_WWW/style33.css"
+ URL_CSS="$URL_WWW/style47.css"
 
  URL_SAFETY_QUALITY='any'
  URL_SAFETY_QUALITY='search'
@@ -77,15 +78,22 @@ _EXCLUDE_="$THIS_PATH/$THIS_NAME.exclude"
 #ROW_HTML="sed 's#^.*<dl><dt>##' | sed 's#</dt><dd>.*##' | grep '^<a href=' | sed 's#^\(<a href=\"\)#\\1$URL_WWW#'"
 ##########
  FIELDSEP='<i>\|</i>'
- ROW_HTML="sed 's#^.*<dl><dt>##'"
- ROW_HTML="$ROW_HTML | sed 's#<span class=\"v\" style=\"color:\#fff;background-color:\#A2EB80\">[0-9,]*</span>##'"
- ROW_HTML="$ROW_HTML | sed 's#<span class=\"v\" style=\"color:\#fff;background-color:\#8DDD69\">[0-9,]*</span>##'"
- ROW_HTML="$ROW_HTML | sed 's#\(<span class=\"a\">\)#\\1 $FIELDSEP #'"
- ROW_HTML="$ROW_HTML | sed 's#\(<span class=\"s\">\)#\\1 $FIELDSEP #'"
- ROW_HTML="$ROW_HTML | sed 's#<span class=\"u\">[0-9,]*</span>##'"
- ROW_HTML="$ROW_HTML | sed 's#<span class=\"d\">[0-9,]*</span>##'"
- ROW_HTML="$ROW_HTML | sed 's#<dd>##' | sed 's#</dd>##'"
- ROW_HTML="$ROW_HTML | grep '^<a href=' | sed 's#^\(<a href=\"\)#\\1$URL_WWW#'"
+ FIELDSEP='\|'
+ ROW_HTML=''
+#---------
+ ROW_HTML="$ROW_HTML   sed 's#^.*<dl><dt>##'"
+ ROW_HTML="$ROW_HTML | sed 's#</dl>##g' | sed 's#</dt>##g'"
+ ROW_HTML="$ROW_HTML | sed 's#<dd>##g'  | sed 's#</dd>##g'"
+#---------
+ ROW_HTML="$ROW_HTML | sed 's#✓# \&\#x2714; #g'"
+#---------
+ ROW_HTML="$ROW_HTML | sed 's#>\([0-9]\)<#>\&nbsp;\&nbsp;\\1<#g' | sed 's#>\([0-9][0-9]\)<#>\&nbsp;\\1<#g'"
+ ROW_HTML="$ROW_HTML | sed 's#>\([0-9]\) #>\&nbsp;\&nbsp;\&nbsp;\\1 #g' | sed 's#>\([0-9][0-9]\) #>\&nbsp;\&nbsp;\\1 #g' | sed 's#>\([0-9][0-9][0-9]\) #>\&nbsp;\\1 #g'"
+#---------
+ ROW_HTML="$ROW_HTML | sed 's#</span><span>#$FIELDSEP#g' | sed 's#<span>##g' | sed 's#<span title=[0-9]*>##g' | sed 's#</span>##g'"
+#---------
+ ROW_HTML="$ROW_HTML | grep '^<a href=' | sed 's#^\(<a href=\)#\\1$URL_WWW#'"
+#---------
  ROW_HTML="$ROW_HTML | grep -v $_FNOT_"
 ##########
  ROW_CHAR='\&#187;'

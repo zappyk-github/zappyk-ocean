@@ -1,5 +1,9 @@
 #!/bin/env bash
 
+# # rewrite new version:
+# f=file.m4a
+# ffmpeg -i "$f" -acodec libmp3lame -b:a 256k "${f%.m4a}.mp3"
+
 files_flv=$*
 
 [ -z "$files_flv" ] && echo "Specifica almeno un file .flv da convertire in .mp3" && exit 1
