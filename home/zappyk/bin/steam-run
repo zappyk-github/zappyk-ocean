@@ -20,17 +20,17 @@ _eval() {
 ################################################################################
 _main() {
     _log "Init $PROG_RUN at $(date)..."
-    _execute_steam
+    _execute_steam "$@"
     _log "...at $(date) $PROG_RUN done"
 }
 
 ################################################################################
 _execute_steam() {
-    _eval 'setsebool -P allow_execheap on'
-    $PROG_RUN
-    _eval 'setsebool -P allow_execheap off'
+#CZ#_eval 'setsebool -P allow_execheap on'
+    $PROG_RUN "$@"
+#CZ#_eval 'setsebool -P allow_execheap off'
 }
 
-_main
+_main "$@"
 
 exit
