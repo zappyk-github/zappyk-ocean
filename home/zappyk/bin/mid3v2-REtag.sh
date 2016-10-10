@@ -19,15 +19,17 @@ for file_path in $(find "$PATH_MUSIC/" -type f -iname "$FILE_MUSIC" -print0 | xa
 
     delete_frame=$(mid3v2 --list-frames "$file_path" | eval "grep -v $TAGS_MUSIC_PRESERVE" |grep '\--' | cut -d' ' -f5 | xargs | sed 's/ --/,/g' | sed 's/^--/--delete-frames=/')
 
-    echo "#___________"
+    echo "#"
+    echo " echo _____________${file_path//?/_}__"
     echo "# filepath =  $file_path"
     echo "# filename =  $file_name"
     echo "# · Artist = [$tag_artist]"
     echo "#  · Album = [$tag_album]"
     echo "#   · Song = [$tag_song]"
-    echo "mid3v2 $delete_frame \"$file_path\""
-    echo "mid3v2 --artist=\"$tag_artist\" --album=\"$tag_album\" --song=\"$tag_song\" \"$file_path\""
-    echo "mid3v2 --list \"$file_path\""
+    echo " mid3v2 $delete_frame \"$file_path\""
+    echo " mid3v2 --artist=\"$tag_artist\" --album=\"$tag_album\" --song=\"$tag_song\" \"$file_path\""
+    echo " mid3v2 --list \"$file_path\""
+   #echo " echo '${file_path//?/_}'"
 done
 
 exit
