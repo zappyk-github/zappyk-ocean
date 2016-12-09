@@ -8,11 +8,13 @@ PID_deluge_D=$(pgrep 'deluged' | grep -v $PID)
 
 PATH_twonky_="$HOME"
 PATH_twonky_="/home/zappyk"
-STOP_twonky_="$PATH_twonky_/Programmi/twonky/twonky.sh stop"
+EVAL_twonky_="$PATH_twonky_/Programmi/twonky/twonky.sh"
+STOP_twonky_="$EVAL_twonky_ stop"
 
 PATH_plexms_="$HOME"
 PATH_plexms_="/home/zappyk"
-STOP_plexms_="$PATH_plexms_/Programmi/plex/plex.sh stop"
+EVAL_plexms_="$PATH_plexms_/Programmi/plex/plex.sh"
+STOP_plexms_="$EVAL_plexms_ stop"
 
 printf '#%.0s' {1..120} ; echo
 
@@ -25,7 +27,7 @@ printf '#%.0s' {1..120} ; echo
 [ -n "$PID_deluge_W" ] && echo "kill $PID_deluge_W" && ECN=1
 [ -n "$PID_deluge_D" ] && echo "kill $PID_deluge_D" && ECN=1
 
-eval "$STOP_twonky_"
-eval "$STOP_plexms_"
+[ -x "$EVAL_twonky_" ] && eval "$STOP_twonky_"
+[ -x "$EVAL_plexms_" ] && eval "$STOP_plexms_"
 
 exit $ECN
