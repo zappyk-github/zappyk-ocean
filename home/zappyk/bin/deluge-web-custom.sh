@@ -32,19 +32,19 @@ SU_USER_CMD="su - $DELUGE_USER -c"
                     DELUGE_DAEMON_LOG='deluge-daemon.log'
                     DELUGE_DAEMON_CMD='deluged -p 58846 -L info'
                     DELUGE_DAEMON_CMD='deluged -p 58846 -L info -d'
-                    DELUGE_DAEMON_RUN="cd $DELUGE_BASE && nohup $DELUGE_DAEMON_CMD >$DELUGE_LOGS/$DELUGE_DAEMON_LOG 2>&1 &"
+                    DELUGE_DAEMON_RUN="cd $DELUGE_BASE && nohup $DELUGE_DAEMON_CMD >$DELUGE_LOGS/$DELUGE_DAEMON_LOG 2>&1 & echo 'deluged started...'"
 ( $CMDRUN_ROOT ) && DELUGE_DAEMON_RUN="$SU_USER_CMD \"$DELUGE_DAEMON_RUN\""
 
 ################################################################################
                     DELUGE_WEB_LOG='deluge-web.log'
                     DELUGE_WEB_CMD='deluge-web -p 8112 --no-ssl -L info'
-                    DELUGE_WEB_RUN="cd $DELUGE_BASE && nohup $DELUGE_WEB_CMD >$DELUGE_LOGS/$DELUGE_WEB_LOG 2>&1 &"
+                    DELUGE_WEB_RUN="cd $DELUGE_BASE && nohup $DELUGE_WEB_CMD >$DELUGE_LOGS/$DELUGE_WEB_LOG 2>&1 & echo 'deluge-web started...'"
 ( $CMDRUN_ROOT ) && DELUGE_WEB_RUN="$SU_USER_CMD \"$DELUGE_WEB_RUN\""
 
 ################################################################################
                     DELUGE_MOVE_LOG='deluge-execute-command-completed.log'
                     DELUGE_MOVE_CMD='deluge-execute-command-completed.sh'
-                    DELUGE_MOVE_RUN="cd $DELUGE_BASE && nohup $DELUGE_MOVE_CMD >$DELUGE_LOGS/$DELUGE_MOVE_LOG 2>&1 &"
+                    DELUGE_MOVE_RUN="cd $DELUGE_BASE && nohup $DELUGE_MOVE_CMD >$DELUGE_LOGS/$DELUGE_MOVE_LOG 2>&1 & echo 'deluge-execute-command-completed'"
 ( $CMDRUN_ROOT ) && DELUGE_MOVE_RUN="$SU_USER_CMD \"$DELUGE_MOVE_RUN\""
 
 ################################################################################
