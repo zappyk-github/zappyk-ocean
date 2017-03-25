@@ -47,9 +47,11 @@ else
 fi
 ################################################################################
 
-CMMD_MOVE='mv -bv'
-CMMD_MOVE='mv -b'
+ CMMD_MOVE='mv -bv'
+ CMMD_MOVE='mv -b'
+#CMMD_MOVE='echo'
 
+################################################################################
 _exc() { ( $test ) && echo "$*" || eval "$*"; }
 _now() { date +'%F %T'; }
 _tag() { printf "%s | " "$(_now)"; }
@@ -66,8 +68,9 @@ _nsm() { ( $test ) && return
     local tdate=$(_now)
     #___________________________________________________________________________
     #
+    local signin="\n\n$(df -h /)"
     local notify="zappyk@gmail.com"
-    local string="Completed files are:\n$names\nDone."
+    local string="Completed files are:\n$names\nDone.$signin"
     #___________________________________________________________________________
     #
     local mail__to_=$notify
