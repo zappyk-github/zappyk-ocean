@@ -24,6 +24,8 @@ repositories='
  100:Dropbox
 #100:google
  100:google-chrome
+ 100:google-cloud-sdk
+ 100:google-gcsfuse
  100:google-earth
  100:google-talkplugin
  100:google-musicmanager
