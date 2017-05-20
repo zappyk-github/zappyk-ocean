@@ -1,6 +1,6 @@
 #!/bin/env bash
 
-MYLIST_HOSTS='zappyk-ws zappyk-mc zappyk-zb zappyk-nb zappyk-rp'
+MYLIST_HOSTS='zappyk-ws zappyk-mc zappyk-zb zappyk-nb zappyk-rp1 zappyk-rp2'
 
 REMOTE_HOSTS=${1:-$MYLIST_HOSTS} ; shift
 LOCALE_PROGR=${1} ; shift
