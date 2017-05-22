@@ -1,0 +1,11 @@
+[Unit]
+Description=Deluge Bittorrent Client Web Interface
+After=network.target
+
+[Service]
+User=deluge-web-custom-admin
+ExecStart=/etc/init.d/deluge-web-custom-admin start
+ExecStop=/etc/init.d/deluge-web-custom-admin stop
+
+[Install]
+WantedBy=multi-user.target
