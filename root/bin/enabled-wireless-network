@@ -1,0 +1,49 @@
+#! /bin/bash
+#
+# enabled-wireless-network      Network Wireless active and connect 'zappyk-wl3'
+#
+# chkconfig: - 01 99
+# description: Active and Connect to netword wireless.
+#
+### BEGIN INIT INFO
+# Provides: $network
+# Should-Start: iptables ip6tables network
+# Short-Description: Network Wireless active and connect 'zappyk-wl3'
+# Description: Network Wireless active and connect 'zappyk-wl3'
+### END INIT INFO
+
+# Source function library.
+. /etc/init.d/functions
+
+rc=0
+
+# See how we were called.
+case "$1" in
+  start)
+	rc=0
+	nmcli nm wifi on
+	nmcli device wifi connect 'zappyk-wl3' password 'L1nkS1sE8350v1'
+	rc=$?
+        ;;
+  stop)
+	rc=0
+	nmcli nm wifi off
+	rc=$?
+        ;;
+  status)
+	rc=0
+	nmcli nm wifi
+	ifconfig wlan0
+	rc=$?
+	;;
+  restart|reload|force-reload)
+	$0 stop
+	$0 start
+	rc=$?
+	;;
+  *)
+        echo $"Usage: $0 {start|stop|status|restart|reload|force-reload}"
+        exit 2
+esac
+
+exit $rc
