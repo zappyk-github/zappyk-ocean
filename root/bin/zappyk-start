@@ -1,0 +1,32 @@
+#!/bin/bash
+#
+# live: Init script for zappyk's autostart
+#
+# chkconfig: 345 99 00
+# description: Init script for zappyk's autostart.
+
+# . /etc/init.d/functions
+
+_stop____deluge() { /root/bin/deluge-web-custom-kill.sh; }
+_start___deluge() { /root/bin/deluge-web-custom.sh     ; }
+_status__deluge() { _stop____deluge; }
+_restart_deluge() { _stop____deluge && _start___deluge; }
+
+_stop____peervpn() { /root/bin/peervpn-kill.sh  ; }
+_start___peervpn() { /root/bin/peervpn-server.sh; }
+_status__peervpn() { _stop____peervpn; }
+_restart_peervpn() { _stop____peervpn && _start___peervpn; }
+
+case "$1" in
+    stop    ) _stop____deluge  | bash
+              _stop____peervpn | bash ;;
+    start   ) _start___deluge  | bash
+              _start___peervpn ;;
+    status  ) _status__deluge
+              _status__peervpn ;;
+    restart ) _restart_deluge
+              _restart_peervpn ;;
+    *       ) echo -e "Used:\n\t$0 [ stop | start | status | restart ]" && exit 1 ;;
+esac
+
+exit
