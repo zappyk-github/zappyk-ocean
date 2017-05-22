@@ -1,5 +1,0 @@
-#
-export DELUGE_PATH="$HOME/Programmi/deluge"
-#
-alias derun='(deluge-web-custom-kill.sh && deluge-web-custom.sh)'
-alias dedir='cd $DELUGE_PATH && (find -L var/ && printf "#%.0s" {1..120} && echo && ls -l var/incomings/*)'
