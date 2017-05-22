@@ -68,7 +68,7 @@ _nsm() { ( $test ) && return
     local tdate=$(_now)
     #___________________________________________________________________________
     #
-    local signin="\n\n$(df -h /)"
+    local signin="\n\nhost $(uname -n)$(df -h /)"
     local notify="zappyk@gmail.com"
     local string="Completed files are:\n$names\nDone.$signin"
     #___________________________________________________________________________
