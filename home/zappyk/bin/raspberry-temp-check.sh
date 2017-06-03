@@ -18,7 +18,7 @@ _int_celsius=$(_value2int "$_max_celsius")
 if [ $celsius_int_ -gt $_int_celsius ]; then
     echo "$HOSTNAME temp is $celsius_temp°C, alert! :-|"
 else
-    echo "$HOSTNAME temp is $celsius_temp°C, normal :-)"
+    echo "$HOSTNAME temp is $celsius_temp°C, normal :-D"
 fi
 
 exit
