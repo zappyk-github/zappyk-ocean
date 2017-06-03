@@ -6,10 +6,10 @@ exit=0
 _max_celsius="49.5"
 
 save_measure=${1:-false}
-path_measure="$HOME/log"
-file_measure="$path_measure/$this.csv"
 name_measure=$(uname -n)
 date_measure=$(date +'%Y%m%d %H:%M.%S')
+path_measure="$HOME/log"
+file_measure="$path_measure/$name_measure-$this.csv"
 
 _value2int() {
     local celsius_temp=$1
