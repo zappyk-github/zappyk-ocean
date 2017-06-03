@@ -8,7 +8,7 @@ _max_celsius="49.5"
 save_measure=${1:-false}
 path_measure="$HOME/log"
 file_measure="$path_measure/$this.csv"
-date_measure=$(date +'%Y%m%d %h:%m.%s')
+date_measure=$(date +'%Y%m%d %H:%M.%S')
 
 _value2int() {
     local celsius_temp=$1
