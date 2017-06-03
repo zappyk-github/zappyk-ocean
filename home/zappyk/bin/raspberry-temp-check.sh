@@ -9,18 +9,16 @@ _value2int() {
     echo "$valueinttemp"
 }
 
-#measure_temp=$(vcgencmd measure_temp)
-measure_temp="temp=50.3'C"
+measure_temp=$(vcgencmd measure_temp)
 celsius_temp=$(echo "$measure_temp" | cut -d"=" -f2 | cut -d"'" -f1)
 
 celsius_int_=$(_value2int "$celsius_temp")
 _int_celsius=$(_value2int "$_max_celsius")
 
-echo "[$celsius_int_] > [$_int_celsius] ?"
 if [ $celsius_int_ -gt $_int_celsius ]; then
-    echo "YES"
+    echo "$HOSTNAME temp is $celsius_temp°C, alert! :-|"
 else
-    echo "No!"
+    echo "$HOSTNAME temp is $celsius_temp°C, normal :-)"
 fi
 
 exit
