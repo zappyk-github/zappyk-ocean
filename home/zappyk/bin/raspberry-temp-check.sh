@@ -8,6 +8,7 @@ _max_celsius="49.5"
 save_measure=${1:-false}
 path_measure="$HOME/log"
 file_measure="$path_measure/$this.csv"
+name_measure=$(uname -n)
 date_measure=$(date +'%Y%m%d %H:%M.%S')
 
 _value2int() {
@@ -25,7 +26,7 @@ _int_celsius=$(_value2int "$_max_celsius")
 
 if ( $save_measure ); then
     mkdir -p "$path_measure"
-    echo "$date_measure;$celsius_temp;$_max_celsius" >>"$file_measure"
+    echo "$name_measure;$date_measure;$celsius_temp;$_max_celsius" >>"$file_measure"
 else
     if [ $celsius_int_ -gt $_int_celsius ]; then
         echo "$HOSTNAME temp is $celsius_temp°C, alert! :-|"
