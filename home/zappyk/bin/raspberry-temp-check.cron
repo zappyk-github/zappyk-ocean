@@ -1,5 +1,0 @@
-# Run the minutly jobs
-SHELL=/bin/bash
-PATH=/sbin:/bin:/usr/sbin:/usr/bin
-MAILTO=root
-* * * * * zappyk /home/bin/raspberry-temp-check.sh true
