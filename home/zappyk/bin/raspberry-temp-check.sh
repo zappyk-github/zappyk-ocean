@@ -1,6 +1,14 @@
 #!/bin/env bash
 
-_max_celsius="50.4"
+this=$(basename "$0" '.sh')
+exit=0
+
+_max_celsius="49.5"
+
+save_measure=${1:-false}
+path_measure="$HOME/log"
+file_measure="$path_measure/$this.csv"
+date_measure=$(date +'%Y%m%d hh:mm.ss')
 
 _value2int() {
     local celsius_temp=$1
@@ -15,10 +23,16 @@ celsius_temp=$(echo "$measure_temp" | cut -d"=" -f2 | cut -d"'" -f1)
 celsius_int_=$(_value2int "$celsius_temp")
 _int_celsius=$(_value2int "$_max_celsius")
 
-if [ $celsius_int_ -gt $_int_celsius ]; then
-    echo "$HOSTNAME temp is $celsius_temp°C, alert! :-|"
+if ( $save_measure ); then
+    mkdir -p "$path_measure"
+    echo "$date_measure;$celsius_temp;$_max_celsius" >>"$file_measure"
 else
-    echo "$HOSTNAME temp is $celsius_temp°C, normal :-D"
+    if [ $celsius_int_ -gt $_int_celsius ]; then
+        echo "$HOSTNAME temp is $celsius_temp°C, alert! :-|"
+        exit=1
+    else
+        echo "$HOSTNAME temp is $celsius_temp°C, normal :-D"
+    fi
 fi
 
-exit
+exit $exit
