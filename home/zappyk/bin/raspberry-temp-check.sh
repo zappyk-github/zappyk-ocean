@@ -26,7 +26,7 @@ _int_celsius=$(_value2int "$_max_celsius")
 
 if ( $save_measure ); then
     mkdir -p "$path_measure"
-    echo "$name_measure;$date_measure;$celsius_temp;$_max_celsius" >>"$file_measure"
+    echo "$name_measure;$_max_celsius;$date_measure;$celsius_temp" >>"$file_measure"
 else
     if [ $celsius_int_ -gt $_int_celsius ]; then
         echo "$HOSTNAME temp is $celsius_temp°C, alert! :-|"
