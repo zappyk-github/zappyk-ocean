@@ -3,3 +3,4 @@ SHELL=/bin/bash
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
 MAILTO=root
 * * * * * zappyk raspberry-temp-check.sh true
+0 * * * * root   ( cd /var/www/lighttpd/temp && /home/zappyk/bin/raspberry-temp-check-on-raspiX.sh )
