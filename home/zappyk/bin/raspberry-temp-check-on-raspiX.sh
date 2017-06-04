@@ -79,7 +79,7 @@ gnuplot << EOR && echo "View graphic file $file_out :-D"  || { exit_code=$?; ech
  plot "$file1csv" using 3:4 with lines title "$file1tag", "$file2csv" using 3:4 with lines title "$file2tag"
 EOR
 
- rm -fv "$csv1"     "$csv2"
- rm -fv "$file1csv" "$file2csv"
+rm -f "$csv1"     "$csv2"
+rm -f "$file1csv" "$file2csv"
 
 exit $exit_code
