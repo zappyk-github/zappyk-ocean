@@ -8,6 +8,7 @@ csv_seps=";"
 csv_head="HOST${csv_seps}TEMP_LIMIT${csv_seps}DATE_TIME${csv_seps}TEMP"
 
 hostcopy='1 2'
+user_tag='zappyk'
 host_tag='zappyk-rp%s'
 file_tag='log/raspi%s-raspberry-temp-check.csv'
 for i in $hostcopy; do
@@ -24,7 +25,7 @@ for i in $hostcopy; do
 
     if ( $sync ); then
         echo "Copy  \"$host:$file\"  in  \"$dir_copy\"  ..."
-        scp $host:"$file" "$dir_copy"
+        scp $user_tag@$host:"$file" "$dir_copy"
         echo "$csv_head" >"$csvO"
         cat  "$csvI"    >>"$csvO"
     fi
