@@ -16,8 +16,8 @@ for i in $hostcopy; do
     name=$(basename "$file")
     head="$dir_copy/$name.csv"
 
-    [ $i -eq 1 ] && csv1=$name && file1csv=$head
-    [ $i -eq 2 ] && csv2=$name && file2csv=$head
+    [ $i -eq 1 ] && csv1=$file && file1csv=$head
+    [ $i -eq 2 ] && csv2=$file && file2csv=$head
 
     sync=$copy ; [ ! -e "$head" ] && sync=true
 
@@ -25,7 +25,7 @@ for i in $hostcopy; do
         echo "Copy  \"$host:$file\"  in  \"$dir_copy\"  ..."
         scp $host:"$file" "$dir_copy"
         echo "$csv_head" >"$head"
-        cat  "$name"    >>"$head"
+        cat  "$file"    >>"$head"
     fi
 done
 file1tag=$(cat "$file1csv" | cut -d"$csv_seps" -f1 | tail -n -2 | sort -u)
