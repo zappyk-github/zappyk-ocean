@@ -14,24 +14,25 @@ for i in $hostcopy; do
     host=$(printf "$host_tag" "$i")
     file=$(printf "$file_tag" "$i")
     name=$(basename "$file")
-    head="$dir_copy/$name.csv"
+    csvI="$dir_copy/$name"
+    csvO="$dir_copy/$name.csv"
 
-    [ $i -eq 1 ] && csv1=$file && file1csv=$head
-    [ $i -eq 2 ] && csv2=$file && file2csv=$head
+    [ $i -eq 1 ] && csv1=$csvI && file1csv=$csvO
+    [ $i -eq 2 ] && csv2=$csvI && file2csv=$csvO
 
-    sync=$copy ; [ ! -e "$head" ] && sync=true
+    sync=$copy ; [ ! -e "$csvO" ] && sync=true
 
     if ( $sync ); then
         echo "Copy  \"$host:$file\"  in  \"$dir_copy\"  ..."
         scp $host:"$file" "$dir_copy"
-        echo "$csv_head" >"$head"
-        cat  "$file"    >>"$head"
+        echo "$csv_head" >"$csvO"
+        cat  "$csvI"    >>"$csvO"
     fi
 done
 file1tag=$(cat "$file1csv" | cut -d"$csv_seps" -f1 | tail -n -2 | sort -u)
 file2tag=$(cat "$file2csv" | cut -d"$csv_seps" -f1 | tail -n -2 | sort -u)
 exte_out="png"
-file_out="$this.$exte_out"
+file_out="$dir_copy/$this.$exte_out"
 
 exit_code=0
 gnuplot << EOR && echo "View graphic file $file_out :-D"  || { exit_code=$?; echo "Graphic file not crete! :-|"; }
@@ -76,7 +77,7 @@ gnuplot << EOR && echo "View graphic file $file_out :-D"  || { exit_code=$?; ech
  plot "$file1csv" using 3:4 with lines title "$file1tag", "$file2csv" using 3:4 with lines title "$file2tag"
 EOR
 
- rm -fv "$csv1"     "$csv2"
+#rm -fv "$csv1"     "$csv2"
 #rm -fv "$file1csv" "$file2csv"
 
 exit $exit_code
