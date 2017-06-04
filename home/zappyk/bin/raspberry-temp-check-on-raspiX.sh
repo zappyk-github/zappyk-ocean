@@ -3,9 +3,9 @@
 this=$(basename "$0" '.sh')
 copy=${1:-true}
 
+dir_copy=${2:-.}
 csv_seps=";"
 csv_head="HOST${csv_seps}TEMP_LIMIT${csv_seps}DATE_TIME${csv_seps}TEMP"
-dir_copy="."
 
 hostcopy='1 2'
 host_tag='zappyk-rp%s'
