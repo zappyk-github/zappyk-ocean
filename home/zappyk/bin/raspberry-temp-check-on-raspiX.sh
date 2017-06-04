@@ -45,7 +45,7 @@ gnuplot << EOR && echo "View graphic file $file_out :-D"  || { exit_code=$?; ech
  set timefmt '%Y%m%d %H:%M'
  set xlabel "DATE_TIME"
  set ylabel "TEMP"
- set title  "Raspberry Pi"
+ set title  "Raspberry Pi (on $HOSTNAME)"
 
  set datafile separator "$csv_seps"
  set key autotitle columnhead
