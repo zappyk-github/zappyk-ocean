@@ -47,6 +47,8 @@ gnuplot << EOR && echo "View graphic file $file_out :-D"  || { exit_code=$?; ech
  set ylabel "TEMP"
  set title  "Raspberry Pi"
 
+ set datafile separator "$csv_seps"
+ set key autotitle columnhead
  set key outside right center
  set style data linespoints
 #set autoscale fix
@@ -70,7 +72,6 @@ gnuplot << EOR && echo "View graphic file $file_out :-D"  || { exit_code=$?; ech
 #set size ratio 0.5
  set size 1,1
 
- set datafile separator "$csv_seps"
 #plot "$file1csv" using 3:4 with lines
 #plot "$file1csv" using 3:4 with linespoints pointtype 3 title ""
 #plot "$file1csv" using 3:4 with lines title "" lt -1 lw 2
