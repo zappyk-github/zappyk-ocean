@@ -18,8 +18,8 @@ for i in $hostcopy; do
     csvI="$dir_copy/$name"
     csvO="$dir_copy/$name.csv"
 
-    [ $i -eq 1 ] && csv1=$csvI && file1csv=$csvO
-    [ $i -eq 2 ] && csv2=$csvI && file2csv=$csvO
+    [ $i -eq 1 ] && orig1csv=$csvI && file1csv=$csvO
+    [ $i -eq 2 ] && orig2csv=$csvI && file2csv=$csvO
 
     sync=$copy ; [ ! -e "$csvO" ] && sync=true
 
@@ -79,7 +79,7 @@ gnuplot << EOR && echo "View graphic file $file_out :-D"  || { exit_code=$?; ech
  plot "$file1csv" using 3:4 with lines title "$file1tag", "$file2csv" using 3:4 with lines title "$file2tag"
 EOR
 
-rm -f "$csv1"     "$csv2"
-rm -f "$file1csv" "$file2csv"
+ rm -f "$orig1csv" "$orig2csv"
+#rm -f "$file1csv" "$file2csv"
 
 exit $exit_code
