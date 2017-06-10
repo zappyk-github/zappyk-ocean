@@ -41,7 +41,8 @@ gnuplot << EOR && echo "View graphic file $file_out :-D"  || { exit_code=$?; ech
  set terminal $exte_out size 2048,1024
  set output "$file_out"
 
- set xdata time
+ set xdata  time
+ set x2data time
  set timefmt '%Y%m%d %H:%M'
  set xlabel "DATE_TIME"
  set ylabel "TEMP"
@@ -55,12 +56,17 @@ gnuplot << EOR && echo "View graphic file $file_out :-D"  || { exit_code=$?; ech
 
 #set yrange [0:10]
 #set xrange [0:10]
- set grid ytics mytics  # draw lines for each ytics and mytics
- set grid xtics mxtics  # draw lines for each ytics and mytics
- set mytics  5          # set the spacing for the mytics
- set mxtics 20          # set the spacing for the mxtics
- set grid               # enable the grid
+ set grid ytics mytics # draw lines for each ytics and mytics
+ set grid xtics mxtics # draw lines for each ytics and mytics
+ set mytics  5         # set the spacing for the mytics
+ set mxtics 20         # set the spacing for the mxtics
+ set grid              # enable the grid
 #set ytic 2.5
+
+ set ytics nomirror
+ set y2tics
+ set xtics nomirror
+ set x2tics
 
 #set style line 100 lt 1 lc rgb "gray" lw 2
 #set style line 101 lt 1 lc rgb "gray" lw 1
