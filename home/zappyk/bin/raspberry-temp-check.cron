@@ -3,4 +3,4 @@ SHELL=/bin/bash
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
 MAILTO=root
 * * * * * zappyk raspberry-temp-check.sh true
-0 * * * * root   /home/zappyk/bin/raspberry-temp-check-sync-lighttpd.sh
+0 * * * * root   /home/zappyk/bin/raspberry-temp-check-sync-lighttpd.sh >/dev/null 2>&1
