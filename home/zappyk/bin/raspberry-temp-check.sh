@@ -8,7 +8,7 @@ _max_celsius="49.5"
 save_measure=${1:-false}
 name_measure=$(uname -n)
 name_measure=${name_measure%%.*}
-date_measure=$(date +'%Y%m%d %H:%M')
+date_measure=$(LANG=it_IT.UTF-8 date +'%Y%m%d %H:%M')
 path_measure="$HOME/log"
 file_measure="$path_measure/$name_measure-$this.csv"
 
