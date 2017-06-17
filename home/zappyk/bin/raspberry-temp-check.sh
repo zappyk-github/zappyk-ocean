@@ -1,7 +1,10 @@
 #!/bin/env bash
 
 this=$(basename "$0" '.sh')
+user='zappyk'
 exit=0
+
+[ "$(whoami)" != "$user" ] && echo "Not valid user $(whoami); try with $user!" && exit 1
 
 _max_celsius="49.5"
 
