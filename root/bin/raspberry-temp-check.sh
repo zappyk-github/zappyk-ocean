@@ -1,0 +1,1 @@
+../../home/zappyk/bin/raspberry-temp-check.sh
