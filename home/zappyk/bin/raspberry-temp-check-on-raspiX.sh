@@ -8,6 +8,7 @@ csv_seps=";"
 csv_head="HOST${csv_seps}TEMP_LIMIT${csv_seps}DATE_TIME${csv_seps}TEMP"
 
 hostcopy='1 2'
+hosttvpn='- t1 t2'
 user_tag='zappyk'
 host_tag='zappyk-rp%s'
 file_tag='log/raspi%s-raspberry-temp-check.csv'
@@ -24,10 +25,24 @@ for i in $hostcopy; do
     sync=$copy ; [ ! -e "$csvO" ] && sync=true
 
     if ( $sync ); then
-        echo "Copy  \"$host:$file\"  in  \"$dir_copy\"  ..."
-        scp $user_tag@$host:"$file" "$dir_copy"
-        echo "$csv_head" >"$csvO"
-        cat  "$csvI"    >>"$csvO"
+        scp=false
+        for t in $hosttvpn; do
+            [ "$t" == '-' ] && t=''
+            rip=$(printf "$host_tag$t" "$i")
+            ping $rip -c 3 >/dev/null
+            if [ $? -eq 0 ]; then
+                echo "Copy  \"$rip:$file\"  in  \"$dir_copy\"  ..."
+                scp $user_tag@$rip:"$file" "$dir_copy"
+                scp=true
+                break
+            fi
+        done
+        if ( $scp ); then
+            echo "$csv_head" >"$csvO"
+            cat  "$csvI"    >>"$csvO"
+        else
+            echo "Not copy from $host file $file, peervpn not close!"
+        fi
     fi
 done
 file1tag=$(cat "$file1csv" | cut -d"$csv_seps" -f1 | tail -n -2 | sort -u)
