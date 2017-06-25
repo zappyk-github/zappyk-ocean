@@ -13,6 +13,7 @@ user_tag='zappyk'
 host_tag='zappyk-rp%s'
 file_tag='log/raspi%s-raspberry-temp-check.csv'
 last_row=15000
+last_row=10000
 
 ################################################################################
 _cat() {
