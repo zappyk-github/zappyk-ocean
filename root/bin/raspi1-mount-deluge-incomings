@@ -1,0 +1,57 @@
+#!/bin/env bash
+
+MOUNT_FLASHDRIVE_DEV='/dev/sda1'
+MOUNT_FLASHDRIVE_DIR='/mnt/flashdrive-sda1'
+
+DELUGE_BASE_='/home/zappyk/Programmi/deluge'
+DELUGE_LINK_="$DELUGE_BASE_/var/incomings"
+DELUGE_FLASH="$DELUGE_LINK_-flashdrive-sda1"
+DELUGE_LOCAL="$DELUGE_LINK_-localdrive-home"
+
+################################################################################
+_mount() {
+    local mount_dev=$1
+    local mount_dir=$2
+
+    mountpoint -q "$mount_dir" \
+    && printf "Mount device \"%s\" alredy monted on \"%s\"! :-D\n" "$mount_dev" "$mount_dir" \
+    && return
+
+    mount "$mount_dev" "$mount_dir" \
+    && printf "Mount device \"%s\" on mount point \"%s\" :-)\n" "$mount_dev" "$mount_dir" \
+    || printf "Mount device \"%s\" NOT execute on \"%s\" :-(\n" "$mount_dev" "$mount_dir"
+}
+
+################################################################################
+_mklink() {
+    local base_link=$1 ; local name_base_link=$(basename "$base_link")
+    local path_link=$2 ; local name_path_link=$(basename "$path_link")
+    local exit_code=0
+
+    local actual_link=$(readlink -s -e "$path_link")
+    local active_link=$(readlink -s -e "$base_link") ; exit_code=$?
+
+    if [ $exit_code -eq 0 ]; then
+        if [ "$actual_link" == "$active_link" ]; then
+            printf "Detect \"%s\" mount and alredy link on \"%s\"! :-D\n" "$name_base_link" "$name_path_link"
+            exit 0
+        else
+            printf "Detect \"%s\" mount " "$name_base_link"
+            ln -fsn "$base_link" "$path_link" ; exit_code=$?
+
+            if [ $exit_code -eq 0 ]; then
+                printf "and now link on \"%s\" :-)\n" "$name_path_link"
+                exit 0
+            else
+                printf "but NOT link on \"%s\" :-(\n" "$name_path_link"
+            fi
+        fi
+    fi
+}
+
+_mount "$MOUNT_FLASHDRIVE_DEV" "$MOUNT_FLASHDRIVE_DIR"
+
+_mklink "$DELUGE_FLASH" "$DELUGE_LINK_"
+_mklink "$DELUGE_LOCAL" "$DELUGE_LINK_"
+
+exit 1
