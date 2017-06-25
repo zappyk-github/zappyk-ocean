@@ -44,7 +44,7 @@ for i in $hostcopy; do
             rip=$(printf "$host_tag$t" "$i")
             ping $rip -c 3 >/dev/null
             if [ $? -eq 0 ]; then
-                echo "Copy  \"$rip:$file\"  in  \"$dir_copy\"  ..."
+                echo "Copy \"$rip:$file\" in \"$dir_copy\" ..."
                 scp $user_tag@$rip:"$file" "$dir_copy"
                 scp=true
                 break
@@ -64,7 +64,7 @@ exte_out="png"
 file_out="$dir_copy/$this.$exte_out"
 
 exit_code=0
-gnuplot << EOR && echo "View graphic file $file_out :-D"  || { exit_code=$?; echo "Graphic file not crete! :-|"; }
+gnuplot << EOR && echo "View graphic file $file_out :-D" || { exit_code=$?; echo "Graphic file not crete! :-|"; }
 #set terminal $exte_out 
  set terminal $exte_out size 2048,1024
  set output "$file_out"
