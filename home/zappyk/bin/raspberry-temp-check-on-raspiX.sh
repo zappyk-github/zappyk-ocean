@@ -7,19 +7,23 @@ dir_copy=${2:-.}
 csv_seps=";"
 csv_head="HOST${csv_seps}TEMP_LIMIT${csv_seps}DATE_TIME${csv_seps}TEMP"
 
-################################################################################
-_cat() {
-    local file=$1
-#CZ#cat "$file"
-    tail -n $last_row "$file"
-}
-
 hostcopy='1 2'
 hosttvpn='- t1 t2'
 user_tag='zappyk'
 host_tag='zappyk-rp%s'
 file_tag='log/raspi%s-raspberry-temp-check.csv'
 last_row=15000
+
+################################################################################
+_cat() {
+    local file=$1
+    if [ $last_row -eq 0 ]; then
+        cat "$file"
+    else
+        tail -n $last_row "$file"
+    fi
+}
+
 for i in $hostcopy; do
     host=$(printf "$host_tag" "$i")
     file=$(printf "$file_tag" "$i")
