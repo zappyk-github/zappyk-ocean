@@ -8,7 +8,7 @@ csv_seps=";"
 csv_head="HOST${csv_seps}TEMP_LIMIT${csv_seps}DATE_TIME${csv_seps}TEMP"
 
 hostcopy='1 2'
-hosttvpn='- t1 t2'
+hosttvpn='- t1 t2 w h'
 user_tag='zappyk'
 host_tag='zappyk-rp%s'
 file_tag='log/raspi%s-raspberry-temp-check.csv'
@@ -42,6 +42,7 @@ for i in $hostcopy; do
         for t in $hosttvpn; do
             [ "$t" == '-' ] && t=''
             rip=$(printf "$host_tag$t" "$i")
+            echo "Check $rip ..."
             ping $rip -c 3 >/dev/null
             if [ $? -eq 0 ]; then
                 echo "Copy \"$rip:$file\" in \"$dir_copy\" ..."
