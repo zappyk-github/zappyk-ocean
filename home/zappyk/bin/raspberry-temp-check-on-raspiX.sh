@@ -2,6 +2,7 @@
 
 this=$(basename "$0" '.sh')
 copy=${1:-true}
+fout=${2:-$this}
 
 dir_copy=${2:-.}
 csv_seps=";"
@@ -62,7 +63,7 @@ done
 file1tag=$(cat "$file1csv" | cut -d"$csv_seps" -f1 | tail -n -2 | sort -u)
 file2tag=$(cat "$file2csv" | cut -d"$csv_seps" -f1 | tail -n -2 | sort -u)
 exte_out="png"
-file_out="$dir_copy/$this.$exte_out"
+file_out="$dir_copy/$fout.$exte_out"
 
 exit_code=0
 gnuplot << EOR && echo "View graphic file $file_out :-D" || { exit_code=$?; echo "Graphic file not crete! :-|"; }
