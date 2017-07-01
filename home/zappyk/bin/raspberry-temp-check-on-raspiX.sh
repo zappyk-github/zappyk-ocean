@@ -19,6 +19,12 @@ last_row=15000
 last_row=10000
 
 ################################################################################
+_log() {
+    local tag=$(date +'%Y%m%d %H:%M.%S')
+    echo "$tag | $*"
+}
+
+################################################################################
 _cat() {
     local file=$1
     if [ $last_row -eq 0 ]; then
@@ -45,10 +51,10 @@ for i in $hostcopy; do
         for t in $hosttvpn; do
             [ "$t" == '-' ] && t=''
             rip=$(printf "$host_tag$t" "$i")
-            echo "Check $rip ..."
+            _log "Check $rip ..."
             ping $rip -c 3 >/dev/null
             if [ $? -eq 0 ]; then
-                echo "Copy \"$rip:$file\" in \"$dir_copy\" ..."
+                _log "Copy \"$rip:$file\" in \"$dir_copy\" ..."
                 scp $user_tag@$rip:"$file" "$dir_copy"
                 scp=true
                 break
@@ -58,7 +64,7 @@ for i in $hostcopy; do
             echo "$csv_head" >"$csvO"
             _cat  "$csvI"   >>"$csvO"
         else
-            echo "Not copy from $host file $file, peervpn not close!"
+            _log "Not copy from $host file $file, peervpn not close!"
         fi
     fi
 done
@@ -68,7 +74,7 @@ exte_out="png"
 file_out="$dir_copy/$tag_name.$exte_out"
 
 exit_code=0
-gnuplot << EOR && echo "View graphic file $file_out :-D" || { exit_code=$?; echo "Graphic file not crete! :-|"; }
+gnuplot << EOR && _log "View graphic file $file_out :-D" || { exit_code=$?; _log "Graphic file not crete! :-|"; }
 #set terminal $exte_out 
  set terminal $exte_out size 2048,1024
  set output "$file_out"
