@@ -92,7 +92,8 @@ _EXCLUDE_="$THIS_PATH/$THIS_NAME.exclude"
 #---------
  ROW_HTML="$ROW_HTML | sed 's#</span><span>#$FIELDSEP#g' | sed 's#<span>##g' | sed 's#<span title=[0-9]*>##g' | sed 's#</span>##g'"
 #---------
- ROW_HTML="$ROW_HTML | grep '^<a href=' | sed 's#^\(<a href=\)#\\1$URL_WWW#'"
+#ROW_HTML="$ROW_HTML | grep '^<a href='   | sed 's#^\(<a href=\)#\\1$URL_WWW#'"
+ ROW_HTML="$ROW_HTML | grep '^<a href=\"' | sed 's#^\(<a href=\"\)#\\1$URL_WWW#'"
 #---------
  ROW_HTML="$ROW_HTML | grep -v $_FNOT_"
 ##########

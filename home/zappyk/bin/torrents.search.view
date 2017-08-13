@@ -9,7 +9,12 @@ HTML_PATH="$HOME/tmp"
 HTML_FILE="$HTML_PATH/$THIS_NAME.html"
 #_______________________________________________________________________________
 #
-google-chrome --incognito --app="file://$HTML_FILE" &
+GOOGLE___=$(which google-chrome 2>/dev/null)
+FIREFOX__=$(which firefox       2>/dev/null)
+#_______________________________________________________________________________
+#
+[ -n "$GOOGLE___" ] && { $GOOGLE___ --incognito --app="file://$HTML_FILE" &        exit; }
+[ -n "$FIREFOX__" ] && { $FIREFOX__ --safe-mode --new-window "file://$HTML_FILE" & exit; }
 #_______________________________________________________________________________
 #
 exit
