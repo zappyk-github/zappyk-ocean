@@ -1,6 +1,6 @@
 #!/bin/env bash
 
-test=false
+test=false ; DELUGE_BASE='/var/opt/deluge/var/completed/'
 
 THIS_FILE=$0
 THIS_NAME=$(basename "$THIS_FILE" '.sh')
@@ -18,7 +18,7 @@ CMMD_XMPP=$(which sendxmpp) # sendxmpp.noarch.rpm
 ################################################################################
     FILE_tID_=$1                              # f28c4e754f19816a7a61d42ac30b2b6bb90a820f
     FILE_NAME=$2                              # Jobs.2013.BDRip.x264-COCAIN[rarbg]
-    FILE_PATH=$3                              # /var/opt/deluge/completed/
+    FILE_PATH=$3                              # /var/opt/deluge/var/completed/
     PATH_NAME="$FILE_PATH/$FILE_NAME"
 #===============================================================================
 if [ -n "$FILE_tID_" ] \
@@ -27,23 +27,27 @@ if [ -n "$FILE_tID_" ] \
 && [ -e "$PATH_NAME" ]; then
     PATH_BASE_DOWNLOADS=$(dirname "$FILE_PATH")
     PATH_BASE_DELUGEDIR=$(dirname "$PATH_BASE_DOWNLOADS")
-    PATH_BASE_COMPLETED=$FILE_PATH
+    PATH_BASE_COMPLETED=$PATH_NAME
     PATH_BASE_INCOMINGS=$PATH_BASE_DOWNLOADS/incomings
     FILE_LOGS_COMPLETED=$PATH_BASE_DELUGEDIR/log/$THIS_NAME.log
-    FILE_FIND_COMPLETED="ls -d \"$PATH_NAME\" 2>/dev/null"
+    FILE_FIND_COMPLETED="ls -d \"$PATH_BASE_COMPLETED\" 2>/dev/null"
     TIME_FIND_COMPLETED=180
     TIME_FIND_TRY_AGAIN=1
-    LOOP_FIND_TRY_AGAIN=false
 else
-    PATH_BASE_DOWNLOADS=${1-${DELUGE_BASE-.}} ; PATH_BASE_DOWNLOADS=$(cd -P "$PATH_BASE_DOWNLOADS" && pwd)
-    PATH_BASE_DELUGEDIR=
-    PATH_BASE_COMPLETED=${2-$PATH_BASE_DOWNLOADS/completed}
-    PATH_BASE_INCOMINGS=${3-$PATH_BASE_DOWNLOADS/incomings}
-    FILE_LOGS_COMPLETED=/dev/null
-    FILE_FIND_COMPLETED="ls -d \"$PATH_BASE_COMPLETED\"/* 2>/dev/null | xargs -0 -i echo \"{}\""
+#CZ#PATH_BASE_DOWNLOADS=${1-${DELUGE_BASE-.}} ; PATH_BASE_DOWNLOADS=$(cd -P "$PATH_BASE_DOWNLOADS" && pwd)
+    PATH_BASE_DOWNLOADS=$(dirname "$FILE_PATH")
+#CZ#PATH_BASE_DELUGEDIR=
+    PATH_BASE_DELUGEDIR=$(dirname "$PATH_BASE_DOWNLOADS")
+#CZ#PATH_BASE_COMPLETED=${2-$PATH_BASE_DOWNLOADS/completed}
+    PATH_BASE_COMPLETED=$PATH_NAME
+#CZ#PATH_BASE_INCOMINGS=${3-$PATH_BASE_DOWNLOADS/incomings}
+    PATH_BASE_INCOMINGS=$PATH_BASE_DOWNLOADS/incomings
+#CZ#FILE_LOGS_COMPLETED=/dev/null
+    FILE_LOGS_COMPLETED=$PATH_BASE_DELUGEDIR/log/$THIS_NAME.log
+#CZ#FILE_FIND_COMPLETED="ls -d \"$PATH_BASE_COMPLETED\"/* 2>/dev/null | xargs -0 -i echo \"{}\""
+    FILE_FIND_COMPLETED="ls -d \"$PATH_BASE_COMPLETED\" 2>/dev/null"
     TIME_FIND_COMPLETED=${4-60}
     TIME_FIND_TRY_AGAIN=${5-300}
-    LOOP_FIND_TRY_AGAIN=true
 fi
 ################################################################################
 
@@ -55,7 +59,7 @@ fi
 ################################################################################
 _exc() { ( $test ) && echo "$*" || eval "$*"; }
 _now() { date +'%F %T'; }
-_tag() { printf "%s | " "$(_now)"; }
+_tag() { printf "%s [%-5s| " "$(_now)" "$$"; }
 _row() { printf "$@"; }
 _lIl() { _tag && _row "$@"; }
 _lpl() {         _row "$@"; }
@@ -101,13 +105,13 @@ loop=true
 (
 while $loop; do
 
+    _log "Find files, execute command: \"$FILE_FIND_COMPLETED\""
     files=$(eval "$FILE_FIND_COMPLETED")
     names="\n"
 
-    ( $LOOP_FIND_TRY_AGAIN ) || loop=false
-    ( $LOOP_FIND_TRY_AGAIN ) || _log "Exec: $CMMD_MOVE $files $PATH_BASE_INCOMINGS"
-
     if [ -n "$files" ]; then
+        loop=false
+        _log "Exec: $CMMD_MOVE $files $PATH_BASE_INCOMINGS"
         _log "Sync files, wait $TIME_FIND_COMPLETED seconds to complete..." && sleep $TIME_FIND_COMPLETED && sync
         IFS=$'\n'
         for file in $files; do
@@ -118,11 +122,10 @@ while $loop; do
         done
         _lIl "Syncronize for complete files move... " && sync          && _lDl "done!"
         _lIl "Notify mail for completed download... " && _nsm "$names" && _lDl "done!"
+        _log "Exec: done."
     else
-        _log "...sleep $TIME_FIND_TRY_AGAIN seconds, check on $PATH_BASE_COMPLETED, move to $PATH_BASE_INCOMINGS" && sleep $TIME_FIND_TRY_AGAIN
+        _log "...sleep $TIME_FIND_TRY_AGAIN seconds, check on \"$PATH_BASE_COMPLETED\", move to \"$PATH_BASE_INCOMINGS\"" && sleep $TIME_FIND_TRY_AGAIN
     fi
-
-    ( $LOOP_FIND_TRY_AGAIN ) || _log "Exec: done."
 done
 ) 2>&1 | stdbuf -oL tee -a "$FILE_LOGS_COMPLETED"
 
