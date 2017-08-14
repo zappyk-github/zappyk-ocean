@@ -1,6 +1,6 @@
 #!/bin/env bash
 
-N_REMOTE=${1}; shift; [ -z "$N_REMOTE" ] && echo "$(basename "$0"): file/directory remote?" && exit 1
+N_REMOTE=${1} ; shift # [ -z "$N_REMOTE" ] && echo "$(basename "$0"): file/directory remote?" && exit 1
 D_LOCAL_=${1:-.}
 
 N_REMOTE=$(printf '%q' "$N_REMOTE")

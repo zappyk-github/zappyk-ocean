@@ -1,6 +1,6 @@
 #!/bin/env bash
 
-N_REMOTE=${1}; shift; [ -z "$N_REMOTE" ] && echo "$(basename "$0"): file/directory remote?" && exit 1
+N_REMOTE=${1} ; shift # [ -z "$N_REMOTE" ] && echo "$(basename "$0"): file/directory remote?" && exit 1
 O_LOCAL_=${*}
 
 ################################################################################
@@ -29,6 +29,6 @@ WGETOPTS="$WGETOPTS --reject \"index*\""
 WGETCMMD="wget $WGETOPTS \"$F_REMOTE\" $O_LOCAL_"
 
 echo "$WGETCMMD"
-eval "$WGETCMMD"
+val "$WGETCMMD"
 
 exit
