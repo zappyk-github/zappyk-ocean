@@ -124,6 +124,6 @@ while $loop; do
 
     ( $LOOP_FIND_TRY_AGAIN ) || _log "Exec: done."
 done
-) 2>&1 | tee -a "$FILE_LOGS_COMPLETED"
+) 2>&1 | stdbuf -oL tee -a "$FILE_LOGS_COMPLETED"
 
 exit
