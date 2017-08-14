@@ -29,6 +29,6 @@ WGETOPTS="$WGETOPTS --reject \"index*\""
 WGETCMMD="wget $WGETOPTS \"$F_REMOTE\" $O_LOCAL_"
 
 echo "$WGETCMMD"
-val "$WGETCMMD"
+eval "$WGETCMMD"
 
 exit
