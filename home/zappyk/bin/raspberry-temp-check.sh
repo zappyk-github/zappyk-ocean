@@ -15,6 +15,8 @@ date_measure=$(LANG=it_IT.UTF-8 date +'%Y%m%d %H:%M')
 path_measure="$HOME/log"
 file_measure="$path_measure/$name_measure-$this.csv"
 
+[ "${date_measure:4:4}" == '0602' ] && exit
+
 _value2int() {
     local celsius_temp=$1
     local value___temp=$(echo "$celsius_temp * 100" | bc)
