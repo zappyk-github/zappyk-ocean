@@ -3,7 +3,7 @@
 PEERVPN_tag=$(basename "$0")
 PEERVPN_run="/etc/peervpn/$PEERVPN_tag.conf"
 PEERVPN_log="/var/log/$PEERVPN_tag.log"
-PEERVPN_slp=9
+PEERVPN_slp=15
 
 [ "$PEERVPN_tag" == "peervpn-1-client" ] && echo "Preparetion to bind mount chroot's diretcories..." && peervpn-root-chroot.sh 1
 
