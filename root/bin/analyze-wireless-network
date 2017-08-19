@@ -1,0 +1,11 @@
+#!/bin/env bash
+
+echo '________________________________________________________________________________'
+nmcli d wifi
+
+echo '________________________________________________________________________________'
+wifi_name=$(cd /sys/class/net && ls -d w* | xargs)
+       nmcli -f 'CHAN,BARS,SIGNAL,SSID' d wifi list ifname $wifi_name | sort -n
+watch "nmcli -f 'CHAN,BARS,SIGNAL,SSID' d wifi list ifname $wifi_name | sort -n"
+
+exit
