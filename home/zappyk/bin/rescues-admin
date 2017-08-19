@@ -9,7 +9,8 @@ FILE=$1
 CMD_ENCFS=$(which encfs)
 CMD_UMOUNT=$(which umount)
 CMD_FIND=$(which find)
-CMD_ZIP=$(which 7za)
+CMD_ZIP=$(which 7za 2>/dev/null)
+CMD_ZIP=$(which 7z)
 OPT_RAR='a -hp -r'
 OPT_ZIP='a -p -r'
 
