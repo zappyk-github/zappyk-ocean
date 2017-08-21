@@ -3,20 +3,21 @@
 THIS=$(basename "$0")
 THIS=${THIS/-kill/}
 
-#TAG=${1:-peervpn}
-TAG=${1:-$THIS}
+TAG='peervpn'
+PRN=${1:-$THIS}
 OFF=${2:-false}
 PID=${3:-$$}
 ECN=0
 
 TAG_peervpn=$TAG
-PID_peervpn=$(pgrep -f "$TAG_peervpn" | grep -v $PID)
+PRN_peervpn=$PRN
+PID_peervpn=$(pgrep -f "$TAG_peervpn " | grep -v $PID)
 
 if [ -n "$PID_peervpn" ]; then
 
     first=true
     for PID_find in $PID_peervpn; do
-        PSC_peervpn=$(ps -efj | grep "$PID_find " | grep -v grep)
+        PSC_peervpn=$(ps -efj | grep "$PID_find " | grep "$PRN_peervpn" | grep -v grep)
         if [ -n "$PSC_peervpn" ]; then
             ( $first ) && first=false && \
             printf '#%.0s' {1..120} && echo
