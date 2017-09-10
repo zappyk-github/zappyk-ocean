@@ -1,6 +1,7 @@
 #!/bin/env bash
 
 PEERVPN_tag=$(basename "$0")
+PEERVPN_ifc="peervpn$(echo "$PEERVPN_tag" | cut -d'-' -f2)"
 PEERVPN_run="/etc/peervpn/$PEERVPN_tag.conf"
 PEERVPN_log="/var/log/$PEERVPN_tag.log"
 PEERVPN_slp=20
@@ -11,6 +12,10 @@ echo -e "Start peervpn $PEERVPN_tag \c" && nohup peervpn "$PEERVPN_run" >"$PEERV
 
 for i in $(seq 1 $PEERVPN_slp); do echo -e ".\c"; sleep 1; done; echo
 
+echo "________________________________________________________________________________"
 tail "$PEERVPN_log"
+
+echo "________________________________________________________________________________"
+ifconfig "$PEERVPN_ifc"
 
 exit
