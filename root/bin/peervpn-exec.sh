@@ -8,7 +8,7 @@ PEERVPN_slp=20
 
 [ "$PEERVPN_tag" == "peervpn-1-client" ] && echo "Preparetion to bind mount chroot's diretcories..." && peervpn-root-chroot.sh 1 | sed 's/^/\t/g'
 
-echo -e "Start peervpn $PEERVPN_tag \c" && nohup peervpn "$PEERVPN_run" >"$PEERVPN_log" 2>&1 &
+echo -e "Start peervpn $PEERVPN_tag \c" && { nohup peervpn "$PEERVPN_run" >"$PEERVPN_log" 2>&1 & }
 
 for i in $(seq 1 $PEERVPN_slp); do echo -e ".\c"; sleep 1; done; echo
 
