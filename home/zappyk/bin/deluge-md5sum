@@ -1,5 +1,5 @@
 ################################################################################
-#[ "$1" == "nohup" ] && ( nohup "$0" >"$0.log"& exit )
+#[ "$1" == "nohup" ] && ( nohup "$0" >"$0.log" & exit )
  [ "$1" == "nohup" ] && ( nohup "$0" >/dev/null& exit )
  _md5one() { md5sum "$1" > "$1.md5sum"; }
  _md5all() { find ./ -type f -print0 | xargs -0 -i bash -c "md5sum \"{}\" > \"{}.md5sum\""; }
