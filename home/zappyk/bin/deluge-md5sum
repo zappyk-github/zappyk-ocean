@@ -1,0 +1,19 @@
+################################################################################
+#[ "$1" == "nohup" ] && ( nohup "$0" >"$0.log"& exit )
+ [ "$1" == "nohup" ] && ( nohup "$0" >/dev/null& exit )
+ _md5one() { md5sum "$1" > "$1.md5sum"; }
+ _md5all() { find ./ -type f -print0 | xargs -0 -i bash -c "md5sum \"{}\" > \"{}.md5sum\""; }
+################################################################################
+ _md5all
+#_md5one "./Tutto.Quello.Che.Vuoi.2017.iTALiAN.BDRiP.XviD-HDi[MT].avi"
+#_md5one "./Wonder Woman (2017).720p.H264.ita.eng.sub.ita.NUita.Eng.iCV-MIRCrew/Wonder Woman (2017).720p).h264.ita.eng.sub.ita.NUita.Eng.iCV-MIRCrew.NUita.srt"
+#_md5one "./Wonder Woman (2017).720p.H264.ita.eng.sub.ita.NUita.Eng.iCV-MIRCrew/Wonder Woman (2017).720p.H264.ita.eng.sub.ita.NUita.Eng.iCV-MIRCrew.mkv"
+#_md5one "./Wonder Woman (2017).720p.H264.ita.eng.sub.ita.NUita.Eng.iCV-MIRCrew/Wonder Woman (2017).720p.h264.ita.eng.sub.ita.NUita.Eng.iCV-MIRCrew.srt"
+#_md5one "./Wonder Woman (2017).720p.H264.ita.eng.sub.ita.NUita.Eng.iCV-MIRCrew/Wonder Woman (2017).720p.h264.ita.eng.sub.ita.NUita.Eng.iCV-MIRCrew.ita.srt"
+#_md5one "./Wonder Woman (2017).720p.H264.ita.eng.sub.ita.NUita.Eng.iCV-MIRCrew/Wonder Woman (2017).720p.h264.ita.eng.sub.ita.NUita.Eng.iCV-MIRCrew.eng.srt"
+#_md5one "./Alien - Covenant (2017).720p.H264.ita.eng.sub.ita.eng.iCV-MIRCrew/Alien - Covenant (2017).H264.ita.eng.sub.ita.eng.iCV-MIRCrew.eng.idx"
+#_md5one "./Alien - Covenant (2017).720p.H264.ita.eng.sub.ita.eng.iCV-MIRCrew/Alien - Covenant (2017).H264.ita.eng.sub.ita.eng.iCV-MIRCrew.ita.sub"
+#_md5one "./Alien - Covenant (2017).720p.H264.ita.eng.sub.ita.eng.iCV-MIRCrew/Alien - Covenant (2017).H264.ita.eng.sub.ita.eng.iCV-MIRCrew.ita.idx"
+#_md5one "./Alien - Covenant (2017).720p.H264.ita.eng.sub.ita.eng.iCV-MIRCrew/Alien - Covenant (2017).720p.H264.ita.eng.sub.ita.eng.iCV-MIRCrew.mkv"
+#_md5one "./Alien - Covenant (2017).720p.H264.ita.eng.sub.ita.eng.iCV-MIRCrew/Alien - Covenant (2017).H264.ita.eng.sub.ita.eng.iCV-MIRCrew.eng.sub"
+#_md5one "./Alien - Covenant (2017).720p.H264.ita.eng.sub.ita.eng.iCV-MIRCrew/Alien - Covenant (2017).H264.ita.eng.sub.ita.eng.iCV-MIRCrew.srt"
