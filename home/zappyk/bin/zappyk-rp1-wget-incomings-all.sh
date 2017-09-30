@@ -19,6 +19,8 @@ _wait() {
     done
 }
 ################################################################################
+_wget_set_limit() { limit=${1:-20k}; wget_opt="$wget_opt --limit-rate=$limit"; }
+################################################################################
 _wget() {
     local url_file=${1}
     local url_name=$(basename "$url_file")
@@ -31,8 +33,8 @@ _wget() {
     mkdir -p "$tag_path"
     wget --continue $wget_opt --directory-prefix="$tag_path" "$url_base/$url_file" ; rc=$?
     if [ $rc == 0 ]; then
-        [ "$url_name" != "$tag_name" ] && mv -v "$tag_path/$url_name" "$tag_path/$tag_name"
-        md5sum "$tag_path/$tag_name" | tee "$tag_path/$tag_name.md5sum"
+        [ "$url_name" != "$tag_name" ] && [ -e "$tag_path/$url_name" ] && mv -v "$tag_path/$url_name" "$tag_path/$tag_name"
+        [ -e "$tag_path/$tag_name" ] && md5sum "$tag_path/$tag_name" | tee "$tag_path/$tag_name.md5sum"
     fi
 }
 ################################################################################
