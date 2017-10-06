@@ -28,10 +28,18 @@ _wget() {
     local tag_path=$(basename "$0" '.sh')
     local url_base=$base_url
 
-    ping -c5 -q $hostname >/dev/null || { echo "Host $hostname not responding..."; exit 1; }
+    echo -n "ping host... "
+    ping -c5 -q $hostname >/dev/null || { echo "host $hostname not responding!"; exit 1; }
+    echo "done."
 
     mkdir -p "$tag_path"
-    wget --continue $wget_opt --directory-prefix="$tag_path" "$url_base/$url_file" ; rc=$?
+
+    local rc=
+    if [ -e "$tag_path/$tag_name" ]; then
+        wget --continue $wget_opt --output-document="$tag_path/$tag_name" "$url_base/$url_file" ; rc=$?
+    else
+        wget --continue $wget_opt --directory-prefix="$tag_path"          "$url_base/$url_file" ; rc=$?
+    fi
     if [ $rc == 0 ]; then
         [ "$url_name" != "$tag_name" ] && [ -e "$tag_path/$url_name" ] && mv -v "$tag_path/$url_name" "$tag_path/$tag_name"
         [ -e "$tag_path/$tag_name" ] && md5sum "$tag_path/$tag_name" | tee "$tag_path/$tag_name.md5sum"

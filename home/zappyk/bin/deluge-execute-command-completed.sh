@@ -99,34 +99,38 @@ _nsm() { ( $test ) && return
     echo -e "$xmpp_mssg" | eval "$xmpp_cmmd -t -u $xmpp_from $xmpp__to_"
     #___________________________________________________________________________
 }
-
 ################################################################################
-loop=true
-(
-while $loop; do
+main() {
+    loop=true
+    while $loop; do
 
-    _log "Find files, execute command: \"$FILE_FIND_COMPLETED\""
-    files=$(eval "$FILE_FIND_COMPLETED")
-    names="\n"
+        _log "Find files, execute command: \"$FILE_FIND_COMPLETED\""
+        files=$(eval "$FILE_FIND_COMPLETED")
+        names="\n"
 
-    if [ -n "$files" ]; then
-        loop=false
-        _log "Exec: $CMMD_MOVE $files $PATH_BASE_INCOMINGS"
-        _log "Sync files, wait $TIME_FIND_COMPLETED seconds to complete..." && sleep $TIME_FIND_COMPLETED && sync
-        IFS=$'\n'
-        for file in $files; do
-            name=$(basename "$file")
-            move="$CMMD_MOVE \"$file\" \"$PATH_BASE_INCOMINGS\""
-            _log "* $move" && eval "$move" && names="$names * save * $name\n" \
-                                           || names="$names # FAIL # $name\n"
-        done
-        _lIl "Syncronize for complete files move... " && sync          && _lDl "done!"
-        _lIl "Notify mail for completed download... " && _nsm "$names" && _lDl "done!"
-        _log "Exec: done."
-    else
-        _log "...sleep $TIME_FIND_TRY_AGAIN seconds, check on \"$PATH_BASE_COMPLETED\", move to \"$PATH_BASE_INCOMINGS\"" && sleep $TIME_FIND_TRY_AGAIN
-    fi
-done
-) 2>&1 | stdbuf -oL tee -a "$FILE_LOGS_COMPLETED"
+        if [ -n "$files" ]; then
+            loop=false
+            _log "Exec: $CMMD_MOVE $files $PATH_BASE_INCOMINGS"
+            _log "Sync files, wait $TIME_FIND_COMPLETED seconds to complete..." && sleep $TIME_FIND_COMPLETED && sync
+            IFS=$'\n'
+            for file in $files; do
+                name=$(basename "$file")
+                move="$CMMD_MOVE \"$file\" \"$PATH_BASE_INCOMINGS\""
+                _log "* $move"
+    	        eval   "$move" && names="$names * save * $name\n" \
+                               || names="$names # FAIL # $name\n"
+            done
+            _lIl "Syncronize for complete files move... " && sync          && _lDl "done!"
+            _lIl "Notify mail for completed download... " && _nsm "$names" && _lDl "done!"
+            _log "Exec: done."
+        else
+            _log "...sleep $TIME_FIND_TRY_AGAIN seconds, check on \"$PATH_BASE_COMPLETED\", move to \"$PATH_BASE_INCOMINGS\"" && sleep $TIME_FIND_TRY_AGAIN
+        fi
+    done
+    _log "________________________________________________________________________________________________________________________"
+    _log ""
+}
+
+main 2>&1 | stdbuf -oL tee -a "$FILE_LOGS_COMPLETED"
 
 exit
