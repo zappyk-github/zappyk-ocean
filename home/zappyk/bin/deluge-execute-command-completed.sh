@@ -75,7 +75,7 @@ _nsm() { ( $test ) && return
     #
     local signin="\n\nhost: $(uname -n) ($(uname -m))\n$(df -H /)"
     local notify="zappyk@gmail.com"
-    local string="Completed files are:\n$names\nDone.$signin"
+    local string="Completed file:\n$names\nDone.$signin"
     #___________________________________________________________________________
     #
     local mail__to_=$notify
@@ -101,7 +101,11 @@ _nsm() { ( $test ) && return
 }
 ################################################################################
 main() {
-    loop=true
+    local this=$(basename "$THIS_FILE")
+    local pswc=$(ps -ef | grep "$this $FILE_tID_" | grep -v grep | wc -l)
+    if [ $pswc -ge 1 ]; then
+    _log "Done: another instance move \"$FILE_NAME\"!"
+    else
     while $loop; do
 
         _log "Find files, execute command: \"$FILE_FIND_COMPLETED\""
@@ -127,6 +131,7 @@ main() {
             _log "...sleep $TIME_FIND_TRY_AGAIN seconds, check on \"$PATH_BASE_COMPLETED\", move to \"$PATH_BASE_INCOMINGS\"" && sleep $TIME_FIND_TRY_AGAIN
         fi
     done
+    fi
     _log "________________________________________________________________________________________________________________________"
     _log ""
 }
