@@ -19,6 +19,7 @@ MOUNT_OPTIONS_CIFS="defaults,user=guest,pass=guest"
 MOUNT_OPTIONS_CIFS="defaults,user=guest,pass=guest,uid=nfsnobody,gid=nfsnobody,iocharset=utf8,file_mode=0664,dir_mode=0775"
 MOUNT_OPTIONS_CIFS="defaults,user=guest,pass=guest,uid=nfsnobody,gid=nfsnobody,iocharset=utf8,file_mode=0666,dir_mode=0777"
 MOUNT_OPTIONS_CIFS="defaults,user=guest,pass=guest,uid=$(id -nu),gid=$(id -ng),iocharset=utf8,file_mode=0666,dir_mode=0777"
+MOUNT_OPTIONS_CIFS="defaults,vers=1.0,user=guest,pass=guest,uid=$(id -nu),gid=$(id -ng),iocharset=utf8,file_mode=0666,dir_mode=0777"
 
 ################################################################################
 

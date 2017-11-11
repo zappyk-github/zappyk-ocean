@@ -17,6 +17,7 @@ THISHOSTNAME=$(hostname -f)
 for remote_host in $REMOTE_HOSTS; do
     remote_user="$REMOTE_USERS@$remote_host"
     remote_cmmd="ssh $remote_user \"$REMOTE_CMMDS\""
+    remote_cmmd="ssh $remote_user \"$REMOTE_CMMDS\" 2>&1"
 
 #CZ#[ "$THISHOSTNAME" == "$remote_host" ] && continue
     [ "$THISHOSTNAME" == "$remote_host" ] && remote_cmmd="$LOCALE_CMMDS"
