@@ -2,16 +2,37 @@
 #
 RELEASEVER=$1 ; [ -z "$RELEASEVER" ] && echo "Releasever?" && exit 1
 #_______________________________________________________________________________
+#DNF system upgrade aggiorna il sistema ad una nuova versione di Fedora
 #
  dnf upgrade --refresh
  dnf install dnf-plugin-system-upgrade
  dnf system-upgrade download --releasever=$RELEASEVER
+ dnf system-upgrade reboot
 #_______________________________________________________________________________
+#Aggiornamento dei file di configurazione di sistema
+#
+ rpmconf -a
+#_______________________________________________________________________________
+#Pulizia dai vecchi pacchetti
 #
  dnf repoquery --unsatisfied
  dnf repoquery --duplicated
  dnf list extras
 #dnf autoremove
+#_______________________________________________________________________________
+#Ricostruzione del database degli RPM
+#
+ rpm --rebuilddb
+#_______________________________________________________________________________
+#Utilizzo di distro-sync per risolvere problemi di dipendenza
+#
+#dnf distro-sync
+#dnf distro-sync --allowerasing
+#_______________________________________________________________________________
+#Rietichettatura dei file con le recenti regole di SELinux
+#
+ touch /.autorelabel
+ reboot
 #_______________________________________________________________________________
 #
 exit
