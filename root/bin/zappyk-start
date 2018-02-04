@@ -7,26 +7,56 @@
 
 # . /etc/init.d/functions
 
+# /root/bin/raspi1-mount-deluge-incomings
+
 _stop____deluge() { /root/bin/deluge-web-custom-kill.sh; }
 _start___deluge() { /root/bin/deluge-web-custom.sh     ; }
 _status__deluge() { _stop____deluge; }
 _restart_deluge() { _stop____deluge && _start___deluge; }
 
-_stop____peervpn() { /root/bin/peervpn-kill.sh  ; }
-_start___peervpn() { /root/bin/peervpn-server.sh; }
+_stop____peervpn() { /root/bin/peervpn-1-client-kill
+                     /root/bin/peervpn-2-server-kill; }
+_start___peervpn() { #root/bin/peervpn-root-chroot.sh 2 server
+                     /root/bin/peervpn-1-client
+                     /root/bin/peervpn-2-server; }
 _status__peervpn() { _stop____peervpn; }
 _restart_peervpn() { _stop____peervpn && _start___peervpn; }
+_tail____peervpn() { echo '#==========================================================='
+                     echo '#   tail /var/log/peervpn-1-client.log                      '
+                     echo '#___________________________________________________________'
+                     echo '#                                                           '
+                     tail /var/log/peervpn-1-client.log
+                     echo '#==========================================================='
+                     echo '#   tail /var/log/peervpn-2-server.log                      '
+                     echo '#___________________________________________________________'
+                     echo '#                                                           '
+                     tail /var/log/peervpn-2-server.log; }
 
 case "$1" in
-    stop    ) _stop____deluge  | bash
-              _stop____peervpn | bash ;;
-    start   ) _start___deluge  | bash
-              _start___peervpn ;;
-    status  ) _status__deluge
-              _status__peervpn ;;
-    restart ) _restart_deluge
-              _restart_peervpn ;;
-    *       ) echo -e "Used:\n\t$0 [ stop | start | status | restart ]" && exit 1 ;;
+    stop            ) stop-deluge
+                      stop-peervpn
+                    ;;
+    start           ) start-deluge
+                    # start-peervpn
+                    ;;
+    status          ) status-deluge
+                      status-peervpn
+                    ;;
+    restart         ) restart-deluge
+                    # restart-peervpn
+                    ;;
+    tail            ) tail-peervpn
+                    ;;
+    stop-deluge     ) _stop____deluge  | bash ;;
+    stop-peervpn    ) _stop____peervpn | bash ;;
+    start-deluge    ) _start___deluge  | bash ;;
+    start-peervpn   ) _start___peervpn ;;
+    status-deluge   ) _status__deluge  ;;
+    status-peervpn  ) _status__peervpn ;;
+    restart-deluge  ) _restart_deluge  ;;
+    restert-peervpn ) _restart_peervpn ;;
+    tail-peervpn    ) _tail____peervpn ;;
+    *               ) echo -e "Used:\n\t$0 [ stop | start | status | restart | tail ] (-deluge|-peervpn)" && exit 1 ;;
 esac
 
 exit
