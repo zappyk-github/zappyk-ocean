@@ -1,10 +1,10 @@
 #!/bin/env bash
 
-THIS=$(basename "$0")
-THIS=${THIS/-kill/}
+THIS=$(basename "$0" '.sh')
+PROG=${THIS/-kill/}
 
 TAG='peervpn'
-PRN=${1:-$THIS}
+PRN=${1:-$PROG}
 OFF=${2:-false}
 PID=${3:-$$}
 ECN=0
@@ -26,12 +26,12 @@ if [ -n "$PID_peervpn" ]; then
             ECN=1
         fi
     done
-    [ $ECN -eq 0 ] && echo "Some peervpn is running (pid $PID_peervpn) but not $THIS!" && exit 1
+    [ $ECN -eq 0 ] && echo "Some peervpn is running (pid $PID_peervpn) but not $PRN_peervpn!" && exit 1
 
 #CZ#( $OFF ) && killall "$TAG_peervpn"
 
 else
-    echo "No $THIS is running!" && exit 1
+    echo "No $PRN_peervpn is running!" && exit 1
 fi
 
 exit $ECN
