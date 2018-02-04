@@ -1,6 +1,6 @@
 #!/bin/env bash
 
-chroot_path='/var/empty/peervpn-'$1 ; shift
+chroot_path='/var/empty/peervpn-'$1'-'$2 ; shift
 
 [ ! -e "$chroot_path" ] && echo "peervpn chroot path \"$chroot_path\" not exist!" && exit 1
 
