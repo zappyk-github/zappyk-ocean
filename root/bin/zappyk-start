@@ -33,19 +33,19 @@ _tail____peervpn() { echo '#====================================================
                      tail /var/log/peervpn-2-server.log; }
 
 case "$1" in
-    stop            ) stop-deluge
-                      stop-peervpn
+    stop            ) $0 stop-deluge
+                      $0 stop-peervpn
                     ;;
-    start           ) start-deluge
-                    # start-peervpn
+    start           ) $0 start-deluge
+                    # $0 start-peervpn
                     ;;
-    status          ) status-deluge
-                      status-peervpn
+    status          ) $0 status-deluge
+                      $0 status-peervpn
                     ;;
-    restart         ) restart-deluge
-                    # restart-peervpn
+    restart         ) $0 restart-deluge
+                    # $0 restart-peervpn
                     ;;
-    tail            ) tail-peervpn
+    tail            ) $0 tail-peervpn
                     ;;
     stop-deluge     ) _stop____deluge  | bash ;;
     stop-peervpn    ) _stop____peervpn | bash ;;
