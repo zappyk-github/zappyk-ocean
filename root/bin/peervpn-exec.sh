@@ -6,7 +6,8 @@ PEERVPN_run="/etc/peervpn/$PEERVPN_tag.conf"
 PEERVPN_log="/var/log/$PEERVPN_tag.log"
 PEERVPN_slp=20
 
-[ "$PEERVPN_tag" == "peervpn-1-client" ] && echo "Preparetion to bind mount chroot's diretcories..." && peervpn-root-chroot.sh 1 | sed 's/^/\t/g'
+[ "$PEERVPN_tag" == "peervpn-1-client" ] && echo "Preparetion to bind mount chroot's diretcories..." && peervpn-root-chroot.sh 1 client | sed 's/^/\t/g'
+[ "$PEERVPN_tag" == "peervpn-2-client" ] && echo "Preparetion to bind mount chroot's diretcories..." && peervpn-root-chroot.sh 2 client | sed 's/^/\t/g'
 
 echo -e "Start peervpn $PEERVPN_tag \c" && { nohup peervpn "$PEERVPN_run" >"$PEERVPN_log" 2>&1 & }
 
