@@ -7,4 +7,6 @@
 #dnf -y update --best --allowerasing
  dnf -y update
 
+#dnf distro-sync --setopt=deltarpm=0
+
 exit
