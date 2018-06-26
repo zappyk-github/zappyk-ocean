@@ -10,6 +10,7 @@ SVN_CONFS="
 SVN_CONFS="
  @§$HOME/Programmi/zappyk-ocean
  @§$HOME/Programmi/zappyk-python
+ @§$HOME/Programmi/zappyk-github/crontab-ui.git
  @§$HOME/Programmi/Version-Control-System.payroll/payroll§svn co --username pes0zap --password crl0zpp1 \"https://svn.payroll.it/payroll/trunk\" payroll
 #@§/opt/payroll-var/webexe
 #@§/opt/payroll

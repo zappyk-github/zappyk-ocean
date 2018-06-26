@@ -6,7 +6,7 @@ opt1=$1 ; shift
 opts=$*
 
 this=$(basename $0)
-help="Usage:\n\t$this [ mount | umount | search <string> ]"
+help="Usage:\n\t$this [ --mount | --umount | --search <string> ]"
 
 path_tag='Rescues'
 work_dir="$HOME/Documenti"
@@ -57,17 +57,17 @@ elif [ $many_tcv -gt 1 ]; then _die "troppi file in $path_tcv"
 else
      mkdir -p "$base_tcv"
      case "$opt1" in
-     m|mount  ) helptag=false ; command="$fileprog -v --keyfiles= --protect-hidden=no '$file_tcv' '$base_tcv'" ;;
-     u|umount ) helptag=false ; command="$fileprog -v -d '$file_tcv'" ;;
-     s|search ) helptag=false ; _search_string "$base_tcv" "$opts" ;;
-     *        ) help="$help\n\nOption '$opt1' not valid!\n" ;;
+     -m|--mount  ) helptag=false ; command="$fileprog -v --keyfiles= --protect-hidden=no '$file_tcv' '$base_tcv'" ;;
+     -u|--umount ) helptag=false ; command="$fileprog -v -d '$file_tcv'" ;;
+     -s|--search ) helptag=false ; _search_string "$base_tcv" "$opts" ;;
+     *           ) help="$help\n\nOption '$opt1' not valid!\n" ;;
      esac
 
      [ -n "$command" ] && ( $debug ) && echo "$command"
      [ -n "$command" ] &&               eval "$command"
 
      case "$opt1" in
-     m|mount  ) helptag=false ; [ -n "$opts" ] && _search_string "$base_tcv" "$opts" ;;
+     -m|--mount  ) helptag=false ; [ -n "$opts" ] && _search_string "$base_tcv" "$opts" ;;
      esac
 fi
 
