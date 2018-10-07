@@ -1,28 +1,31 @@
-#!/usr/bin/perl -W
+#!/usr/bin/perl -w
 $|=1;
 
 use strict;
 use Mail::Sender;
 use File::Basename;
 
-#CZ#use IO::Socket::SSL qw(debug3);
-#CZ#use Net::SSLeay;
+my $THIS           = basename( $0 );
 
-my $THIS          = basename( $0 );
+my $iEXIT_CODE     = 0;
+my $iMAIL_VERSION  = '2.0';
 
-my $iEXIT_CODE    = 0;
-
-my $iMAIL_SMTP    = 'smtp.gmail.com'         ; $iMAIL_SMTP = 'smtp.ngi.it';
-my $iMAIL_FROM    = 'zappyk.notice@gmail.com'; $iMAIL_FROM = 'zappyk@ngi.it';
-my $iMAIL_SUBJECT = '';
-my @vMAIL_HEADERS = ("X-ZappykNotice: $iMAIL_SMTP");
-my @vMAIL_TO      = ();
-my @vMAIL_CC      = ();
-my @vMAIL_BCC     = ();
-my @vMAIL_MSG     = ();
-my @vMAIL_FILES   = ();
-my $iMAIL_STDIN   = '-';
-my %iMAIL_COMMONS;
+my $iMAIL_PORT     = '25';
+my $iMAIL_SMTP     = 'smtp.gmail.com'          ; $iMAIL_SMTP = 'smtp.ngi.it';
+my $iMAIL_FROM     = 'zappyk.notice@gmail.com' ; $iMAIL_FROM = 'zappyk@ngi.it';
+my $iMAIL_GMAIL    = 0;
+my $iMAIL_SENDGRID = 0;
+my $iMAIL_AUTH     = '';
+my $iMAIL_AUTHID   = '';
+my $iMAIL_AUTHPWD  = '';
+my $iMAIL_SUBJECT  = '';
+my @vMAIL_HEADERS  = ("X-ZappykNotice: $iMAIL_SMTP");
+my @vMAIL_TO       = ();
+my @vMAIL_CC       = ();
+my @vMAIL_BCC      = ();
+my @vMAIL_MSG      = ();
+my @vMAIL_FILES    = ();
+my $iMAIL_STDIN    = '-';
 my $iMAIL_SEND;
 
 my $iMAIL_HTML           = 0;
@@ -30,12 +33,23 @@ my $iMAIL_HTML_FONT_FACE = 'arial,helvetica,sans-serif';
 my $iMAIL_HTML_FONT_STYL = 'font-family: courier new,monospace;';
 my $iMAIL_HTML_FONT_SIZE = 1;
 
+my $iMAIL_DEBUG          = 0;
+my $iMAIL_DEBUG_FHO      = undef;
+my $iMAIL_DEBUG_OUT      = '&STDOUT';
+
 my $help = 0; $help = 1 if (scalar(@ARGV) == 0);
 for ( my $i=0; $i<scalar(@ARGV); $i++ ) {
     SWITCH: for( $ARGV[$i] ) {
-        ( /^(-)?-(p|smtp)$/             ) && do{ $iMAIL_SMTP           = $ARGV[++$i]                          ; last SWITCH; };
-        ( /^(-)?-(f|from)$/             ) && do{ $iMAIL_FROM           = $ARGV[++$i]                          ; last SWITCH; };
-        ( /^(-)?-(s|subject)$/          ) && do{ $iMAIL_SUBJECT        = $ARGV[++$i]                          ; last SWITCH; };
+        ( /^(-)?-(p|smtp)$/                ) && do{ $iMAIL_SMTP           = $ARGV[++$i]                          ; last SWITCH; };
+        ( /^(-)?-(f|from)$/                ) && do{ $iMAIL_FROM           = $ARGV[++$i]                          ; last SWITCH; };
+        ( /^(-)?-(s|subject)$/             ) && do{ $iMAIL_SUBJECT        = $ARGV[++$i]                          ; last SWITCH; };
+
+        ( /^(-)?-(spg|set-smtp-gmail)$/    ) && do{ $iMAIL_GMAIL          = 1                                    ; last SWITCH; };
+        ( /^(-)?-(sps|set-smtp-sendgrid)$/ ) && do{ $iMAIL_SENDGRID       = 1                                    ; last SWITCH; };
+        ( /^(-)?-(port|port)$/             ) && do{ $iMAIL_PORT           = $ARGV[++$i]                          ; last SWITCH; };
+        ( /^(-)?-(auth|auth)$/             ) && do{ $iMAIL_AUTH           = $ARGV[++$i]                          ; last SWITCH; };
+        ( /^(-)?-(aid|auth-id)$/           ) && do{ $iMAIL_AUTHID         = $ARGV[++$i]                          ; last SWITCH; };
+        ( /^(-)?-(apwd|auth-pwd)$/         ) && do{ $iMAIL_AUTHPWD        = $ARGV[++$i]                          ; last SWITCH; };
 
         ( /^(-)?-(l|html)$/             ) && do{ $iMAIL_HTML           = 1                                    ; last SWITCH; };
         ( /^(-)?-(lfs|html-font-size)$/ ) && do{ $iMAIL_HTML_FONT_SIZE = $ARGV[++$i]                          ; last SWITCH; };
@@ -54,10 +68,30 @@ for ( my $i=0; $i<scalar(@ARGV); $i++ ) {
         ( /^(\+)?\+(m|msg)$/            ) && do{                             push(@vMAIL_MSG    , $ARGV[++$i]); last SWITCH; };
         ( /^(\+)?\+(a|file)$/           ) && do{                             push(@vMAIL_FILES  , $ARGV[++$i]); last SWITCH; };
 
+        ( /^(-)?-(d|debug)$/            ) && do{ $iMAIL_DEBUG          = 1                                    ; last SWITCH; };
+
         ( /^(-h|--help)$/i ) && do{ $help = 1; last SWITCH; };
     }
 }
 for (my $i=0; $i<scalar(@vMAIL_MSG); $i++) { $vMAIL_MSG[$i] = readSTDIN() if ( $vMAIL_MSG[$i] eq $iMAIL_STDIN ) }
+if ($iMAIL_GMAIL) {
+    $iMAIL_PORT    = '587';
+    $iMAIL_SMTP    = 'smtp.gmail.com';
+    $iMAIL_AUTH    = 'LOGIN';
+    $iMAIL_AUTHID  = 'sysop@payroll.it';
+    $iMAIL_AUTHPWD = 's3rv1c3s';
+    $iMAIL_FROM    = $iMAIL_AUTHID; # e' indifferente settare FROM, Google invia con indirizzo AUTHID !!!
+    @vMAIL_HEADERS = ("X-ZappykNotice: $iMAIL_SMTP");
+}
+if ($iMAIL_SENDGRID) {
+    $iMAIL_PORT    = '2525';
+    $iMAIL_SMTP    = 'smtp.sendgrid.net';
+    $iMAIL_AUTH    = 'LOGIN';
+    $iMAIL_AUTHID  = 'sendgrid-pands';
+    $iMAIL_AUTHPWD = 's3rv1c3s';
+    $iMAIL_FROM    = 'sysop+sendgrid@payroll.it';
+    @vMAIL_HEADERS = ("X-ZappykNotice: $iMAIL_SMTP");
+}
 my %hMAIL_HEADERS = map( +( $_, 1 ), @vMAIL_HEADERS ); @vMAIL_HEADERS = keys( %hMAIL_HEADERS );
 my %hMAIL_TO      = map( +( $_, 1 ), @vMAIL_TO      ); @vMAIL_TO      = keys( %hMAIL_TO      );
 my %hMAIL_CC      = map( +( $_, 1 ), @vMAIL_CC      ); @vMAIL_CC      = keys( %hMAIL_CC      );
@@ -68,64 +102,14 @@ my $iMAIL_CC      = join( ', ', @vMAIL_CC      );
 my $iMAIL_BCC     = join( ', ', @vMAIL_BCC     );
 my $iMAIL_MSG     = join( '\n', @vMAIL_MSG     );
 my $iMAIL_FILES   = join( ', ', @vMAIL_FILES   );
+
 help() if ( $help );
 
-$iMAIL_MSG     = readSTDIN() if ( $iMAIL_MSG eq '' );
-$iMAIL_MSG     = join( "\n", split( /\\n/, $iMAIL_MSG     ) );
-$iMAIL_HEADERS = join( "\n", split( /\\n/, $iMAIL_HEADERS ) );
-%iMAIL_COMMONS =
-(
-#_______________________________________________________________________________
-#
-'smtp.gmail.com' => { 
-#_______________________________________________________________________________
-#CZ#debug           => '/dev/stderr',
-#CZ#debug_level     => 4,
-####=================
-#CZ#SSL_ca_file     => '/etc/ssl/certs/smtp.gmail.com.crt.pem',
-#CZ#SSL_version     => 'TLSv1',
-    SSL_version     => 'SSLv23:!SSLv2',
-    SSL_verify_mode => 0,
-#CZ#TLS_allowed     => 1,
-    TLS_required    => 1,
-#CZ#auth            => 'PLAIN',
-    auth            => 'LOGIN',
-    authid          => $iMAIL_FROM,
-#CZ#authpwd         => 'z4pp1k@n0t1c3',
-    authpwd         => 'z4pp1k@n0t1c3s',
-    authdomain      => 'gmail.com',
-#CZ#port            => 587,
-####=================
-    smtp            => $iMAIL_SMTP,
-    from            => $iMAIL_FROM,
-    subject         => $iMAIL_SUBJECT,
-    headers         => $iMAIL_HEADERS,
-    to              => $iMAIL_TO,
-    cc              => $iMAIL_CC,
-    bcc             => $iMAIL_BCC,
-},
-#_______________________________________________________________________________
-#
-'smtp.ngi.it' => {
-#_______________________________________________________________________________
-    esmtp           => { 'NOTIFY' => ''
-                       , 'RET'    => ''
-                       , 'ORCPT'  => ''
-                       , 'ENVID'  => '' },
-####=================
-    auth            => 'LOGIN',
-    authid          => $iMAIL_FROM,
-    authpwd         => 'Z4pp1kW3bm',
-    authdomain      => 'ngi.it',
-####=================
-    smtp            => $iMAIL_SMTP,
-    from            => $iMAIL_FROM,
-    subject         => $iMAIL_SUBJECT,
-    headers         => $iMAIL_HEADERS,
-    to              => $iMAIL_TO,
-    cc              => $iMAIL_CC,
-    bcc             => $iMAIL_BCC,
-});
+$iMAIL_HEADERS    = join( "\n", split( /\\n/, $iMAIL_HEADERS ) );
+$iMAIL_MSG        = readSTDIN() if ( $iMAIL_MSG eq '' );
+$iMAIL_MSG        = join( "\n", split( /\\n/, $iMAIL_MSG     ) );
+
+open($iMAIL_DEBUG_FHO, ">$iMAIL_DEBUG_OUT") || warn("$THIS: non posso scrivere il file '$iMAIL_DEBUG_OUT' per il debug!\n") if ( $iMAIL_DEBUG );
 
 $iMAIL_SEND = new Mail::Sender() || die( "$THIS: non posso creare l'oggetto Mail::Sender ($Mail::Sender::Error)\n" );
 
@@ -138,17 +122,22 @@ if ( scalar(@vMAIL_FILES) > 0 ) {
 
     $iEXIT_CODE = 1 if ( $iMAIL_SEND->OpenMultipart
                             ({
-                                   #smtp      => $iMAIL_SMTP,
-                                   #from      => $iMAIL_FROM,
-                                   #subject   => $iMAIL_SUBJECT,
-                                   #headers   => $iMAIL_HEADERS,
-                                   #to        => $iMAIL_TO,
-                                   #cc        => $iMAIL_CC,
-                                   #bcc       => $iMAIL_BCC,
-                                    %{$iMAIL_COMMONS{$iMAIL_SMTP}},
+                                    ssl_verify_mode => 0,
+                                    debug     => $iMAIL_DEBUG_FHO,
+                                    port      => $iMAIL_PORT,
+                                    smtp      => $iMAIL_SMTP,
+                                    from      => $iMAIL_FROM,
+                                    auth      => $iMAIL_AUTH,
+                                    authid    => $iMAIL_AUTHID,
+                                    authpwd   => $iMAIL_AUTHPWD,
+                                    subject   => $iMAIL_SUBJECT,
+                                    headers   => $iMAIL_HEADERS,
+                                    to        => $iMAIL_TO,
+                                    cc        => $iMAIL_CC,
+                                    bcc       => $iMAIL_BCC,
                                     multipart => 'mixed',
                             })->Part({ ctype => 'multipart/alternative' })
-                              ->Part({ ctype => 'text/plain', disposition => 'NONE', msg => $iMAIL_MSG_BODY })
+                              ->Part({ ctype => 'text/plain', disposition => 'NONE', msg => $iMAIL_MSG })
                               ->Part({ ctype => 'text/html' , disposition => 'NONE', msg => $iMAIL_MSG_HTML })
                               ->EndPart("multipart/alternative")
                               ->Attach({ file => \@vMAIL_FILES })
@@ -158,17 +147,22 @@ if ( scalar(@vMAIL_FILES) > 0 ) {
 
     $iEXIT_CODE = 1 if ( $iMAIL_SEND->OpenMultipart
                             ({
-                                   #smtp      => $iMAIL_SMTP,
-                                   #from      => $iMAIL_FROM,
-                                   #subject   => $iMAIL_SUBJECT,
-                                   #headers   => $iMAIL_HEADERS,
-                                   #to        => $iMAIL_TO,
-                                   #cc        => $iMAIL_CC,
-                                   #bcc       => $iMAIL_BCC,
-                                    %{$iMAIL_COMMONS{$iMAIL_SMTP}},
+                                    ssl_verify_mode => 0,
+                                    debug     => $iMAIL_DEBUG_FHO,
+                                    port      => $iMAIL_PORT,
+                                    smtp      => $iMAIL_SMTP,
+                                    from      => $iMAIL_FROM,
+                                    auth      => $iMAIL_AUTH,
+                                    authid    => $iMAIL_AUTHID,
+                                    authpwd   => $iMAIL_AUTHPWD,
+                                    subject   => $iMAIL_SUBJECT,
+                                    headers   => $iMAIL_HEADERS,
+                                    to        => $iMAIL_TO,
+                                    cc        => $iMAIL_CC,
+                                    bcc       => $iMAIL_BCC,
                                     multipart => 'mixed',
                             })->Part({ ctype => 'multipart/alternative' })
-                              ->Part({ ctype => 'text/plain', disposition => 'NONE', msg => $iMAIL_MSG_BODY })
+                              ->Part({ ctype => 'text/plain', disposition => 'NONE', msg => $iMAIL_MSG })
                               ->Part({ ctype => 'text/html' , disposition => 'NONE', msg => $iMAIL_MSG_HTML })
                               ->EndPart("multipart/alternative")
                               ->Close() >= 0 );
@@ -181,14 +175,19 @@ if ( scalar(@vMAIL_FILES) > 0 ) {
 
     $iEXIT_CODE = 1 if ( $iMAIL_SEND->MailFile
                             ({
-                                   #smtp    => $iMAIL_SMTP,
-                                   #from    => $iMAIL_FROM,
-                                   #subject => $iMAIL_SUBJECT,
-                                   #headers => $iMAIL_HEADERS,
-                                   #to      => $iMAIL_TO,
-                                   #cc      => $iMAIL_CC,
-                                   #bcc     => $iMAIL_BCC,
-                                    %{$iMAIL_COMMONS{$iMAIL_SMTP}},
+                                    ssl_verify_mode => 0,
+                                    debug   => $iMAIL_DEBUG_FHO,
+                                    port    => $iMAIL_PORT,
+                                    smtp    => $iMAIL_SMTP,
+                                    from    => $iMAIL_FROM,
+                                    auth    => $iMAIL_AUTH,
+                                    authid  => $iMAIL_AUTHID,
+                                    authpwd => $iMAIL_AUTHPWD,
+                                    subject => $iMAIL_SUBJECT,
+                                    headers => $iMAIL_HEADERS,
+                                    to      => $iMAIL_TO,
+                                    cc      => $iMAIL_CC,
+                                    bcc     => $iMAIL_BCC,
                                     msg     => $iMAIL_MSG,
                                     file    => \@vMAIL_FILES
                             }) >= 0 );
@@ -197,20 +196,27 @@ if ( scalar(@vMAIL_FILES) > 0 ) {
 
     $iEXIT_CODE = 1 if ( $iMAIL_SEND->MailMsg
                             ({
-                                   #smtp    => $iMAIL_SMTP,
-                                   #from    => $iMAIL_FROM,
-                                   #subject => $iMAIL_SUBJECT,
-                                   #headers => $iMAIL_HEADERS,
-                                   #to      => $iMAIL_TO,
-                                   #cc      => $iMAIL_CC,
-                                   #bcc     => $iMAIL_BCC,
-                                    %{$iMAIL_COMMONS{$iMAIL_SMTP}},
+                                    ssl_verify_mode => 0,
+                                    debug   => $iMAIL_DEBUG_FHO,
+                                    port    => $iMAIL_PORT,
+                                    smtp    => $iMAIL_SMTP,
+                                    from    => $iMAIL_FROM,
+                                    auth    => $iMAIL_AUTH,
+                                    authid  => $iMAIL_AUTHID,
+                                    authpwd => $iMAIL_AUTHPWD,
+                                    subject => $iMAIL_SUBJECT,
+                                    headers => $iMAIL_HEADERS,
+                                    to      => $iMAIL_TO,
+                                    cc      => $iMAIL_CC,
+                                    bcc     => $iMAIL_BCC,
                                     msg     => $iMAIL_MSG
                             }) >= 0 );
 
 }
 
 }
+
+close($iMAIL_DEBUG_FHO) if ( $iMAIL_DEBUG );
 
 warn( "$THIS: errore: $Mail::Sender::Error", "\n" ) if ( defined($Mail::Sender::Error) );
 
@@ -225,6 +231,13 @@ Uso:
         -p   |  --smtp    <server>                  (= '$iMAIL_SMTP')
         -f   |  --from    <address>                 (= '$iMAIL_FROM')
         -s   |  --subject <text>                    (= '$iMAIL_SUBJECT')
+
+        -spg |  --set-smtp-gmail
+        -sps |  --set-smtp-sendgrid
+        -port|  --port     <port>                   (= '$iMAIL_PORT')
+        -auth|  --auth     [ LOGIN | PLAIN ]        (= '$iMAIL_AUTH')
+        -aid |  --auth-id  <id-name>                (= '$iMAIL_AUTHID')
+        -apwd|  --auth-pwd <password>               (= '$iMAIL_AUTHPWD')
 
         -l   |  --html                              ($iMAIL_HTML_DEFAULT)
         -lfs |  --html-font-size <number>           (= '$iMAIL_HTML_FONT_SIZE')
@@ -247,6 +260,8 @@ Uso:
         -a   |  --file    <file-name>               (= '$iMAIL_FILES')
         +a   |  ++file    <file-name>
 
+        -d   |  --debug
+
         -h   |  --help
 
 Nota:
@@ -256,6 +271,8 @@ Nota:
 
  *  Se l'opzione --msg (-m) non e' settata, oppure e' settata con la
     variabile '$iMAIL_STDIN', il programma leggera' dallo STDIN.
+
+Version: $iMAIL_VERSION
 _EOD_
 
     exit( 1 );
