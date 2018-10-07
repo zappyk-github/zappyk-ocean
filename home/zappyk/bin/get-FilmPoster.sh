@@ -11,6 +11,7 @@ FILE_EXT='.jpg'
 
 PATH_BASE=${1:-./}
 WWW_IMAGE=${2}
+EXEC_BASH=${3}
 URL_EMPTY='-'
 
 FIND_NAME=$(echo "$LIST_EXT" | sed 's/  */" -o -iname "\*/g')
@@ -45,6 +46,7 @@ _wget_make() {
     local path_base=$1
     local www_image=$2
     local find_files=$3
+    local exec_wget=$4
 
     path_base=$(dirname "$path_base")
 
@@ -62,7 +64,11 @@ _wget_make() {
 
         if [ ! -e "$file_img" ]; then
             if [ -n "$www_image" ]; then
-                _wget_echo "$www_image" "$file_img"
+		if [ -n "$exec_wget" ]; then
+                    _wget_echo "$www_image" "$file_img" | eval "$exec_wget"
+		else
+                    _wget_echo "$www_image" "$file_img"
+		fi
             else
                 $CMMD "$file" || _echo_recursive "$file"
             fi
@@ -70,7 +76,7 @@ _wget_make() {
     done
 }
 
-_wget_make "$PATH_BASE" "$WWW_IMAGE" "$FIND_FILE" 2>&1 | tee "$FILE_BASH"
+_wget_make "$PATH_BASE" "$WWW_IMAGE" "$FIND_FILE" "$EXEC_BASH" 2>&1 | tee "$FILE_BASH"
 
 [ ! -s "$FILE_BASH" ] && [ "$FILE_BASH" != "$FILE_null" ] && rm -f "$FILE_BASH" && echo "# ...nessuna locandina da trovare..."
 

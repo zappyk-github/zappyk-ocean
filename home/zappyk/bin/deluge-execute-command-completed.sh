@@ -82,6 +82,7 @@ _nsm() { ( $test ) && return
     local mail_mssg=$string
     local mail_subj="Deluge $count files completed download [$tdate]"
     local mail_from="zappyk@zappyk-rp"
+    local mail_from="zappyk@$(hostname -f)
     local mail_cmmd=$CMMD_MAIL
     local mail_cmmd="$(which $mail_cmmd)"
 
