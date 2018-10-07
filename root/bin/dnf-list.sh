@@ -41,7 +41,7 @@ search_packages=''
 directory="$HOME/Configurazioni/dnf"
 mkdir -p "$directory"
 
-dnf_cmd='dnf --quiet'
+dnf_cmd='dnf -y --quiet'
 dnf_opt="$*"
 dnf_exc='--disableexcludes=main'
 dnf_rep='--disablerepo=* --enablerepo'
@@ -59,6 +59,7 @@ execute() {
 
     echo "$str"
 #CZ#echo "$cmd"
+#CZ#echo "$exc"
     eval "$cmd"
     eval "$exc"
 }
