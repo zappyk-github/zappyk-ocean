@@ -1,0 +1,317 @@
+#!/usr/bin/perl -w
+$|=1;
+
+use strict;
+use File::Basename;
+
+my $THIS           = basename( $0 );
+
+my $iEXIT_CODE     = 0;
+my $iMAIL_VERSION  = '3.0';
+
+my $iMAIL_PORT     = '25';
+my $iMAIL_SMTP     = 'smtp.ngi.it';
+my $iMAIL_FROM     = 'zappyk@ngi.it';
+my $iMAIL_GMAIL    = 0;
+my $iMAIL_NGIEOLO  = 0;
+my $iMAIL_SENDGRID = 0;
+my $iMAIL_AUTH     = '';
+my $iMAIL_AUTHUSR  = '';
+my $iMAIL_AUTHPWD  = '';
+my $iMAIL_SUBJECT  = '';
+my @vMAIL_HEADERS  = ();
+my @vMAIL_TO       = ();
+my @vMAIL_CC       = ();
+my @vMAIL_BCC      = ();
+my @vMAIL_MSG      = ();
+my @vMAIL_FILES    = ();
+my $iMAIL_STDIN    = '-';
+my $iMAIL_SEND;
+
+my $iMAIL_HTML           = 0;
+my $iMAIL_HTML_FONT_FACE = 'arial,helvetica,sans-serif';
+my $iMAIL_HTML_FONT_STYL = 'font-family: courier new,monospace;';
+my $iMAIL_HTML_FONT_SIZE = 1;
+my $iMAIL_TEXT_NOT       = 0;
+
+my $iMAIL_HEADERS_SEP    = ': ';
+my $iMAIL_HEADERS_TAG    = 'X-ZappykNotice';
+
+my $iMAIL_DEBUG          = 0;
+my $iMAIL_DEBUG_SEP      = ('_' x 80)."\n";
+
+my $help = 0; $help = 1 if (scalar(@ARGV) == 0);
+for ( my $i=0; $i<scalar(@ARGV); $i++ ) {
+    SWITCH: for( $ARGV[$i] ) {
+        ( /^(-)?-(p|smtp)$/                ) && do{ $iMAIL_SMTP        = $ARGV[++$i]                          ; last SWITCH; };
+        ( /^(-)?-(f|from)$/                ) && do{ $iMAIL_FROM        = $ARGV[++$i]                          ; last SWITCH; };
+        ( /^(-)?-(s|subject)$/             ) && do{ $iMAIL_SUBJECT     = $ARGV[++$i]                          ; last SWITCH; };
+
+        ( /^(-)?-(spg|set-smtp-gmail)$/    ) && do{ $iMAIL_GMAIL       = 1                                    ; last SWITCH; };
+        ( /^(-)?-(spn|set-smtp-ngieolo)$/  ) && do{ $iMAIL_NGIEOLO     = 1                                    ; last SWITCH; };
+        ( /^(-)?-(sps|set-smtp-sendgrid)$/ ) && do{ $iMAIL_SENDGRID    = 1                                    ; last SWITCH; };
+        ( /^(-)?-(port|port)$/             ) && do{ $iMAIL_PORT        = $ARGV[++$i]                          ; last SWITCH; };
+        ( /^(-)?-(auth|auth)$/             ) && do{ $iMAIL_AUTH        = $ARGV[++$i]                          ; last SWITCH; };
+        ( /^(-)?-(ausr|auth-username)$/    ) && do{ $iMAIL_AUTHUSR     = $ARGV[++$i]                          ; last SWITCH; };
+        ( /^(-)?-(apwd|auth-password)$/    ) && do{ $iMAIL_AUTHPWD     = $ARGV[++$i]                          ; last SWITCH; };
+
+        ( /^(-)?-(l|html)$/             ) && do{ $iMAIL_HTML           = 1                                    ; last SWITCH; };
+        ( /^(-)?-(lfs|html-font-size)$/ ) && do{ $iMAIL_HTML_FONT_SIZE = $ARGV[++$i]                          ; last SWITCH; };
+        ( /^(-)?-(l|html)$/             ) && do{ $iMAIL_TEXT_NOT       = 1                                    ; last SWITCH; };
+
+        ( /^(-)?-(e|headers)$/          ) && do{ @vMAIL_HEADERS        = (); push(@vMAIL_HEADERS, $ARGV[++$i]); last SWITCH; };
+        ( /^(-)?-(t|to)$/               ) && do{ @vMAIL_TO             = (); push(@vMAIL_TO     , $ARGV[++$i]); last SWITCH; };
+        ( /^(-)?-(c|cc)$/               ) && do{ @vMAIL_CC             = (); push(@vMAIL_CC     , $ARGV[++$i]); last SWITCH; };
+        ( /^(-)?-(b|bcc)$/              ) && do{ @vMAIL_BCC            = (); push(@vMAIL_BCC    , $ARGV[++$i]); last SWITCH; };
+        ( /^(-)?-(m|msg)$/              ) && do{ @vMAIL_MSG            = (); push(@vMAIL_MSG    , $ARGV[++$i]); last SWITCH; };
+        ( /^(-)?-(a|file)$/             ) && do{ @vMAIL_FILES          = (); push(@vMAIL_FILES  , $ARGV[++$i]); last SWITCH; };
+
+        ( /^(\+)?\+(e|headers)$/        ) && do{                             push(@vMAIL_HEADERS, $ARGV[++$i]); last SWITCH; };
+        ( /^(\+)?\+(t|to)$/             ) && do{                             push(@vMAIL_TO     , $ARGV[++$i]); last SWITCH; };
+        ( /^(\+)?\+(c|cc)$/             ) && do{                             push(@vMAIL_CC     , $ARGV[++$i]); last SWITCH; };
+        ( /^(\+)?\+(b|bcc)$/            ) && do{                             push(@vMAIL_BCC    , $ARGV[++$i]); last SWITCH; };
+        ( /^(\+)?\+(m|msg)$/            ) && do{                             push(@vMAIL_MSG    , $ARGV[++$i]); last SWITCH; };
+        ( /^(\+)?\+(a|file)$/           ) && do{                             push(@vMAIL_FILES  , $ARGV[++$i]); last SWITCH; };
+
+        ( /^(-)?-(d|debug)$/            ) && do{ $iMAIL_DEBUG          = 1                                    ; last SWITCH; };
+
+        ( /^(-h|--help)$/i ) && do{ $help = 1; last SWITCH; };
+    }
+}
+
+sub _splitField { my @fields = split(':', $_[0]); return(@fields) }
+sub _splitFirst { my @fields = _splitField($_[0]); my $first = shift(@fields); return($first) }
+sub _splitOther { my @fields = _splitField($_[0]); my $first = shift(@fields); return(join(':', @fields)) }
+for (my $i=0; $i<scalar(@vMAIL_MSG); $i++) { $vMAIL_MSG[$i] = readSTDIN() if ( $vMAIL_MSG[$i] eq $iMAIL_STDIN ) }
+if ($iMAIL_GMAIL) {
+    $iMAIL_PORT    = '587';
+    $iMAIL_SMTP    = 'smtp.gmail.com';
+   #$iMAIL_AUTH    = 'LOGIN';
+    $iMAIL_AUTHUSR = 'zappyk.notice@gmail.com';
+    $iMAIL_AUTHPWD = 'z4pp1k@n0t1c3s';
+    $iMAIL_FROM    = $iMAIL_AUTHUSR; # e' indifferente settare FROM, Google invia con indirizzo AUTHUSR !!!
+}
+if ($iMAIL_NGIEOLO) {
+    $iMAIL_PORT    = '25';
+    $iMAIL_SMTP    = 'smtp.ngi.it';
+   #$iMAIL_AUTH    = 'LOGIN';
+    $iMAIL_AUTHUSR = 'zappyk@ngi.it';
+    $iMAIL_AUTHPWD = 'Z4pp1kW3bm';
+#CZ#$iMAIL_FROM    = $iMAIL_AUTHUSR;
+}
+if ($iMAIL_SENDGRID) {
+    $iMAIL_PORT    = '2525';
+    $iMAIL_SMTP    = 'smtp.sendgrid.net';
+   #$iMAIL_AUTH    = 'LOGIN';
+    $iMAIL_AUTHUSR  = 'sendgrid-pands';
+    $iMAIL_AUTHPWD = 's3rv1c3s';
+    $iMAIL_FROM    = 'sysop+sendgrid@payroll.it';
+}
+
+my %hMAIL_HEADERS = map( +( $_, 1 ), @vMAIL_HEADERS ); @vMAIL_HEADERS = keys( %hMAIL_HEADERS );
+my %hMAIL_TO      = map( +( $_, 1 ), @vMAIL_TO      ); @vMAIL_TO      = keys( %hMAIL_TO      );
+my %hMAIL_CC      = map( +( $_, 1 ), @vMAIL_CC      ); @vMAIL_CC      = keys( %hMAIL_CC      );
+my %hMAIL_BCC     = map( +( $_, 1 ), @vMAIL_BCC     ); @vMAIL_BCC     = keys( %hMAIL_BCC     );
+my $iMAIL_HEADERS = join( '\n', @vMAIL_HEADERS );
+my $iMAIL_TO      = join( ', ', @vMAIL_TO      );
+my $iMAIL_CC      = join( ', ', @vMAIL_CC      );
+my $iMAIL_BCC     = join( ', ', @vMAIL_BCC     );
+my $iMAIL_MSG     = join( '\n', @vMAIL_MSG     );
+my $iMAIL_FILES   = join( ', ', @vMAIL_FILES   );
+
+@vMAIL_HEADERS    = (@vMAIL_HEADERS, join($iMAIL_HEADERS_SEP, $iMAIL_HEADERS_TAG, "$iMAIL_SMTP($iMAIL_PORT)"));
+%hMAIL_HEADERS    = map( +( _splitFirst($_), _splitOther($_) ), @vMAIL_HEADERS );
+$iMAIL_HEADERS    = join( "\n", split( /\\n/, $iMAIL_HEADERS ) );
+
+help() if ( $help );
+
+$iMAIL_MSG        = readSTDIN() if ( $iMAIL_MSG eq '' );
+$iMAIL_MSG        = join( "\n", split( /\\n/, $iMAIL_MSG     ) );
+
+
+my $iMAIL_MSG_BODY = $iMAIL_MSG;
+my $iMAIL_MSG_HTML = "<html><body><font face=\"$iMAIL_HTML_FONT_FACE\" style=\"$iMAIL_HTML_FONT_STYL\" size=\"$iMAIL_HTML_FONT_SIZE\"><pre>$iMAIL_MSG_BODY</pre></font></body></html>";
+
+################################################################################
+use Email::MIME;
+use Email::Sender::Simple qw(sendmail);
+use Email::Sender::Transport::SMTP qw();
+use IO::All;
+#_______________________________________________________________________________
+    my @iMAIL_PARTS     = ();
+    my $iMAIL_TRANSPORT = {
+        transport => Email::Sender::Transport::SMTP->new({
+            host => $iMAIL_SMTP,
+            port => $iMAIL_PORT,
+           #ssl  => 1,
+           #startls  => 1,
+            sasl_username => $iMAIL_AUTHUSR,
+            sasl_password => $iMAIL_AUTHPWD,
+            debug => $iMAIL_DEBUG
+        }),
+    };
+#_______________________________________________________________________________
+# produce an Email::Abstract compatible message object,
+# e.g. produced by Email::Simple, Email::MIME, Email::Stuff
+do{
+    print(" · Part body Text.\n") if ( $iMAIL_DEBUG );
+    push(@iMAIL_PARTS, Email::MIME->create(
+        attributes => {
+            content_type => "text/plain",
+        #CZ#disposition  => "attachment",
+            encoding     => "quoted-printable",
+        #CZ#encoding     => "base64",
+        #CZ#charset      => "US-ASCII",
+            charset      => "UTF-8",
+        },
+        body     => $iMAIL_MSG_BODY,
+    #CZ#body_str => $iMAIL_MSG_BODY,
+    ))
+} if ( ! $iMAIL_TEXT_NOT );
+#_______________________________________________________________________________
+do{
+    print(" · Part body HTML: font size = $iMAIL_HTML_FONT_SIZE\n") if ( $iMAIL_DEBUG );
+    push(@iMAIL_PARTS, Email::MIME->create(
+        attributes => {
+            content_type => "text/html",
+        #CZ#disposition  => "attachment",
+            encoding     => "quoted-printable",
+        #CZ#encoding     => "base64",
+        #CZ#charset      => "US-ASCII",
+            charset      => "UTF-8",
+        },
+        body     => $iMAIL_MSG_HTML,
+    #CZ#body_str => $iMAIL_MSG_HTML,
+    ))
+} if ( $iMAIL_HTML );
+#_______________________________________________________________________________
+foreach my $file ( @vMAIL_FILES ) {
+    my $file_mimetype  = io( $file )->mimetype;
+   #my $file_binaryall = io( $file )->all;
+   #my $file_binaryall = io( $file )->slurp;
+    my $file_binaryall = io( $file )->binary->all;
+    if ( $iMAIL_DEBUG ) {
+        print(" · File attachment: $file ($file_mimetype) => ");
+    do{ print("skip, not exist!\n"); next } if ( ! -e $file );
+        print("done.\n");
+    }
+    push(@iMAIL_PARTS, Email::MIME->create(
+        attributes => {
+        #CZ#content_type => "application/pdf",
+            content_type => $file_mimetype,
+            disposition  => "attachment",
+        #CZ#encoding     => "quoted-printable",
+            encoding     => "base64",
+            filename     => basename( $file ),
+            name         => $file,
+        },
+        body => $file_binaryall,
+    )) if ( -e $file );
+}
+#_______________________________________________________________________________
+    if ( $iMAIL_DEBUG ) {
+        print(" · From   : $iMAIL_FROM\n");
+        print(" · Subject: $iMAIL_SUBJECT\n");
+        print(" · To     : $iMAIL_TO\n");
+        print(" · Cc     : $iMAIL_CC\n");
+        print(" · Bcc    : $iMAIL_BCC\n");
+        print(" · $iMAIL_HEADERS\n");
+    }
+    $iMAIL_SEND = Email::MIME->create(
+        header_str => [
+            From    => $iMAIL_FROM,
+            Subject => $iMAIL_SUBJECT,
+            To      => [ @vMAIL_TO ],
+            Cc      => [ @vMAIL_CC ],
+            Bcc     => [ @vMAIL_BCC ],
+            %hMAIL_HEADERS,
+        ],
+        attributes => { content_type => "multipart/alternative" },
+        parts => [ @iMAIL_PARTS ],
+    );
+#_______________________________________________________________________________
+#
+    warn($iMAIL_DEBUG_SEP."\n".$iMAIL_SEND->debug_structure.$iMAIL_DEBUG_SEP) if ( $iMAIL_DEBUG );
+#_______________________________________________________________________________
+#
+    eval {
+        sendmail($iMAIL_SEND, $iMAIL_TRANSPORT);
+        $iEXIT_CODE = 1;
+    };
+    warn("sending failed: $@") if ($@);
+################################################################################
+
+die( "$THIS: messaggio non inviato!\n" ) if ( ! $iEXIT_CODE );
+
+sub help
+{
+    my $iMAIL_ENABLED_SMTP_GMAIL    = ($iMAIL_GMAIL   )?'is enabled':'';
+    my $iMAIL_ENABLED_SMTP_NGIEOLO  = ($iMAIL_NGIEOLO )?'is enabled':'';
+    my $iMAIL_ENABLED_SMTP_SENDGRID = ($iMAIL_SENDGRID)?'is enabled':'';
+    my $iMAIL_ENABLED_HTML          = ($iMAIL_HTML    )?'is enabled':'';
+    my $iMAIL_ENABLED_TEXT_NONE     = ($iMAIL_TEXT_NOT)?'is enabled':'';
+    my $iMAIL_ENABLED_DEBUG         = ($iMAIL_DEBUG   )?'is enabled':'';
+    print( << "_EOD_" );
+Uso:
+    $THIS
+        -p   |  --smtp    <server>                 =[$iMAIL_SMTP]
+        -f   |  --from    <address>                =[$iMAIL_FROM]
+        -s   |  --subject <text>                   =[$iMAIL_SUBJECT]
+
+        -port|  --port     <port>                  =[$iMAIL_PORT]
+        -auth|  --auth     [ LOGIN | PLAIN ]       =[$iMAIL_AUTH]
+        -ausr|  --auth-username <username>         =[$iMAIL_AUTHUSR]
+        -apwd|  --auth-password <password>         =[$iMAIL_AUTHPWD]
+
+        -spg |  --set-smtp-gmail                    ($iMAIL_ENABLED_SMTP_GMAIL)
+        -spn |  --set-smtp-ngieolo                  ($iMAIL_ENABLED_SMTP_NGIEOLO)
+        -sps |  --set-smtp-sendgrid                 ($iMAIL_ENABLED_SMTP_SENDGRID)
+
+        -l   |  --html                              ($iMAIL_ENABLED_HTML)
+        -lfs |  --html-font-size <number>          =[$iMAIL_HTML_FONT_SIZE]
+        -ltn |  --html-text-none                    ($iMAIL_ENABLED_TEXT_NONE)
+
+        -e   |  --headers <header>\\n...\\n<header>  =[$iMAIL_HEADERS]
+        +e   |  ++headers <header>\\n...\\n<header>
+
+        -t   |  --to      <address,...,address>    =[$iMAIL_TO]
+        +t   |  ++to      <address,...,address>
+
+        -c   |  --cc      <address,...,address>    =[$iMAIL_CC]
+        +c   |  ++cc      <address,...,address>
+
+        -b   |  --bcc     <address,...,address>    =[$iMAIL_BCC]
+        +b   |  ++bcc     <address,...,address>
+
+        -m   |  --msg     <text>\\n...\\n<text>      =[$iMAIL_MSG]
+        +m   |  ++msg     <text>\\n...\\n<text>
+
+        -a   |  --file    <file-name>              =[$iMAIL_FILES]
+        +a   |  ++file    <file-name>
+
+        -d   |  --debug                             ($iMAIL_ENABLED_DEBUG)
+
+        -h   |  --help
+
+Nota:
+ *  Il '--' di una opzione azzera l'opzione stessa.
+
+ *  Il '++' di una opzione va in aggiunta a quelle gia' specificate.
+
+ *  Se l'opzione --msg (-m) non e' settata, oppure e' settata con la
+    variabile '$iMAIL_STDIN', il programma leggera' dallo STDIN.
+
+Version: $iMAIL_VERSION
+_EOD_
+
+    exit( 1 );
+}
+
+sub readSTDIN
+{
+    my @text = ();
+
+    while (my $line = <STDIN>) { push(@text, $line) }
+
+    return( join('', @text) );
+}
