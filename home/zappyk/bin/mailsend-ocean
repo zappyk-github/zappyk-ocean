@@ -238,10 +238,16 @@ foreach my $file ( @vMAIL_FILES ) {
         sendmail($iMAIL_SEND, $iMAIL_TRANSPORT);
         $iEXIT_CODE = 1;
     };
-    warn("sending failed: $@") if ($@);
+#CZ#warn("$THIS: $@") if ($@);
+    if ($@) {
+	my @line_all = split("\n", $@);
+	my $line_one = shift(@line_all);
+        warn("$THIS: $line_one\n");
+	warn("|".join("\n| ", @line_all)."\n|\n|\n") if ( $iMAIL_DEBUG );
+    }
 ################################################################################
 
-die( "$THIS: messaggio non inviato!\n" ) if ( ! $iEXIT_CODE );
+die( "$THIS: messaggio non inviato! :-(\n" ) if ( ! $iEXIT_CODE );
 
 sub help
 {
