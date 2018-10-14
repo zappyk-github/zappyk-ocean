@@ -51,8 +51,9 @@ else
 fi
 ################################################################################
 
- CMMD_MOVE='mv -bv'
+ CMMD_MOVE='mv -vb'
  CMMD_MOVE='mv -b'
+ CMMD_MOVE='mv -vf'
  CMMD_MOVE='mv -f'
 #CMMD_MOVE='echo'
 
