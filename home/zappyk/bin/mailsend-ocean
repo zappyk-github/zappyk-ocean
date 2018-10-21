@@ -84,7 +84,8 @@ sub _splitFirst { my @fields = _splitField($_[0]); my $first = shift(@fields); r
 sub _splitOther { my @fields = _splitField($_[0]); my $first = shift(@fields); return(join(':', @fields)) }
 for (my $i=0; $i<scalar(@vMAIL_MSG); $i++) { $vMAIL_MSG[$i] = readSTDIN() if ( $vMAIL_MSG[$i] eq $iMAIL_STDIN ) }
 if ($iMAIL_GMAIL) {
-    $iMAIL_PORT    = '587';
+    $iMAIL_PORT    = '587'; $iMAIL_AUTH = 'starttls';
+#ok#$iMAIL_PORT    = '465'; $iMAIL_AUTH = '1';
     $iMAIL_SMTP    = 'smtp.gmail.com';
    #$iMAIL_AUTH    = 'LOGIN';
     $iMAIL_AUTHUSR = 'zappyk.notice@gmail.com';
@@ -139,12 +140,14 @@ use Email::Sender::Transport::SMTP qw();
 use IO::All;
 #_______________________________________________________________________________
     my @iMAIL_PARTS     = ();
-    my $iMAIL_TRANSPORT = {
+    my $iMAIL_TRANSPORT = {};
+       $iMAIL_TRANSPORT = {
         transport => Email::Sender::Transport::SMTP->new({
             host => $iMAIL_SMTP,
             port => $iMAIL_PORT,
-           #ssl  => 1,
-           #startls  => 1,
+            ssl  => $iMAIL_AUTH,
+           #helo => 'localhost.localdomain',
+           #startls => 1,
             sasl_username => $iMAIL_AUTHUSR,
             sasl_password => $iMAIL_AUTHPWD,
             debug => $iMAIL_DEBUG
@@ -240,10 +243,10 @@ foreach my $file ( @vMAIL_FILES ) {
     };
 #CZ#warn("$THIS: $@") if ($@);
     if ($@) {
-	my @line_all = split("\n", $@);
-	my $line_one = shift(@line_all);
+        my @line_all = split("\n", $@);
+        my $line_one = shift(@line_all);
         warn("$THIS: $line_one\n");
-	warn("|".join("\n| ", @line_all)."\n|\n|\n") if ( $iMAIL_DEBUG );
+        warn("|".join("\n| ", @line_all)."\n|\n|\n") if ( $iMAIL_DEBUG );
     }
 ################################################################################
 
