@@ -87,7 +87,6 @@ if ($iMAIL_GMAIL) {
     $iMAIL_PORT    = '587'; $iMAIL_AUTH = 'starttls';
 #ok#$iMAIL_PORT    = '465'; $iMAIL_AUTH = '1';
     $iMAIL_SMTP    = 'smtp.gmail.com';
-   #$iMAIL_AUTH    = 'LOGIN';
     $iMAIL_AUTHUSR = 'zappyk.notice@gmail.com';
     $iMAIL_AUTHPWD = 'z4pp1k@n0t1c3s';
     $iMAIL_FROM    = $iMAIL_AUTHUSR; # e' indifferente settare FROM, Google invia con indirizzo AUTHUSR !!!
@@ -104,8 +103,10 @@ if ($iMAIL_SENDGRID) {
     $iMAIL_PORT    = '2525';
     $iMAIL_SMTP    = 'smtp.sendgrid.net';
    #$iMAIL_AUTH    = 'LOGIN';
-    $iMAIL_AUTHUSR  = 'sendgrid-pands';
+    $iMAIL_AUTHUSR = 'sendgrid-pands';
     $iMAIL_AUTHPWD = 's3rv1c3s';
+    $iMAIL_AUTHID  = 'sendgrid-pands-payroll';
+    $iMAIL_AUTHPWD = '}3>,jWD$J4E3KwBroup2';
     $iMAIL_FROM    = 'sysop+sendgrid@payroll.it';
 }
 
