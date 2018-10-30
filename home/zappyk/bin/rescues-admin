@@ -4,7 +4,8 @@ THIS=$0
 NAME=$(basename "$0")
 
 EXEC=$1 ; shift
-FILE=$1
+FILE=$1 ; shift
+FINE=$1 ; shift
 
 CMD_ENCFS=$(which encfs)
 CMD_UMOUNT=$(which umount)
@@ -14,15 +15,37 @@ CMD_ZIP=$(which 7z)
 OPT_RAR='a -hp -r'
 OPT_ZIP='a -p -r'
 
+EC_nBLACK_='\033[0;30m' ; EC_dGREY__='\033[0;30m'
+EC_nRED___='\033[0;31m' ; EC_lRED___='\033[0;31m'
+EC_nGREEN_='\033[0;32m' ; EC_lGREEN_='\033[0;32m'
+EC_nBROWN_='\033[0;33m' ; EC_YELLOW_='\033[0;33m'
+EC_nBLUE__='\033[0;34m' ; EC_lBLUE__='\033[0;34m'
+EC_nPURPLE='\033[0;35m' ; EC_lPURPLE='\033[0;35m'
+EC_nCYAN__='\033[0;36m' ; EC_lCYAN__='\033[0;36m'
+EC_lGREY__='\033[0;37m' ; EC_WHITE__='\033[0;37m'
+EC_n_xxx_1='\033[0;38m' ; EC_l_xxx_1='\033[0;38m'
+EC_n_xxx_2='\033[0;39m' ; EC_l_xxx_2='\033[0;39m'
+EC_n_xxx_3='\033[0;40m' ; EC_l_xxx_3='\033[0;40m'
+EC_NoC____='\033[0m'
+
 _error() { echo "${1//?/_}" ; echo "$1"; }
 _print() { echo "$NAME: execute $1"; }
 _write() {
     local file=$1
+    local grep=$2
+    printf "$EC_nBROWN_"
     printf "      _%s_ \n" "${file//?/_}"
     printf "FILE=| %s |\n" "${file}"
     printf "_____|_%s_|\n" "${file//?/_}"
-    cat "$file" ; local rc=$?
+    printf "$EC_NoC____"
+    if [ -z "$grep" ]; then
+        cat "$file"                           ; local rc=$?
+    else
+        cat "$file" | grep -i --color "$grep" ; local rc=$?
+    fi
+    printf "$EC_nBROWN_"
     printf "_______%s__\n" "${file//?/_}"
+    printf "$EC_NoC____"
     return $rc
 }
 
@@ -51,15 +74,16 @@ case "$EXEC" in
   -u) umount=true ;;
   -s) search=true ;;
   -b) backup=true ;;
-  -p) _write "$FILE" ; exit ;; 
+  -p) _write "$FILE" "$FINE" ; exit ;; 
   * ) "$THIS" -h ; [ -n "$EXEC" ] && _error "First parameter \"$EXEC\" non valid!" ; exit 1 ;;
 esac
 ismount=$(ls "$DIR_OFMOUNT/") ; [ -z "$ismount" ] && ( ! $umount ) && mount=true
 
  ( $mount  ) && _print 'mount...'  && "$CMD_ENCFS" "$PATH_SOURCE" "$DIR_OFMOUNT"
  ( $umount ) && _print 'umount...' && sudo "$CMD_UMOUNT" "$DIR_OFMOUNT"
-#( $search ) && _print 'search...' && "$CMD_FIND" -L "$DIR_OFMOUNT" -type f -iname $* -print0 | sort -z | xargs -0i bash -c "echo 'FILE=[ {} ]' && cat '{}'"
- ( $search ) && _print 'search...' && "$CMD_FIND" -L "$DIR_OFMOUNT" -type f -iname $* -print0 | sort -z | xargs -0i bash -c "$THIS -p \"{}\""
+#( $search ) && _print 'search...' && "$CMD_FIND" -L "$DIR_OFMOUNT" -type f -iname $*    -print0 | sort -z | xargs -0i bash -c "echo 'FILE=[ {} ]' && cat '{}'"
+#( $search ) && _print 'search...' && "$CMD_FIND" -L "$DIR_OFMOUNT" -type f -iname $*    -print0 | sort -z | xargs -0i bash -c "$THIS -p \"{}\""
+ ( $search ) && _print 'search...' && "$CMD_FIND" -L "$DIR_OFMOUNT" -type f -iname $FILE -print0 | sort -z | xargs -0i bash -c "$THIS -p \"{}\" \"$FINE\""
 #( $backup ) && _print 'backup...' && "$CMD_RAR" $OPT_RAR "$TAG_BACKUP_" "$DIR_BACKUP_"
  ( $backup ) && _print 'backup...' && "$CMD_ZIP" $OPT_ZIP "$TAG_BACKUP_" "$DIR_BACKUP_"
 
