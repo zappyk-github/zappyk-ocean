@@ -82,10 +82,9 @@ _nsm() { ( $test ) && return
     local mail__to_=$notify
     local mail_mssg=$string
     local mail_subj="Deluge $count files completed download [$tdate]"
-    local mail_from="zappyk@zappyk-rp"
-    local mail_from="zappyk@$(hostname -f)
-    local mail_cmmd=$CMMD_MAIL
-    local mail_cmmd="$(which $mail_cmmd)"
+#CZ#local mail_from="zappyk@zappyk-rp"
+    local mail_from="zappyk@"$(hostname -f)
+    local mail_cmmd="$CMMD_MAIL"
 
 #CZ#echo -e "$mail_mssg" | eval "$mail_cmmd         -s \"$mail_subj\" -r $mail_from    $mail__to_"
 #CZ#echo -e "$mail_mssg" | eval "$mail_cmmd -l -spn -s \"$mail_subj\" -f $mail_from -t $mail__to_"
@@ -95,8 +94,7 @@ _nsm() { ( $test ) && return
     local xmpp__to_=$notify
     local xmpp_mssg=$string
     local xmpp_from="zappyk.notice"
-    local xmpp_cmmd=$CMMD_XMPP
-    local xmpp_cmmd="perl -X $(which $xmpp_cmmd)"
+    local xmpp_cmmd="perl -X $CMMD_XMPP"
 
     echo -e "$xmpp_mssg" | eval "$xmpp_cmmd -t -u $xmpp_from $xmpp__to_"
     #___________________________________________________________________________
