@@ -5,7 +5,7 @@ NAME=$(basename "$0")
 
 EXEC=$1 ; shift
 FILE=$1 ; shift
-FINE=$1 ; shift
+FINE=$* ; shift
 
 CMD_ENCFS=$(which encfs)
 CMD_UMOUNT=$(which umount)
@@ -31,17 +31,17 @@ EC_NoC____='\033[0m'
 _error() { echo "${1//?/_}" ; echo "$1"; }
 _print() { echo "$NAME: execute $1"; }
 _write() {
-    local file=$1
-    local grep=$2
+    local file=$1 ; shift
+    local grep=$*
     printf "$EC_nBROWN_"
     printf "      _%s_ \n" "${file//?/_}"
     printf "FILE=| %s |\n" "${file}"
     printf "_____|_%s_|\n" "${file//?/_}"
     printf "$EC_NoC____"
     if [ -z "$grep" ]; then
-        cat "$file"                           ; local rc=$?
+        cat "$file"                         ; local rc=$?
     else
-        cat "$file" | grep -i --color "$grep" ; local rc=$?
+        cat "$file" | grep --color -i $grep ; local rc=$?
     fi
     printf "$EC_nBROWN_"
     printf "_______%s__\n" "${file//?/_}"
