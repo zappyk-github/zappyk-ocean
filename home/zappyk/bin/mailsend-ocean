@@ -141,6 +141,7 @@ use Email::Sender::Transport::SMTP qw();
 use IO::All;
 #_______________________________________________________________________________
     my @iMAIL_PARTS     = ();
+    my $iMAIL_EMAILSEND = {};
     my $iMAIL_TRANSPORT = {};
        $iMAIL_TRANSPORT = {
         transport => Email::Sender::Transport::SMTP->new({
@@ -239,7 +240,9 @@ foreach my $file ( @vMAIL_FILES ) {
 #_______________________________________________________________________________
 #
     eval {
-        sendmail($iMAIL_SEND, $iMAIL_TRANSPORT);
+    #ok#$iMAIL_EMAILSEND = { from => $iMAIL_FROM, to => @vMAIL_TO, cc => @vMAIL_CC, bcc => @vMAIL_BCC };
+        sendmail($iMAIL_SEND,                   $iMAIL_TRANSPORT);
+    #ok#sendmail($iMAIL_SEND, $iMAIL_EMAILSEND, $iMAIL_TRANSPORT);
         $iEXIT_CODE = 1;
     };
 #CZ#warn("$THIS: $@") if ($@);
