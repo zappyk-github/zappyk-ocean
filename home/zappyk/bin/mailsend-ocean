@@ -105,7 +105,7 @@ if ($iMAIL_SENDGRID) {
    #$iMAIL_AUTH    = 'LOGIN';
     $iMAIL_AUTHUSR = 'sendgrid-pands';
     $iMAIL_AUTHPWD = 's3rv1c3s';
-    $iMAIL_AUTHID  = 'sendgrid-pands-payroll';
+    $iMAIL_AUTHUSR = 'sendgrid-pands-payroll';
     $iMAIL_AUTHPWD = '}3>,jWD$J4E3KwBroup2';
     $iMAIL_FROM    = 'sysop+sendgrid@payroll.it';
 }
