@@ -57,7 +57,7 @@ for ( my $i=0; $i<scalar(@ARGV); $i++ ) {
 
         ( /^(-)?-(l|html)$/             ) && do{ $iMAIL_HTML           = 1                                    ; last SWITCH; };
         ( /^(-)?-(lfs|html-font-size)$/ ) && do{ $iMAIL_HTML_FONT_SIZE = $ARGV[++$i]                          ; last SWITCH; };
-        ( /^(-)?-(l|html)$/             ) && do{ $iMAIL_TEXT_NOT       = 1                                    ; last SWITCH; };
+        ( /^(-)?-(ltn|html-text-none)$/ ) && do{ $iMAIL_TEXT_NOT       = 1                                    ; last SWITCH; };
 
         ( /^(-)?-(e|headers)$/          ) && do{ @vMAIL_HEADERS        = (); push(@vMAIL_HEADERS, $ARGV[++$i]); last SWITCH; };
         ( /^(-)?-(t|to)$/               ) && do{ @vMAIL_TO             = (); push(@vMAIL_TO     , $ARGV[++$i]); last SWITCH; };
