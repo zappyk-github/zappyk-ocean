@@ -8,6 +8,7 @@ SET_NUMBERS='0-9'
 SET_NUMBERS='0-90-9'
 SET_SYMBOLS='_!@#$%^&*()+[]|:<>?='
 SET_SYMBOLS='_!@#$%'
+SET_CHARACT="$SET_NUMBERS$SET_ALFABET$SET_NUMBERS$SET_SYMBOLS$SET_NUMBERS"
 
 DEV_RANDOM0=''
 DEV_RANDOM1='/dev/random'
@@ -18,6 +19,6 @@ DEV_RANDOM2='/dev/urandom'
 
 [ -z "$DEV_RANDOM0" ] && echo "$0:  device random not found!" && exit 1
 
-cat "$DEV_RANDOM0" | tr -dc "$SET_NUMBERS$SET_ALFABET$SET_NUMBERS$SET_SYMBOLS$SET_NUMBERS" | fold -w $PASSWORD_LENGTH | head -n $PASSWORD_NUMBER
+cat "$DEV_RANDOM0" | tr -dc "$SET_CHARACT" | fold -w $PASSWORD_LENGTH | head -n $PASSWORD_NUMBER
 
 exit
