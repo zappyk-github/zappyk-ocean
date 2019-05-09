@@ -21,6 +21,7 @@ _echo() {
 _rclone_show() {
     _echo ; rclone check "$REMOTE_PATH" "$LOCALE_PATH"
     _echo ; rclone ls    "$REMOTE_PATH" 
+    _echo ; rclone lsl   "$REMOTE_PATH" 
     _echo ; ls -l                       "$LOCALE_PATH"
 }
 
