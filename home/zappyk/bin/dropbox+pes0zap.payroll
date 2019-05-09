@@ -1,0 +1,5 @@
+#!/bin/bash
+#HOME=$HOME/.dropbox+pes0zap.payroll dropbox start -i
+#HOME=$HOME/.dropbox+pes0zap.payroll dropbox start
+ HOME=$HOME/.dropbox+pes0zap.payroll dropbox "$@"
+exit

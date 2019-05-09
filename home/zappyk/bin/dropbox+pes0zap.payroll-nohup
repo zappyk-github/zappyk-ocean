@@ -1,0 +1,6 @@
+#!/bin/bash
+#nohup dropbox+pes0zap.payroll "$@" &>/dev/null disown
+#nohup dropbox+pes0zap.payroll "$@" &>/dev/null disown -h
+#nohup dropbox+pes0zap.payroll "$@" &>/dev/null disown -ar
+ nohup dropbox+pes0zap.payroll "$@" &>/dev/null
+exit
