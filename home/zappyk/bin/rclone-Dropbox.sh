@@ -9,6 +9,9 @@ BASE_NAME=$(basename "$0" ".sh")
 LOCK_FILE="$BASE_PATH/$BASE_NAME.lock"
 LOG__FILE="$BASE_PATH/$BASE_NAME.log"
 
+MSGSYNCOK="Synchronization ok"
+MSGSYNCKO="Synchronization must be performed..."
+
 ################################################################################
 _echo() {
     lsep="____________________"
@@ -20,8 +23,8 @@ _echo() {
 ################################################################################
 _rclone_show() {
     _echo ; rclone check "$REMOTE_PATH" "$LOCALE_PATH"
-    _echo ; rclone ls    "$REMOTE_PATH" 
-    _echo ; rclone lsl   "$REMOTE_PATH" 
+    _echo ; rclone ls    "$REMOTE_PATH"
+    _echo ; rclone lsl   "$REMOTE_PATH"
     _echo ; ls -l                       "$LOCALE_PATH"
 }
 
@@ -34,11 +37,21 @@ _rclone() {
 
 ################################################################################
 _rclone_sync() {
-    sync=true
-    _rclone check "$REMOTE_PATH" "$LOCALE_PATH" "$@" && sync=false
+    vCheck=true
+    vCloud=true
+    vLocal=true
+    action='copy'
+    versus=$1 ; shift
+    [ "$versus" == "^" ] && vLocal=false && action='sync'
+    [ "$versus" == "." ] && vCloud=false && action='sync'
+    [ "$versus" == "-" ] && vCloud=false && vLocal=false
+
+    sync=false
+    ( $vCheck ) && sync=true
+    ( $vCheck ) && _rclone check   "$REMOTE_PATH" "$LOCALE_PATH" "$@" && sync=false && echo "$MSGSYNCOK" || echo "$MSGSYNCKO"
     if ( $sync ); then
-    _rclone copy  "$REMOTE_PATH" "$LOCALE_PATH" "$@"
-    _rclone copy  "$LOCALE_PATH" "$REMOTE_PATH" "$@"
+    ( $vCloud ) && _rclone $action "$REMOTE_PATH" "$LOCALE_PATH" "$@"
+    ( $vLocal ) && _rclone $action "$LOCALE_PATH" "$REMOTE_PATH" "$@"
     fi
 }
 
