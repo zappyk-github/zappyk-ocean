@@ -38,13 +38,13 @@ _rclone() {
 ################################################################################
 _rclone_sync() {
     vCheck=true
-    vCloud=true
-    vLocal=true
+    vCloud=false
+    vLocal=false
     action='copy'
     versus=$1 ; shift
-    [ "$versus" == "^" ] && vLocal=false && action='sync'
-    [ "$versus" == "." ] && vCloud=false && action='sync'
-    [ "$versus" == "-" ] && vCloud=false && vLocal=false
+    [ "$versus" == "^" ] && vCloud=true && action='sync'
+    [ "$versus" == "." ] && vLocal=true && action='sync'
+    [ "$versus" == "-" ] && vCloud=true && vLocal=true
 
     sync=false
     ( $vCheck ) && sync=true
@@ -75,27 +75,27 @@ _rclone_main() {
     ) 9>"$LOCK_FILE"
 }
 
-_rclone_main "$@"
-_rclone_show
+ _rclone_main "$@"
+#_rclone_show
 
 exit
 
-::::::::::LINK::::::::::
-https://www.dropbox.com/developers/apps
-https://medium.com/@tegola/backup-home-dir-with-rclone-6289d3372987
+# ::::::::::LINK::::::::::
+# https://www.dropbox.com/developers/apps
+# https://medium.com/@tegola/backup-home-dir-with-rclone-6289d3372987
 
-::::::::::URL::::::::::
-https://www.dropbox.com/1/oauth2/authorize?client_id=5jcck7diasz0rqy&redirect_uri=http%3A%2F%2Flocalhost%3A53682%2F&response_type=code&state=fc804b1a8b6f70682b7bf303231b3689
+# ::::::::::URL::::::::::
+# https://www.dropbox.com/1/oauth2/authorize?client_id=5jcck7diasz0rqy&redirect_uri=http%3A%2F%2Flocalhost%3A53682%2F&response_type=code&state=fc804b1a8b6f70682b7bf303231b3689
 
-::::::::::CODE::::::::::
-{"access_token":"rK4N1OfE1YAAAAAAAAAAK9FItix2s940-unNmqo4H1OTz-RRIxHZHXL1BMHwCJcW","token_type":"bearer","expiry":"0001-01-01T00:00:00Z"}
-{"access_token":"rK4N1OfE1YAAAAAAAAAALQcq70N26BjF1s6iWDLGhiUQNt8JcUw3Ev_JXC_nmXDj","token_type":"bearer","expiry":"0001-01-01T00:00:00Z"}
+# ::::::::::CODE::::::::::
+# {"access_token":"rK4N1OfE1YAAAAAAAAAAK9FItix2s940-unNmqo4H1OTz-RRIxHZHXL1BMHwCJcW","token_type":"bearer","expiry":"0001-01-01T00:00:00Z"}
+# {"access_token":"rK4N1OfE1YAAAAAAAAAALQcq70N26BjF1s6iWDLGhiUQNt8JcUw3Ev_JXC_nmXDj","token_type":"bearer","expiry":"0001-01-01T00:00:00Z"}
 
-::::::::::COMMAND::::::::::
-rclone ls    remote:Work
-rclone check remote:Work ~/Dropbox+pes0zap.payroll@rclone/
-rclone sync  remote:Work ~/Dropbox+pes0zap.payroll@rclone/
+# ::::::::::COMMAND::::::::::
+# rclone ls    remote:Work
+# rclone check remote:Work ~/Dropbox+pes0zap.payroll@rclone/
+# rclone sync  remote:Work ~/Dropbox+pes0zap.payroll@rclone/
 
-::::::::::?::::::::::
-http://localhost:53682/?state=fc804b1a8b6f70682b7bf303231b3689&code=rK4N1OfE1YAAAAAAAAAAKuBCx75xyzsz6GZzaX0w6aI
-http://localhost:53682/?state=052048a1219a09d4e0a5d90632fa3e98&code=rK4N1OfE1YAAAAAAAAAALFlmZURuNvJ3e0vIFTJPTa8
+# ::::::::::?::::::::::
+# http://localhost:53682/?state=fc804b1a8b6f70682b7bf303231b3689&code=rK4N1OfE1YAAAAAAAAAAKuBCx75xyzsz6GZzaX0w6aI
+# http://localhost:53682/?state=052048a1219a09d4e0a5d90632fa3e98&code=rK4N1OfE1YAAAAAAAAAALFlmZURuNvJ3e0vIFTJPTa8
