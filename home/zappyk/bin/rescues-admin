@@ -10,8 +10,8 @@ FINE=$* ; shift
 CMD_ENCFS=$(which encfs)
 CMD_UMOUNT=$(which umount)
 CMD_FIND=$(which find)
+CMD_ZIP=$(which 7z  2>/dev/null)
 CMD_ZIP=$(which 7za 2>/dev/null)
-CMD_ZIP=$(which 7z)
 OPT_RAR='a -hp -r'
 OPT_ZIP='a -p -r'
 
@@ -59,7 +59,7 @@ TAG_BACKUP_="$DIR_OFMOUNT.backup_$(date +'%Y%m%d').7z"
 [ ! -n "$CMD_ENCFS"  ] && echo "$NAME: Installa il pacchetto encfs!"  && exit 1
 [ ! -n "$CMD_UMOUNT" ] && echo "$NAME: Installa il pacchetto umount!" && exit 1
 [ ! -n "$CMD_FIND"   ] && echo "$NAME: Installa il pacchetto find!"   && exit 1
-[ ! -n "$CMD_ZIP"    ] && echo "$NAME: Installa il pacchetto zip!"    && exit 1
+[ ! -n "$CMD_ZIP"    ] && echo "$NAME: Installa il pacchetto p7zip!"  && exit 1
 
 [ ! -d "$PATH_SOURCE" ] && echo "$NAME: Path di Partenza '$PATH_SOURCE' inesistente..." && exit 1
 [ ! -d "$DIR_OFMOUNT" ] && echo "$NAME: Path di Mount '$DIR_OFMOUNT' inesistente..."    && exit 1

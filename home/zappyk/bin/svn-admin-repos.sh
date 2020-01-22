@@ -2,6 +2,7 @@
 IFS_SAVE=$IFS
 
 SVN_DEBUG=false
+SVN_CMMND='svn'
 SVN_CONFS="
  zappyk@:/home/zappyk/bin
  root@:/root/bin
@@ -11,7 +12,7 @@ SVN_CONFS="
  @§$HOME/Programmi/zappyk-ocean
  @§$HOME/Programmi/zappyk-python
  @§$HOME/Programmi/zappyk-github/crontab-ui.git
- @§$HOME/Programmi/Version-Control-System.payroll/payroll§svn co --username pes0zap --password crl0zpp1 \"https://svn.payroll.it/payroll/trunk\" payroll
+#@§$HOME/Programmi/Version-Control-System.payroll/payroll-svn-legacy§$SVN_CMMND co --username pes0zap --password crl0zpp1 \"https://svn.payroll.it/payroll/trunk\" payroll-svn-legacy
 #@§/opt/payroll-var/webexe
 #@§/opt/payroll
 "
@@ -47,11 +48,9 @@ _quoting() {
 }
 
 #-------------------------------------------------------------------------------
-SVN_COMMAND='svn'
+[ -z "$*" ] && echo -e "$($SVN_CMMND --help)\n$SVN_CONFS\nSpecifica un comando..." && exit 1
 
-[ -z "$*" ] && echo -e "$($SVN_COMMAND --help)\n$SVN_CONFS\nSpecifica un comando..." && exit 1
-
-COMMAND="$SVN_COMMAND "$(_quoting "$@")
+COMMAND="$SVN_CMMND "$(_quoting "$@")
 EXITCODE=0
 #-------------------------------------------------------------------------------
 IFS=$'\n'

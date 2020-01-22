@@ -1,14 +1,13 @@
 #!/usr/bin/env xdg-open
-
 [Desktop Entry]
 Version=1.0
 Encoding=UTF-8
-Name=zappyk-hd
+Name=*zappyk-hd
 Icon=/home/zappyk/Programmi/mount-zappyk-hd/mount-zappyk-hd.png
 Type=Application
 Terminal=false
 #CZ#Exec=mount-zappyk-hd+tty --sudo --gui
 Exec=mount-zappyk-hd --sudo --gui
-Name[it_IT]=zappyk-hd
+Name[it_IT]=*zappyk-hd
 Icon[it_IT]=/home/zappyk/Programmi/mount-zappyk-hd/mount-zappyk-hd.png
 StartupNotify=true
