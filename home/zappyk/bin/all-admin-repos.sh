@@ -7,6 +7,7 @@ COMMANDS_GIT=$COMMANDS_ALL
 ################################################################################
 case "$COMMANDS_ALL" in
     up     ) COMMANDS_GIT=pull ;;
+    pull   ) COMMANDS_SVN=up ;;
     push   ) COMMANDS_SVN= ;;
     commit ) ;;
     status ) ;;
