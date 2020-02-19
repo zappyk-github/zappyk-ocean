@@ -17,18 +17,45 @@ GIT_CONFS="
  @§$HOME/Programmi/_dvcs_/pes0zap-payroll/payroll-legacy§gcloud source repos clone payroll-legacy --project=payroll-datacenter
 "
 
+EC_nBLACK_='\033[0;30m' ; EC_dGREY__='\033[0;30m'
+EC_nRED___='\033[0;31m' ; EC_lRED___='\033[0;31m'
+EC_nGREEN_='\033[0;32m' ; EC_lGREEN_='\033[0;32m'
+EC_nBROWN_='\033[0;33m' ; EC_YELLOW_='\033[0;33m'
+EC_nBLUE__='\033[0;34m' ; EC_lBLUE__='\033[0;34m'
+EC_nPURPLE='\033[0;35m' ; EC_lPURPLE='\033[0;35m'
+EC_nCYAN__='\033[0;36m' ; EC_lCYAN__='\033[0;36m'
+EC_lGREY__='\033[0;37m' ; EC_WHITE__='\033[0;37m'
+EC_n_xxx_1='\033[0;38m' ; EC_l_xxx_1='\033[0;38m'
+EC_n_xxx_2='\033[0;39m' ; EC_l_xxx_2='\033[0;39m'
+EC_n_xxx_3='\033[0;40m' ; EC_l_xxx_3='\033[0;40m'
+EC_NoC____='\033[0m'
+
 ################################################################################
 _log() {
     local string="$*"
+    echo -n -e "$EC_nGREEN_"
     echo "+-${string//?/-}-+"
     echo "| ${string} |"
     echo "+-${string//?/-}-+"
+    echo -n -e "$EC_NoC____"
+}
+
+################################################################################
+_err() {
+    local string="$*"
+    echo -n -e "$EC_nRED___"
+    echo "+-${string//?/-}-+"
+    echo "| ${string} |"
+#CZ#echo "+-${string//?/-}-+"
+    echo -n -e "$EC_NoC____"
 }
 
 ################################################################################
 _help() {
     local string="$*"
+    echo -n -e "$EC_YELLOW_"
     [ -n "$string" ] && echo -e "$string"
+    echo -n -e "$EC_NoC____"
 }
 
 ################################################################################
@@ -86,8 +113,8 @@ for GIT_CONF in $GIT_CONFS; do
 
     _log "$cmd_0"
     eval "$cmd_0" ; EXITCODE=$?
-    [ $EXITCODE -eq 0 ] && echo || { _log "Error! ($EXITCODE)"; _help "$GIT_HELP"; }
-    echo
+    [ $EXITCODE -eq 0 ] && echo || { _err "Error! ($EXITCODE)"; _help "$GIT_HELP"; }
+#CZ#echo
 done
 IFS=$IFS_SAVE
 #-------------------------------------------------------------------------------
