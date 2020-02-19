@@ -7,14 +7,15 @@ COMMANDS_GIT=$COMMANDS_ALL
 ################################################################################
 case "$COMMANDS_ALL" in
     up     ) COMMANDS_GIT=pull ;;
-    commit ) COMMANDS_GIT=push ;;
+    push   ) COMMANDS_SVN= ;;
+    commit ) ;;
     status ) ;;
 esac
 
 ################################################################################
-svn-admin-repos.sh "$COMMANDS_SVN" "$@"
+[ -n "$COMMANDS_SVN" ] && svn-admin-repos.sh "$COMMANDS_SVN" "$@"
 
 ################################################################################
-git-admin-repos.sh "$COMMANDS_GIT" "$@"
+[ -n "$COMMANDS_GIT" ] && git-admin-repos.sh "$COMMANDS_GIT" "$@"
 
 exit
