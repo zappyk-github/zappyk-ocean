@@ -1,0 +1,1 @@
+gcloud beta compute --project "payroll-datacenter" "$@"
