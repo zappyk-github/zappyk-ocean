@@ -9,10 +9,10 @@ SVN_CONFS="
  root@:/opt/sysadm
 "
 SVN_CONFS="
- @§$HOME/Programmi/zappyk-ocean
- @§$HOME/Programmi/zappyk-python
- @§$HOME/Programmi/zappyk-github/crontab-ui.git
-#@§$HOME/Programmi/Version-Control-System.payroll/payroll-svn-legacy§$SVN_CMMND co --username pes0zap --password crl0zpp1 \"https://svn.payroll.it/payroll/trunk\" payroll-svn-legacy
+#@§$HOME/Programmi/_dvcs_/zappyk-github/zappyk-ocean
+#@§$HOME/Programmi/_dvcs_/zappyk-github/zappyk-python
+#@§$HOME/Programmi/_dvcs_/zappyk-github/crontab-ui
+#@§$HOME/Programmi/_dvcs_/pes0zap-payroll/payroll-legacy§$SVN_CMMND co --username pes0zap --password crl0zpp1 \"https://svn.payroll.it/payroll/trunk\" payroll-svn-legacy
 #@§/opt/payroll-var/webexe
 #@§/opt/payroll
 "

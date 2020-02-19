@@ -9,11 +9,12 @@ GIT_CONFS="
  root@:/opt/sysadm
 "
 GIT_CONFS="
-#@§$HOME/Programmi/zappyk-github/zappyk-ocean§$GIT_CMMND clone \"https://zappyk@github.com/zappyk-github/zappyk-ocean.git\" zappyk-ocean
-#@§$HOME/Programmi/zappyk-github/zappyk-python§$GIT_CMMND clone \"https://zappyk@github.com/zappyk-github/zappyk-python.git\" zappyk-python
-#@§$HOME/Programmi/Version-Control-System.payroll/payroll-git-google§$GIT_CMMND clone \"ssh://pes0zap@payroll.it@source.developers.google.com:2022/p/payroll-datacenter/r/payroll-legacy\" payroll-git-google
-#@§$HOME/Programmi/Version-Control-System.payroll/payroll-git-google§$GIT_CMMND clone \"https://source.developers.google.com/p/payroll-datacenter/r/payroll-legacy\" payroll-git-google
- @§$HOME/Programmi/Version-Control-System.payroll/payroll-git-google§gcloud source repos clone payroll-legacy --project=payroll-datacenter
+ @§$HOME/Programmi/_dvcs_/zappyk-github/zappyk-ocean§$GIT_CMMND clone \"https://zappyk@github.com/zappyk-github/zappyk-ocean.git\" zappyk-ocean
+ @§$HOME/Programmi/_dvcs_/zappyk-github/zappyk-python§$GIT_CMMND clone \"https://zappyk@github.com/zappyk-github/zappyk-python.git\" zappyk-python
+ @§$HOME/Programmi/_dvcs_/zappyk-github/crontab-ui
+#@§$HOME/Programmi/_dvcs_/pes0zap-payroll/payroll-legacy§$GIT_CMMND clone \"ssh://pes0zap@payroll.it@source.developers.google.com:2022/p/payroll-datacenter/r/payroll-legacy\" payroll-git-google
+#@§$HOME/Programmi/_dvcs_/pes0zap-payroll/payroll-legacy§$GIT_CMMND clone \"https://source.developers.google.com/p/payroll-datacenter/r/payroll-legacy\" payroll-git-google
+ @§$HOME/Programmi/_dvcs_/pes0zap-payroll/payroll-legacy§gcloud source repos clone payroll-legacy --project=payroll-datacenter
 "
 
 ################################################################################
