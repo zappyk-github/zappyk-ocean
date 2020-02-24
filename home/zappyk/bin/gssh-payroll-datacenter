@@ -1,1 +1,10 @@
-gcloud beta compute --project "payroll-datacenter" "$@"
+#!/bin/env bash
+
+remote=${1} ; shift
+
+project='payroll-datacenter'
+thezone='europe-west1-d'
+
+gcloud beta compute --project "$project" "$@" ssh --zone "$thezone" "$remote"
+
+exit

@@ -1,1 +1,1 @@
-gssh-payroll-datacenter ssh --zone "europe-west1-d" "zadmin@fs"
+gssh-payroll-datacenter zadmin@fs "$@"

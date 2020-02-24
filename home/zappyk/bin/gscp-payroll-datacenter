@@ -1,0 +1,16 @@
+#!/bin/env bash
+
+remote=${1}          ; shift
+file_1=${1}          ; shift
+file_2=${1:-$file_1} ; shift
+
+project='payroll-datacenter'
+thezone='europe-west1-d'
+
+if [ -e "$file_1" ]; then
+    gcloud beta compute --project "$project" "$@" scp --zone "$thezone" "$file_1" $remote:"$file_2"
+else
+    gcloud beta compute --project "$project" "$@" scp --zone "$thezone"           $remote:"$file_1" "$file_2"
+fi
+
+exit
