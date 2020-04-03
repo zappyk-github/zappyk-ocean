@@ -1,0 +1,11 @@
+#!/bin/env bash
+# FilterOptions setting, the order is: separator(s),text-delimiter,encoding,first-row,column-format
+
+FILE_CSV=$1 ; shift
+FILE_XLS=$1 ; [ -z "$FILE_XLS" ] && FILE_XLS="$(dirname "$FILE_CSV")/$(basename "$FILE_CSV" ".csv").xlsx"
+
+                                               # 59=;
+                                               #    34=" 
+unoconv -f xlsx -o "$FILE_XLS" -i FilterOptions="59,34,0,1" "$FILE_CSV"
+
+exit
