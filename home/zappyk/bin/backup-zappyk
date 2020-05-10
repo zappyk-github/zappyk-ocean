@@ -1,0 +1,16 @@
+#!/bin/env bash
+
+cd ~ || { echo "Not change directory HOME, exit"; exit 1; }
+
+exit_code=0
+shellfail=''
+_shell() { eval "$*" ; [ $? -ne 0 ] && exit_code=$? && shellfail="$shellfail\nerror($?) : $*"; }
+
+_shell tar -cf Dropbox-backup.tar         Dropbox/
+_shell tar -cf Dropbox-backup-Private.tar Dropbox/Private/
+_shell cp  -iv Dropbox-backup-Private.tar Insync/zappyk@gmail.com/Google\ Drive/Media/Documenti/pim/
+
+_shell tar -cf Insync-backup.tar          Insync/
+
+echo "$shellfail"
+exit "$exit_code"
