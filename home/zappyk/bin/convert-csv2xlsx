@@ -3,11 +3,11 @@
 
 _FORMAT_='xlsx'
 FILE_CSV=$1 ; shift
-FILE_XLS=$1 ; [ -z "$FILE_XLS" ] && FILE_XLS="$(dirname "$FILE_CSV")/$(basename "$FILE_CSV" ".csv").xlsx"
+FILE_XLS=$1 ; [ -z "$FILE_XLS" ] && FILE_XLS="$(dirname "$FILE_CSV")/$(basename "$FILE_CSV" ".csv").$_FORMAT_"
 
-                                                      # 59=;
-                                                      # 44=,
-                                                      #    34=" 
-unoconv -f "$_FORMAT_" -o "$FILE_XLS" -i FilterOptions="59,34,0,1" "$FILE_CSV"
+    #                                                                  # 59=;
+    # lang=it formatta il numero con separatore ,                      # 44=,
+    #                                                                  #    34=" 
+LANG=it_IT.UTF-8 unoconv -f "$_FORMAT_" -o "$FILE_XLS" -i FilterOptions="59,34,0,1" "$FILE_CSV"
 
 exit
