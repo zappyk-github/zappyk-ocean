@@ -33,6 +33,8 @@ _print() { echo "$NAME: execute $1"; }
 _write() {
     local file=$1 ; shift
     local grep=$*
+    local type=$(file -i "$file" | cut -d':' -f2- | grep -i 'text/plain')
+    if [ -n "$type" ]; then
     printf "$EC_nBROWN_"
     printf "      _%s_ \n" "${file//?/_}"
     printf "FILE=| %s |\n" "${file}"
@@ -46,6 +48,7 @@ _write() {
     printf "$EC_nBROWN_"
     printf "_______%s__\n" "${file//?/_}"
     printf "$EC_NoC____"
+    fi
     return $rc
 }
 

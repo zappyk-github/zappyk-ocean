@@ -22,6 +22,7 @@ repositories='
  100:lfarkas-truecrypt
  100:virtualbox
  100:Dropbox
+ 100:packages-microsoft-com-prod
 #100:google
  100:google-chrome
  100:google-cloud-sdk

@@ -1,8 +1,8 @@
 #!/bin/env bash
 
 remote=${1}          ; shift
-file_1=${1}          ; shift
-file_2=${1:-$file_1} ; shift
+file_1=${1}          ; shift ; name_1=$(basename "$file_1")
+file_2=${1:-$name_1} ; shift
 
 project='payroll-datacenter'
 thezone='europe-west1-d'

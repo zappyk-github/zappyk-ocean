@@ -1,0 +1,7 @@
+#!/bin/env bash
+
+# $HOME/Programmi/GoogleCloud/cloud_sql_proxy-payroll-run.sh
+
+pgrep cloud_sql_proxy || gnome-terminal --window --hide-menubar --profile="user (cloud_sql_proxy)" && echo "# cloud_sql_proxy alredy run..."
+
+exit

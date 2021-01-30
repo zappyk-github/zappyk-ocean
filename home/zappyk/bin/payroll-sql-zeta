@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+REGEXP=${1:-_xxx}
+STRING=${2:-_xxx}
+shift 2
+
+payroll-sql-one-line.pl "$STRING" "$REGEXP" "$@"
+
+exit
