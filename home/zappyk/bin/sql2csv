@@ -1,0 +1,7 @@
+#!/bin/env bash
+
+SEP='|'
+
+grep -a "^$SEP" | sed "s/^$SEP//" | sed "s/$SEP$//" | any2csv "$@"
+
+exit

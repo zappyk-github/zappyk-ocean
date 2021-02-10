@@ -1,10 +1,20 @@
 #!/bin/env bash
 #
-CONNECT_tag=${1}    ; shift
-QUERYONEROW=${1:-1} ; shift
+CONNECT_tag=
+SQLisOneRow=1
+Query_Array=
+Query_Count=0
+while test -n "$1"; do
+    case "$1" in
+        -c   | --connect        ) CONNECT_tag=$2 ; shift ;;
+        -smr | --sql-multi-rows ) SQLisOneRow=0  ;;
+        *                       ) Query_Array[$Query_Count]=$1 ; Query_Count=$(($Query_Count +1));;
+    esac
+    shift
+done
 #
-QueryOneRow=true
-QueryOneRow=false
+QUERYONEROW=true
+QUERYONEROW=false
 #
 case "$CONNECT_tag" in
     hrpp ) CONNECT_set='HRPP   zetarw s3rv1c3s' ;;
@@ -17,20 +27,34 @@ case "$CONNECT_tag" in
     *    ) echo "Connessione DB '$CONNECT_tag' non configurata!"; exit 1 ;;
 esac
 #
+_run_query_() { LANG=C isql -b -v $CONNECT_set; }
+#
 payroll-mssql-cloud_sql_proxy
 #
-if ( $QueryOneRow );
+if ( $QUERYONEROW );
 then
-    if [ -z "$*" ];
-    then LANG=C isql -b -v $CONNECT_set < <(cat      )
-    else LANG=C isql -b -v $CONNECT_set < <(echo "$*")
+    if [ -z "$Query_Array" ];
+    then _run_query_ < <(cat      )
+#CZ#else _run_query_ < <(echo "${Query_Array[*]}")
+    else 
+        for i in $(seq 0 $Query_Count); do query=${Query_Array[$i]}
+        [ -f "$query" ] && _run_query_ < <(cat  "$query") \
+                        || _run_query_ < <(echo "$query")
+        shift
+        done
     fi
 else
-    if [ -z "$*" ];
-   #then LANG=C isql -b -v $CONNECT_set < <(cat       ; echo 'go'; echo '\quit')
-   #else LANG=C isql -b -v $CONNECT_set < <(echo "$*" ; echo 'go'; echo '\quit')
-    then LANG=C isql -b -v $CONNECT_set < <(cat       | payroll-sql-one-line.pl '' '' $QUERYONEROW)
-    else LANG=C isql -b -v $CONNECT_set < <(echo "$*" | payroll-sql-one-line.pl '' '' $QUERYONEROW)
+    if [ -z "$Query_Array" ];
+   #then _run_query_ < <(cat                      ; echo 'go'; echo '\quit')
+   #else _run_query_ < <(echo "${Query_Array[*]}" ; echo 'go'; echo '\quit')
+    then _run_query_ < <(cat                      | payroll-sql-one-line.pl '' '' $SQLisOneRow)
+#CZ#else _run_query_ < <(echo "${Query_Array[*]}" | payroll-sql-one-line.pl '' '' $SQLisOneRow)
+    else 
+        for i in $(seq 0 $Query_Count); do query=${Query_Array[$i]}
+        [ -f "$query" ] && _run_query_ < <(cat  "$query" | payroll-sql-one-line.pl '' '' $SQLisOneRow) \
+                        || _run_query_ < <(echo "$query" | payroll-sql-one-line.pl '' '' $SQLisOneRow)
+        shift
+        done
     fi
 fi
 #

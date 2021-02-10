@@ -1,5 +1,7 @@
 #!/bin/env bash
 
+def_numrow=50
+
 operations='list'
 repositories='
  100:fedora
@@ -36,6 +38,7 @@ repositories='
  100:livna
  100:steam
 '
+repositories=$(dnf repolist --enabled | cut -d' ' -f1 | tail -n +2 | sed "s/^/$def_numrow:/g")
 search_packages='nvidia'
 search_packages=''
 
@@ -75,7 +78,7 @@ execute_command() {
     [ "${ite:0:1}" == '#' ] && return
 
     IFS=$':' read num rep < <(echo "$ite")
-    [ -z "$rep" ] && rep=$num && num=50
+    [ -z "$rep" ] && rep=$num && num=$def_numrow
 
                local log="$directory/dnf-$ope.log"
     [ -n "$rep" ] && log="$directory/dnf-$ope-$rep.log"

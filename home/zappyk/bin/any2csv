@@ -9,8 +9,8 @@ DEF_TRIM_RIGHT='\s*'
 DEF_FILE_INPUT=/dev/stdin
 OLD_FIELD_SPLIT='|'
 OLD_FIELD_DELIM=''
-NEW_FIELD_SPLIT=','
-NEW_FIELD_DELIM='"'
+NEW_FIELD_SPLIT=',' ; NEW_FIELD_SPLIT=';'
+NEW_FIELD_DELIM='"' ; NEW_FIELD_DELIM=''
 HELP_STRING="Usage:
         $BASENAME
                 [ -h   | --help ]

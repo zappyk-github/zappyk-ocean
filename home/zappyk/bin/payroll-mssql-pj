@@ -1,5 +1,5 @@
 #!/bin/env bash
 
-payroll-mssql prjp "$@"
+payroll-mssql -c prjp "$@"
 
 exit

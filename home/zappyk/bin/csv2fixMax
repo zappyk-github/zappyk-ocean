@@ -1,0 +1,117 @@
+#!/bin/env perl
+
+use strict;
+use warnings;
+
+my $SEP = $ARGV[0] || ';';
+my $TRM = $ARGV[1] || 0;
+my $QUT = $ARGV[2] || '"';
+
+#-------------------------------------------------------------------------------
+my $DOS_line = "\r"; #="\r"="0D"="CR"=Carriage Return
+my $NEW_line = "\n"; #="\n"="0A"="LF"=Line Feed
+my $END_line = "$DOS_line$NEW_line";
+   $END_line = "$NEW_line";
+#-------------------------------------------------------------------------------
+
+my %dat;
+
+my $qut = $QUT;
+my $sep = $SEP;
+#CZ$sep =~ s/(.)/\\$1/g; # quotato a mano...
+my $num = 0;
+my $row = 1;
+while (my $line = <STDIN>) {
+    $line = _chompLine($line);
+
+#CZ#my @field = split(/$sep/, $line, -1); # ...quotato a mano
+    my @field = split(/\Q$sep\E/, $line, -1);
+    my $entry = ($line =~ m/\Q$sep\E/)?1:0;
+
+    for (my $i=0; $i<scalar(@field); $i++) {
+            my $val = $field[$i];
+               $val = _trim($val) if ($TRM);
+        if ($entry) {
+            my $max = $dat{$num}{$i} || 0;
+            my $len = length($val);
+            $dat{$num}{$i} = $len if ($len > $max);
+        }
+            $dat{$row}{$i} = $val;
+    }
+    $row++;
+}
+
+#-------------------------------------------------------------------------------
+foreach $row (sort{$a <=> $b} keys %dat) {
+    next if ($row == $num);
+
+    my @field;
+    foreach my $i (sort{$a <=> $b} keys %{$dat{$row}}) {
+        my $len = $dat{$num}{$i} || '';
+        my $val = $dat{$row}{$i};
+        my $dsx = _isNumber(_valExtract($val))?'':'-';
+        my $frm = '%'.$dsx.$len.'s';
+        $field[$i] = sprintf($frm, $val);
+    }
+#CZ#printf("%s$END_line", join($SEP, @field));
+    printf("%s$END_line", join($sep, @field));
+}
+
+exit;
+
+################################################################################
+sub _trim {
+    my $string = shift;
+       $string =~ s/^\s+//;
+       $string =~ s/\s+$//;
+    return($string);
+}
+
+################################################################################
+sub _valExtract {
+    my $quote = $qut;
+    my $value = shift;
+       $value =~ s/^$quote//;
+       $value =~ s/$quote$//;
+    return($value);
+}
+
+################################################################################
+sub _isNumber {
+    my $number = shift;
+#CZ#return(0) if (! defined($number));
+    return(0) if (! defined($number)); $number = _trim($number);
+    return(1) if ($number =~ m/^0$/);
+    return(0) if ($number =~ m/^00/);
+    return(0) if ($number =~ m/^-$/);
+    return(0) if ($number =~ m/^\s*$/);
+    return(1) if ($number =~ m/^0(,|\.)/);
+#CZ#return(1) if ($number =~ m/^-?\d*(\.?\d+(e?[-|\s]?\d\d)?)?$/);
+    return(1) if ($number =~ m/^-?\d*([\.,]?\d+(e?[-|\s]?\d\d)?)?$/);
+    return(0);
+}
+
+################################################################################
+sub _it2en {
+    my $number = shift;
+       $number =~ s/\.//g;
+       $number =~ s/,/\./g;
+    return($number);
+}
+
+################################################################################
+sub _en2it {
+    my $number = shift;
+       $number =~ s/,//g;
+       $number =~ s/\./,/g;
+    return($number);
+}
+
+################################################################################
+sub _chompLine {
+    my $line = shift;
+#CZ#chop($line) if ($line =~ m/$DOS_line$/);
+    ($line = $line) =~ s/$DOS_line//g;
+    ($line = $line) =~ s/$NEW_line//g;
+    return($line);
+}
