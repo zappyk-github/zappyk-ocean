@@ -1,1 +1,1 @@
-/home/zappyk/Programmi/_dvcs_/zappyk-github/zappyk-python/bin/zappyk-python.sh
+../../../../zappyk-python/bin/zappyk-python.sh
