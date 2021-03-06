@@ -27,7 +27,9 @@ case "$CONNECT_tag" in
     *    ) echo "Connessione DB '$CONNECT_tag' non configurata!"; exit 1 ;;
 esac
 #
-_run_query_() { LANG=C isql -b -v $CONNECT_set; }
+#_run_query_() { LANG=C iusql -b -v $CONNECT_set; }
+#_run_query_() { LANG=C isql  -b -v $CONNECT_set; }
+ _run_query_() { LANG=C isql     -v $CONNECT_set | tail -n +10; }
 #
 payroll-mssql-cloud_sql_proxy
 #
