@@ -15,7 +15,8 @@ my $rowend = ($onerow)?' ':"\n";
 my @lines = <STDIN>;
 my $lines_string = join('', @lines);
 ###$lines_string =~ s/\/\*(.*)\*\///gs;                                      # ...is my solution! :-|
-   $lines_string =~ s/((?:\/\*(?:[^*]|(?:\*+[^*\/]))*\*+\/)|(?:\/\/.*))//gs; # ...solution on: https://blog.ostermiller.org/finding-comments-in-source-code-using-regular-expressions/
+###$lines_string =~ s/((?:\/\*(?:[^*]|(?:\*+[^*\/]))*\*+\/)|(?:\/\/.*))//gs; # ...solution on: (1) https://blog.ostermiller.org/finding-comments-in-source-code-using-regular-expressions/
+   $lines_string =~ s/\/\*(?:.|[\r\n])*?\*\///gs;                            # ...solution on: (2)   "
 my @lines_array  = split(/\n/, $lines_string, -1);
 foreach my $line (@lines_array) { _print(_normalize($line)); }
 

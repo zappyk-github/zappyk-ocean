@@ -1,2 +1,5 @@
-rm -Rfv /var/cache/PackageKit/metadata/updates/packages/*.rpm
-pkcon refresh force -c -1
+#rm -Rfv /var/cache/PackageKit/metadata/updates/packages/*.rpm
+#rm -Rfv /var/cache/PackageKit/33/metadata/*/packages/*.rpm
+#rm -Rfv /var/cache/PackageKit/*/metadata/*/packages/*.rpm
+ rm -Rfv /var/cache/PackageKit/*/metadata/*
+ pkcon refresh force -c -1

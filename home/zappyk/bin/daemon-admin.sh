@@ -1,4 +1,5 @@
 #!/bin/env bash
+echo "...script bloccato..." ; exit 1
 
 script_daemon=$1
 host_name=${2:-$HOSTNAME}

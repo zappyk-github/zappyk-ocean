@@ -1,0 +1,1 @@
+gssh-payroll-datacenter zadmin@web-server-2 "$@"

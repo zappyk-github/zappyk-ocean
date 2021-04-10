@@ -32,24 +32,54 @@ _error() { echo "${1//?/_}" ; echo "$1"; }
 _print() { echo "$NAME: execute $1"; }
 _write() {
     local file=$1 ; shift
-    local grep=$*
+    local last="${file:${#file}-1:1}"
+#CZ#local grep=$*
     local type=$(file -i "$file" | cut -d':' -f2- | grep -i 'text/plain')
-    if [ -n "$type" ]; then
+    if [ -n "$type" ];
+    then
+        _write_init "$file"
+    #CZ#_write_body "$file" "$last" $grep ; local rc=$?
+        _write_body "$file" "$last" $*    ; local rc=$?
+        _write_done "$file"
+    fi
+    return $rc
+}
+_write_init() {
+    local file=$1 ; shift
     printf "$EC_nBROWN_"
     printf "      _%s_ \n" "${file//?/_}"
     printf "FILE=| %s |\n" "${file}"
     printf "_____|_%s_|\n" "${file//?/_}"
     printf "$EC_NoC____"
-    if [ -z "$grep" ]; then
-        cat "$file"                         ; local rc=$?
-    else
-        cat "$file" | grep --color -i $grep ; local rc=$?
+}
+_write_body() {
+    local file=$1 ; shift
+    local last=$1 ; shift
+    local grep=$*
+    [ "$last" == "~" ] && printf "$EC_nPURPLE"
+    if [ -z "$grep" ];
+    then cat "$file"                         ; local rc=$?
+    else cat "$file" | grep --color -i $grep ; local rc=$?
     fi
+    [ "$last" == "~" ] && printf "$EC_NoC____"
+    return $rc
+}
+_write_done() {
+    local file=$1 ; shift
     printf "$EC_nBROWN_"
     printf "_______%s__\n" "${file//?/_}"
     printf "$EC_NoC____"
+}
+
+_create_targz() {
+    dir_base=$(dirname  "$DIR_OFMOUNT")
+    dir_name=$(basename "$DIR_OFMOUNT")
+    tar_file="$dir_name.tar.gz"
+    listfile=$(ls "$DIR_OFMOUNT")
+    if [ -n "$listfile" ]; then
+        _print "create $tar_file file for backup..."
+        { cd "$dir_base" && tar -zcf "$tar_file" "$dir_name"; }
     fi
-    return $rc
 }
 
 PATH_COMMON="$HOME"
@@ -82,8 +112,8 @@ case "$EXEC" in
 esac
 ismount=$(ls "$DIR_OFMOUNT/") ; [ -z "$ismount" ] && ( ! $umount ) && mount=true
 
- ( $mount  ) && _print 'mount...'  && "$CMD_ENCFS" "$PATH_SOURCE" "$DIR_OFMOUNT"
- ( $umount ) && _print 'umount...' && sudo "$CMD_UMOUNT" "$DIR_OFMOUNT"
+ ( $mount  ) && _print 'mount...'  && "$CMD_ENCFS" "$PATH_SOURCE" "$DIR_OFMOUNT" && _create_targz
+ ( $umount ) && _print 'umount...' && _create_targz && sudo "$CMD_UMOUNT" "$DIR_OFMOUNT"
 #( $search ) && _print 'search...' && "$CMD_FIND" -L "$DIR_OFMOUNT" -type f -iname $*    -print0 | sort -z | xargs -0i bash -c "echo 'FILE=[ {} ]' && cat '{}'"
 #( $search ) && _print 'search...' && "$CMD_FIND" -L "$DIR_OFMOUNT" -type f -iname $*    -print0 | sort -z | xargs -0i bash -c "$THIS -p \"{}\""
  ( $search ) && _print 'search...' && "$CMD_FIND" -L "$DIR_OFMOUNT" -type f -iname $FILE -print0 | sort -z | xargs -0i bash -c "$THIS -p \"{}\" \"$FINE\""
