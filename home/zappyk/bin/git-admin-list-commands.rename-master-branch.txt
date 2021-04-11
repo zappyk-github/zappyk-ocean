@@ -51,6 +51,27 @@ Now, we’re going to send our renamed branch off to the interwebs.
        To https://github.com/YakDriver/scratchrelaxtv.git
         * [new branch]      main -> main
        Branch 'main' set up to track remote branch 'main' from 'origin'.
+#CZ############################### addictional init:
+#CZ#
+Fetch all the branches
+     % git fetch
+The above command will just fetch all the remote branches to your local.
+
+Update the upstream remote HEAD
+     % git remote set-head origin -a
+The above command will query the remote host for the HEAD upstream and it updates that upstream in the local.
+
+Rename the default branch
+     % git branch -m master master2
+This is the same as the old one. We are just moving the branch without affecting the history of the branch.
+
+Set remote upstream tracking for the new branch
+     % git push -u origin master2
+
+To delete the old branch’s upstream you can use
+     % git push origin --delete master
+#CZ#
+#CZ############################### addictional done.
 
 #___________________________________________________________
 Step 5. Update Default Branch on GitHub
