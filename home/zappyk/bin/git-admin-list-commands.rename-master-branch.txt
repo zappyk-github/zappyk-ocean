@@ -1,0 +1,101 @@
+################################################################################################################################################################
+#
+# https://faun.pub/git-step-by-step-renaming-a-master-branch-to-main-16390ca7577b
+#
+################################################################################################################################################################
+
+Git: Renaming a master Branch to main Step-by-Step
+
+If we, as technologists, have the power to make the world better, more inclusive, and less offensive, we should accept the challenge to act. Here I go through the steps to rename a Git default branch called master to main for a GitHub repository that I maintain called scratchrelaxtv.
+People of different races and genders place their hands on top of each other
+NOTE: These steps are designed for a non-forked repository that you own and where the origin is in your GitHub account. Renaming an organizational repository will involve a similar process but is beyond the scope of these steps.
+
+#___________________________________________________________
+Step 1. Investigate Your Repository
+The first thing you’ll want to do is verify that the default branch is indeed called master. Browse to the repository’s main page. For example, here is the main page for scratchrelaxtv (with URL https://github.com/YakDriver/scratchrelaxtv).
+GitHub screenshot showing a repository with a master branch
+The default branch is shown prominently on the main page so we know that the repository’s default branch is master.
+
+#___________________________________________________________
+Step 2. Update Your Local master Branch
+We need to make sure that our local branch is in sync with what’s out on GitHub. We’ll go to the directory of the repository’s local clone and update the local and remote default branches:
+     % cd scratchrelaxtv
+     % git checkout master
+Already on 'master'
+Your branch is up to date with 'origin/master'.
+     % git fetch --all -p
+       Fetching origin
+     % git pull
+       Already up to date.
+     % git push
+       Everything up-to-date
+
+#___________________________________________________________
+Step 3. Rename Your Local master Branch
+In this step, we are simply changing, locally, the name of master to main. Notice that remotely, our local main branch is still tracking the remote master.
+     % git branch -m master main
+     % git status
+       On branch main
+       Your branch is up to date with 'origin/master'.
+       nothing to commit, working tree clean
+
+#___________________________________________________________
+Step 4. Push the Renamed Main Branch
+Now, we’re going to send our renamed branch off to the interwebs.
+     % git push -u origin main
+       Total 0 (delta 0), reused 0 (delta 0), pack-reused 0
+       remote: 
+       remote: Create a pull request for 'main' on GitHub by visiting:
+       remote:      https://github.com/YakDriver/scratchrelaxtv/pull/new/main
+       remote: 
+       To https://github.com/YakDriver/scratchrelaxtv.git
+        * [new branch]      main -> main
+       Branch 'main' set up to track remote branch 'main' from 'origin'.
+
+#___________________________________________________________
+Step 5. Update Default Branch on GitHub
+Let’s go back to GitHub in the browser. Choose Settings and Branches. Under the Default branch heading, select the main branch and choose Update.
+GitHub screenshot showing the steps to update the default branch from master to main
+
+#___________________________________________________________
+Step 6. Update Branch Protection Rules
+Still under Settings and Branches on GitHub, if any branch protection rules apply to master, choose Edit next to the rule.
+GitHub screenshot showing how to edit a branch protection rule to apply to a main branch
+Under Branch name pattern, enter “main,” and choose Save changes.
+GitHub screenshot showing changing branch protection to apply to a main branch
+
+#___________________________________________________________
+Step 7. Delete master
+At this point, we still have one branch called master on GitHub. We can delete the branch two ways, either from GitHub or locally.
+From GitHub, choose branches.
+GitHub screenshot showing how to view Git branches
+Then, choose the trash icon next to the master branch.
+GitHub screenshot showing how to delete a master branch
+Alternatively, you can push a remote branch delete request from the command line.
+     % git push origin --delete master
+       To https://github.com/YakDriver/scratchrelaxtv.git
+        - [deleted]         master
+
+#___________________________________________________________
+Step 8. Set the Remote HEAD
+If you look at the Git log now, you’ll see that two references point to the latest main commit: the local HEAD and the remote branch main.
+       *   0f9cde7 - (HEAD -> main, origin/main) Merge pull request #126...
+The trouble is that origin/HEAD is not pointing there and doesn’t exist since we just deleted the commit and branch where it pointed. If we attempt to use the symbolic-ref now (e.g., git pull origin is an implicit use of this symbolic-ref), we would get an error.
+To fix this, we can ask Git to set the remote HEAD (i.e., origin/HEAD) automatically, which will be the latest commit on the default branch:
+     % git remote set-head origin --auto 
+       Now we’ll see that three references point to the latest main commit:
+       *   0f9cde7 - (HEAD -> main, origin/main, origin/HEAD) Merge pull request #126...
+
+#___________________________________________________________
+Step 9. Check Your Code and Config
+Updating Git and GitHub is just part of the fix. Since master has been considered a well-known term, it’s likely we’ve hardcoded it in CI configuration, build-badge URLs, and automation code. Rather than go through all the possibilities, here is a checklist of places to look. After renaming your default branch to main, search your repository for any mentions of master.
+Here are some specific areas to look:
+ · .travis.yml
+ · azure-pipelines.yml
+ · .circleci/config.yaml
+ · Badge URLs such as https://travis-ci.org/YakDriver/scratchrelaxtv.svg?branch=master
+ · The .github/workflows directory
+
+#___________________________________________________________
+Step 10. Check CI Services
+Some CI services have settings that will need to be updated for the new branch. For example, Travis CI scheduled/cron builds are set up by branch. These need to be reconfigured for the new branch.
