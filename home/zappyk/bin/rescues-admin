@@ -34,13 +34,16 @@ _write() {
     local file=$1 ; shift
     local last="${file:${#file}-1:1}"
 #CZ#local grep=$*
-    local type=$(file -i "$file" | cut -d':' -f2- | grep -i 'text/plain')
+#CZ#local type=$(file -i "$file" | cut -d':' -f2- | grep -i    'text/plain')
+    local type=$(file -i "$file" | cut -d':' -f2- | grep -i -e 'text/plain' -e 'inode/symlink')
     if [ -n "$type" ];
     then
         _write_init "$file"
     #CZ#_write_body "$file" "$last" $grep ; local rc=$?
         _write_body "$file" "$last" $*    ; local rc=$?
         _write_done "$file"
+    else
+        _write_else "$file" "$type"
     fi
     return $rc
 }
@@ -68,6 +71,14 @@ _write_done() {
     local file=$1 ; shift
     printf "$EC_nBROWN_"
     printf "_______%s__\n" "${file//?/_}"
+    printf "$EC_NoC____"
+}
+_write_else() {
+    local file=$1 ; shift
+    local type=$1 ; shift
+    printf "$EC_nRED___"
+    printf "Find FILE=| %s |\n" "${file}"
+    printf "File TYPE=| %s |\n" "${type}"
     printf "$EC_NoC____"
 }
 
@@ -114,9 +125,10 @@ ismount=$(ls "$DIR_OFMOUNT/") ; [ -z "$ismount" ] && ( ! $umount ) && mount=true
 
  ( $mount  ) && _print 'mount...'  && "$CMD_ENCFS" "$PATH_SOURCE" "$DIR_OFMOUNT" && _create_targz
  ( $umount ) && _print 'umount...' && _create_targz && sudo "$CMD_UMOUNT" "$DIR_OFMOUNT"
-#( $search ) && _print 'search...' && "$CMD_FIND" -L "$DIR_OFMOUNT" -type f -iname $*    -print0 | sort -z | xargs -0i bash -c "echo 'FILE=[ {} ]' && cat '{}'"
-#( $search ) && _print 'search...' && "$CMD_FIND" -L "$DIR_OFMOUNT" -type f -iname $*    -print0 | sort -z | xargs -0i bash -c "$THIS -p \"{}\""
- ( $search ) && _print 'search...' && "$CMD_FIND" -L "$DIR_OFMOUNT" -type f -iname $FILE -print0 | sort -z | xargs -0i bash -c "$THIS -p \"{}\" \"$FINE\""
+#( $search ) && _print 'search...' && "$CMD_FIND" -L "$DIR_OFMOUNT"     -type f                -iname $*    -print0 | sort -z | xargs -0i bash -c "echo 'FILE=[ {} ]' && cat '{}'"
+#( $search ) && _print 'search...' && "$CMD_FIND" -L "$DIR_OFMOUNT"     -type f                -iname $*    -print0 | sort -z | xargs -0i bash -c "$THIS -p \"{}\""
+#( $search ) && _print 'search...' && "$CMD_FIND" -L "$DIR_OFMOUNT"     -type f                -iname $FILE -print0 | sort -z | xargs -0i bash -c "$THIS -p \"{}\" \"$FINE\""
+ ( $search ) && _print 'search...' && "$CMD_FIND" -L "$DIR_OFMOUNT" \( -xtype f -o -xtype l \) -iname $FILE -print0 | sort -z | xargs -0i bash -c "$THIS -p \"{}\" \"$FINE\""
 #( $backup ) && _print 'backup...' && "$CMD_RAR" $OPT_RAR "$TAG_BACKUP_" "$DIR_BACKUP_"
  ( $backup ) && _print 'backup...' && "$CMD_ZIP" $OPT_ZIP "$TAG_BACKUP_" "$DIR_BACKUP_"
 
