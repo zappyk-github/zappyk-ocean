@@ -9,12 +9,12 @@ SVN_CONFS="
  root@:/opt/sysadm
 "
 SVN_CONFS="
-#@§$HOME/Programmi/_SCMs_/github/zappyk-ocean
-#@§$HOME/Programmi/_SCMs_/github/zappyk-python
-#@§$HOME/Programmi/_SCMs_/github/zappyk-django
-#@§$HOME/Programmi/_SCMs_/github/zappyk-java
-#@§$HOME/Programmi/_SCMs_/github/crontab-ui
-#@§$HOME/Programmi/_SCMs_/payroll/payroll-legacy§$SVN_CMMND co --username pes0zap --password crl0zpp1 \"https://svn.payroll.it/payroll/trunk\" payroll-svn-legacy
+#@§$HOME/Programmi/_VoCs_/github/zappyk-ocean
+#@§$HOME/Programmi/_VoCs_/github/zappyk-python
+#@§$HOME/Programmi/_VoCs_/github/zappyk-django
+#@§$HOME/Programmi/_VoCs_/github/zappyk-java
+#@§$HOME/Programmi/_VoCs_/github/crontab-ui
+#@§$HOME/Programmi/_VoCs_/payroll/payroll-legacy§$SVN_CMMND co --username pes0zap --password crl0zpp1 \"https://svn.payroll.it/payroll/trunk\" payroll-svn-legacy
 #@§/opt/payroll-var/webexe
 #@§/opt/payroll
 "
