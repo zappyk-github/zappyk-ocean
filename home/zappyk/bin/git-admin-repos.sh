@@ -17,6 +17,7 @@ GIT_CONFS="
 #@§$HOME/Programmi/_VoCs_/payroll/payroll-legacy§$GIT_CMMND clone \"ssh://pes0zap@payroll.it@source.developers.google.com:2022/p/payroll-datacenter/r/payroll-legacy\" payroll-git-google
 #@§$HOME/Programmi/_VoCs_/payroll/payroll-legacy§$GIT_CMMND clone \"https://source.developers.google.com/p/payroll-datacenter/r/payroll-legacy\" payroll-git-google
  @§$HOME/Programmi/_VoCs_/payroll/payroll-legacy§gcloud source repos clone payroll-legacy --project=payroll-datacenter
+ @§$HOME/Programmi/_VoCs_/payroll/payroll-java-space-invaders§$GIT_CMMND clone \"https://github.com/People-Solutions/space-invaders.git\" payroll-java-space-invaders
 "
 
 EC_nBLACK_='\033[0;30m' ; EC_dGREY__='\033[0;30m'
