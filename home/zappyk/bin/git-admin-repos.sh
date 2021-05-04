@@ -13,12 +13,11 @@ GIT_CONFS="
  @§$HOME/Programmi/_VoCs_/github/zappyk-ocean§$GIT_CMMND clone \"https://zappyk@github.com/zappyk-github/zappyk-ocean.git\" zappyk-ocean
  @§$HOME/Programmi/_VoCs_/github/zappyk-python§$GIT_CMMND clone \"https://zappyk@github.com/zappyk-github/zappyk-python.git\" zappyk-python
  @§$HOME/Programmi/_VoCs_/github/zappyk-django§$GIT_CMMND clone \"https://zappyk@github.com/zappyk-github/zappyk-django.git\" zappyk-django
- @§$HOME/Programmi/_VoCs_/github/pes0zappayroll-pes0zap-java§$GIT_CMMND clone \"https://pes0zappayroll@github.com/pes0zap-jaba/pes0zap-java.git\" pes0zappayroll-pes0zap-java
- @§$HOME/Programmi/_VoCs_/payroll/payroll-java-space-invaders§$GIT_CMMND clone \"https://github.com/People-Solutions/space-invaders.git\" payroll-java-space-invaders
+ @§$HOME/Programmi/_VoCs_/payroll/pes0zappayroll-pes0zap-java§$GIT_CMMND clone \"https://pes0zappayroll@github.com/pes0zap-jaba/pes0zap-java.git\" pes0zappayroll-pes0zap-java
+ @§$HOME/Programmi/_VoCs_/payroll/payroll-java-space-invaders§$GIT_CMMND clone \"https://pes0zappayroll@github.com/People-Solutions/space-invaders.git\" payroll-java-space-invaders
 #@§$HOME/Programmi/_VoCs_/payroll/payroll-legacy§$GIT_CMMND clone \"ssh://pes0zap@payroll.it@source.developers.google.com:2022/p/payroll-datacenter/r/payroll-legacy\" payroll-git-google
 #@§$HOME/Programmi/_VoCs_/payroll/payroll-legacy§$GIT_CMMND clone \"https://source.developers.google.com/p/payroll-datacenter/r/payroll-legacy\" payroll-git-google
  @§$HOME/Programmi/_VoCs_/payroll/payroll-legacy§gcloud source repos clone payroll-legacy --project=payroll-datacenter
- @§$HOME/Programmi/_VoCs_/payroll/payroll-java-space-invaders§$GIT_CMMND clone \"https://github.com/People-Solutions/space-invaders.git\" payroll-java-space-invaders
 "
 
 EC_nBLACK_='\033[0;30m' ; EC_dGREY__='\033[0;30m'
