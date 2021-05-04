@@ -1,20 +1,21 @@
 #!/bin/env bash
 IFS_SAVE=$IFS
 
-SVN_DEBUG=false
-SVN_CMMND='svn'
-SVN_CONFS="
+VCS_DEBUG=false
+VCS_CMMND='svn'
+VCS_SLEEP=1
+VCS_CONFS="
  zappyk@:/home/zappyk/bin
  root@:/root/bin
  root@:/opt/sysadm
 "
-SVN_CONFS="
+VCS_CONFS="
 #@§$HOME/Programmi/_VoCs_/github/zappyk-ocean
 #@§$HOME/Programmi/_VoCs_/github/zappyk-python
 #@§$HOME/Programmi/_VoCs_/github/zappyk-django
 #@§$HOME/Programmi/_VoCs_/github/zappyk-java
 #@§$HOME/Programmi/_VoCs_/github/crontab-ui
-#@§$HOME/Programmi/_VoCs_/payroll/payroll-legacy§$SVN_CMMND co --username pes0zap --password crl0zpp1 \"https://svn.payroll.it/payroll/trunk\" payroll-svn-legacy
+#@§$HOME/Programmi/_VoCs_/payroll/payroll-legacy§$VCS_CMMND co --username pes0zap --password crl0zpp1 \"https://svn.payroll.it/payroll/trunk\" payroll-svn-legacy
 #@§/opt/payroll-var/webexe
 #@§/opt/payroll
 "
@@ -77,46 +78,47 @@ _quoting() {
 }
 
 #-------------------------------------------------------------------------------
-[ -z "$*" ] && echo -e "$($SVN_CMMND --help)\n$SVN_CONFS\nSpecifica un comando..." && exit 1
+[ -z "$*" ] && echo -e "$($VCS_CMMND --help)\n$VCS_CONFS\nSpecifica un comando..." && exit 1
 
-COMMAND="$SVN_CMMND "$(_quoting "$@")
+COMMAND="$VCS_CMMND "$(_quoting "$@")
 EXITCODE=0
 #-------------------------------------------------------------------------------
 IFS=$'\n'
-for SVN_CONF in $SVN_CONFS; do
+for VCS_CONF in $VCS_CONFS; do
     IFS=$IFS_SAVE
 
-    SVN_CONF_skip=${SVN_CONF:0:1}
-    SVN_CONF_line=${SVN_CONF:1}
+    VCS_CONF_skip=${VCS_CONF:0:1}
+    VCS_CONF_line=${VCS_CONF:1}
 
-    [ "$SVN_CONF_skip" == '#' ] && continue
+    [ "$VCS_CONF_skip" == '#' ] && continue
 
-    IFS=$'§' read SVN_USER_HOST SVN_PATH SVN_HELP < <(echo "$SVN_CONF_line")
-    IFS=$'@' read SVN_USER SVN_HOST               < <(echo "$SVN_USER_HOST")
+    IFS=$'§' read VCS_USER_HOST VCS_PATH VCS_HELP < <(echo "$VCS_CONF_line")
+    IFS=$'@' read VCS_USER VCS_HOST               < <(echo "$VCS_USER_HOST")
 
-    [ -n "$SVN_HELP" ] && SVN_HELP="cd \"$(dirname "$SVN_PATH")\" && $SVN_HELP $(basename "$SVN_PATH")" \
-                       && SVN_HELP="| Try the help :\n${SVN_HELP//?/-}\n$SVN_HELP"
+    [ -n "$VCS_HELP" ] && VCS_HELP="cd \"$(dirname "$VCS_PATH")\" && $VCS_HELP $(basename "$VCS_PATH")" \
+                       && VCS_HELP="| Try the help :\n${VCS_HELP//?/-}\n$VCS_HELP"
 
-    [ ! -d "$SVN_PATH" ] && _log "Directory not exists:  \"$SVN_PATH\"" && continue
+    [ ! -d "$VCS_PATH" ] && _log "Directory not exists:  \"$VCS_PATH\"" && continue
 
-    cmd_1="cd $SVN_PATH && $COMMAND"
+    cmd_1="cd $VCS_PATH && $COMMAND"
     cmd_1="($cmd_1)"
 
-    if   [ -n "$SVN_HOST" ]; then
-        cmd_0="ssh $SVN_USER@$SVN_HOST \"$cmd_1\""
-    elif [ -n "$SVN_USER" ]; then
-    #CZ#cmd_0="su -c \"$cmd_1\" -s /bin/bash - $SVN_USER"
-        cmd_0="su -c \"$cmd_1\" - $SVN_USER"
+    if   [ -n "$VCS_HOST" ]; then
+        cmd_0="ssh $VCS_USER@$VCS_HOST \"$cmd_1\""
+    elif [ -n "$VCS_USER" ]; then
+    #CZ#cmd_0="su -c \"$cmd_1\" -s /bin/bash - $VCS_USER"
+        cmd_0="su -c \"$cmd_1\" - $VCS_USER"
     else
         cmd_0="$cmd_1"
     fi
 
-    ( $SVN_DEBUG ) && printf "%-15s - %-15s - %-30s - %s\n" "|$SVN_USER|" "|$SVN_HOST|" "|$SVN_PATH|" "|$cmd_0|" && continue
+    ( $VCS_DEBUG ) && printf "%-15s - %-15s - %-30s - %s\n" "|$VCS_USER|" "|$VCS_HOST|" "|$VCS_PATH|" "|$cmd_0|" && continue
 
     _log "$cmd_0"
     eval "$cmd_0" ; EXITCODE=$?
-    [ $EXITCODE -eq 0 ] && echo || { _err "Error! ($EXITCODE)"; _help "$SVN_HELP"; }
+    [ $EXITCODE -eq 0 ] && echo || { _err "Error! ($EXITCODE)"; _help "$VCS_HELP"; }
 #CZ#echo
+    sleep $VCS_SLEEP
 done
 IFS=$IFS_SAVE
 #-------------------------------------------------------------------------------
