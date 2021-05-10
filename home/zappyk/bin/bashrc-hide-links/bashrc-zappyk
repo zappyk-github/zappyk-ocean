@@ -25,10 +25,10 @@ alias rm='rm -i'
 alias mv='mv -i'
 alias cp='cp -i'
 #
-alias cpv="cd \"$HOME_VERSIONCONTROL\""
-alias cpp="cd \"$HOME_PROJECT_PYTHON\""
-alias cpj="cd \"$HOME_PROJECT_IDEAIC\""
-alias cpd="cd \"$HOME_PROJECT_DJANGO\""
+alias cdv="cd \"$HOME_VERSIONCONTROL\""
+alias cdp="cd \"$HOME_PROJECT_PYTHON\""
+alias cdj="cd \"$HOME_PROJECT_IDEAIC\""
+alias cdd="cd \"$HOME_PROJECT_DJANGO\""
 alias c19ui="cd $HOME_VERSIONCONTROL/github/COVID-19/COVID-19-Italy && git pull"
 alias c19uw="cd $HOME_VERSIONCONTROL/github/COVID-19/COVID-19-World && git pull"
 alias c19wu="$HOME_VERSIONCONTROL/github/COVID-19/COVID-19-World-update"

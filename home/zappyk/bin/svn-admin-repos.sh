@@ -44,6 +44,16 @@ _log() {
 }
 
 ################################################################################
+_war() {
+    local string="$*"
+    echo -n -e "$EC_nBROWN_"
+    echo "+-${string//?/-}-+"
+    echo "| ${string} |"
+    echo "+-${string//?/-}-+"
+    echo -n -e "$EC_NoC____"
+}
+
+################################################################################
 _err() {
     local string="$*"
     echo -n -e "$EC_nRED___"
@@ -98,7 +108,7 @@ for VCS_CONF in $VCS_CONFS; do
     [ -n "$VCS_HELP" ] && VCS_HELP="cd \"$(dirname "$VCS_PATH")\" && $VCS_HELP $(basename "$VCS_PATH")" \
                        && VCS_HELP="| Try the help :\n${VCS_HELP//?/-}\n$VCS_HELP"
 
-    [ ! -d "$VCS_PATH" ] && _log "Directory not exists:  \"$VCS_PATH\"" && continue
+    [ ! -d "$VCS_PATH" ] && _war "Directory not exists:  \"$VCS_PATH\"" && continue
 
     cmd_1="cd $VCS_PATH && $COMMAND"
     cmd_1="($cmd_1)"
