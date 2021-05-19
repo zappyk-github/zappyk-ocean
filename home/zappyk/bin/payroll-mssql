@@ -31,7 +31,7 @@ esac
 #_run_query_() { LANG=C isql  -b -v $CONNECT_set; }
  _run_query_() { LANG=C isql     -v $CONNECT_set | tail -n +10; }
 #
-payroll-mssql-cloud_sql_proxy
+payroll-cloud_sql_proxy
 #
 if ( $QUERYONEROW );
 then

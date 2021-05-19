@@ -1,0 +1,7 @@
+#!/bin/env bash
+#
+payroll-cloud_sql_proxy
+#
+mysql -t -ugeroot -pger00t -h 127.0.0.1 -P 1433 --connect-timeout=5 "$@"
+#
+exit
