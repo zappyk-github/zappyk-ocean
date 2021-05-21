@@ -2,6 +2,11 @@
 #
 payroll-cloud_sql_proxy
 #
-mysql -t -ugeroot -pger00t -h 127.0.0.1 -P 1433 --connect-timeout=5 "$@"
+#mysql -t -ugeroot -pger00t --connect-timeout=5 -h 127.0.0.1 -P 3306 "$@"
+#
+#________________________
+# for suppress warning => mysql: [Warning] Using a password on the command line interface can be insecure.
+ export MYSQL_PWD=ger00t
+ mysql -t -ugeroot          --connect-timeout=5 -h 127.0.0.1 -P 3306 "$@"
 #
 exit

@@ -28,15 +28,17 @@ EC_n_xxx_2='\033[0;39m' ; EC_l_xxx_2='\033[0;39m'
 EC_n_xxx_3='\033[0;40m' ; EC_l_xxx_3='\033[0;40m'
 EC_NoC____='\033[0m'
 
+_file_get_mime_type() { file -i "$1" | cut -d':' -f2-; }
+
 _error() { echo "${1//?/_}" ; echo "$1"; }
 _print() { echo "$NAME: execute $1"; }
 _write() {
     local file=$1 ; shift
     local last="${file:${#file}-1:1}"
 #CZ#local grep=$*
-#CZ#local type=$(file -i "$file" | cut -d':' -f2- | grep -i    'text/plain')
-    local type=$(file -i "$file" | cut -d':' -f2- | grep -i -e 'text/plain' -e 'inode/symlink')
-    if [ -n "$type" ];
+    local type=$(_file_get_mime_type "$file")
+    local view=$(echo "$type" | grep -i -e 'text/plain' -e 'inode/symlink')
+    if [ -n "$view" ];
     then
         _write_init "$file"
     #CZ#_write_body "$file" "$last" $grep ; local rc=$?
