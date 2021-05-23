@@ -10,14 +10,17 @@
 # export PS1='[\u@\h \W]\$ '
 #
 export HOME_VERSIONCONTROL="$HOME/Programmi/_VoCs_"
-export HOME_PROJECT_PYTHON="$HOME/Programmi/PyCharm/pycharm-projects/zappyk-python"
-export HOME_PROJECT_IDEAIC="$HOME/Programmi/IntelliJ/intellij-projects/zappyk-java"
-export HOME_PROJECT_DJANGO="$HOME/Programmi/Homebrew/homebrew-code/zappyk-django"
+export HOME_PROJECT_PYTHON="$HOME/Programmi/PyCharm/pycharm-projects"
+export HOME_PROJECT_IDEAIC="$HOME/Programmi/IntelliJ/intellij-projects"
+export HOME_PROJECT_DJANGO="$HOME/Programmi/Homebrew/homebrew-code"
 export HOME_BASH_GIT="$HOME/Programmi/bash-git-prompt"
 export HOME_ANACONDA="$HOME/Programmi/Anaconda/anaconda3"
 export HOME_HOMEBREW="$HOME/Programmi/Homebrew/homebrew"
-export JAVA_HOME="$HOME/Programmi/Java/jre"
-export JAVA_HOME="$HOME/Programmi/Java/jdk"
+#export JRE_HOME="$HOME/Programmi/Java/jre"                                     # if both JRE_HOME and JAVA_HOME are specified, JRE_HOME is used
+export JAVA_HOME="$HOME/Programmi/Java/jdk"                                    # is required for $CATALINA_HOME
+export CATALINA_HOME="$HOME/Programmi/ApacheTomEE/apache-tomee"
+#export CATALINA_BASE="$CATALINA_HOME"                                          # by default, $CATALINA_BASE to be equals to $CATALINA_HOME
+#export CATALINA_OPTS=""
 export PATH="$JAVA_HOME/bin:$HOME_HOMEBREW/bin:$PATH"
 #
 alias vi='vim -b'
