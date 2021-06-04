@@ -1,0 +1,6 @@
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+#CZ#export SDKMAN_DIR="/home/zappyk/.sdkman"
+#CZ#[[ -s "/home/zappyk/.sdkman/bin/sdkman-init.sh" ]] && source "/home/zappyk/.sdkman/bin/sdkman-init.sh"
+#CZ#
+source "$SDKMAN_DIR/bin/sdkman-init.sh"
+#CZ#

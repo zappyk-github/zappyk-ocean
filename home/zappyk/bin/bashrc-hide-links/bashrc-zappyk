@@ -16,6 +16,7 @@ export HOME_PROJECT_DJANGO="$HOME/Programmi/Homebrew/homebrew-code"
 export HOME_BASH_GIT="$HOME/Programmi/bash-git-prompt"
 export HOME_ANACONDA="$HOME/Programmi/Anaconda/anaconda3"
 export HOME_HOMEBREW="$HOME/Programmi/Homebrew/homebrew"
+export SDKMAN_DIR="$HOME/Programmi/sdkman/sdkman-sources"
 #export JRE_HOME="$HOME/Programmi/Java/jre"                                     # if both JRE_HOME and JAVA_HOME are specified, JRE_HOME is used
 export JAVA_HOME="$HOME/Programmi/Java/jdk"                                    # is required for $CATALINA_HOME
 export CATALINA_HOME="$HOME/Programmi/ApacheTomEE/apache-tomee"
@@ -38,7 +39,8 @@ alias c19wu="$HOME_VERSIONCONTROL/github/COVID-19/COVID-19-World-update"
 #
 ################################################################################
 #
-[ -f $HOME/.bashrc-zappyk-prompt-git   ] && source $HOME/.bashrc-zappyk-prompt-git
-[ -f $HOME/.bashrc-zappyk-prompt-conda ] && source $HOME/.bashrc-zappyk-prompt-conda
+ [ -f $HOME/.bashrc-zappyk-prompt-git   ] && source $HOME/.bashrc-zappyk-prompt-git
+ [ -f $HOME/.bashrc-zappyk-prompt-conda ] && source $HOME/.bashrc-zappyk-prompt-conda
+#[ -f $HOME/.bashrc-zappyk-sdkman       ] && source $HOME/.bashrc-zappyk-sdkman
 #
 ################################################################################
