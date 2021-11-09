@@ -29,6 +29,8 @@ alias rm='rm -i'
 alias mv='mv -i'
 alias cp='cp -i'
 #
+alias ra="rescues-admin"
+#
 alias cdv="cd \"$HOME_VERSIONCONTROL\""
 alias cdp="cd \"$HOME_PROJECT_PYTHON\""
 alias cdj="cd \"$HOME_PROJECT_IDEAIC\""

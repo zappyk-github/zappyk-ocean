@@ -4,19 +4,23 @@
 # f=file.m4a
 # ffmpeg -i "$f" -acodec libmp3lame -b:a 256k "${f%.m4a}.mp3"
 
+_flv_fext='.flv'
+_wav_fext='.wav'
+_mp3_fext='.mp3'
 files_flv=$*
 
 [ -z "$files_flv" ] && echo "Specifica almeno un file .flv da convertire in .mp3" && exit 1
 
-_convert_audio_mp3() {
+_convert_audio_flvTOmp3() {
     local file_flv=$1
     local exitcode=0
 
     [ ! -r "$file_flv" ] && echo "Il file '$file_flv' non esiste o non puo' essere letto!" && return 1
 
-    path_mp3=`dirname  "$file_flv"`
-    name_mp3=`basename "$file_flv" '.flv'`
-    file_mp3="$path_mp3/$name_mp3.mp3"
+    path_mp3=$(dirname  "$file_flv")
+    name_mp3=$(basename "$file_flv" "$_flv_fext")
+    name_mp3=$(basename "$file_flv" "$_wav_fext") # <== prevedere un programma aggiuntivo per i files WAV!
+    file_mp3="$path_mp3/$name_mp3$_mp3_fext"
 
     echo   '==========================================================================================================================================='
     printf "Convert %-50s --> %s\n" "'$file_flv'" "'$file_mp3'"
@@ -29,9 +33,9 @@ _convert_audio_mp3() {
 }
 
 if [ -r "$files_flv" ]; then
-    _convert_audio_mp3 "$files_flv"
+    _convert_audio_flvTOmp3 "$files_flv"
 else
-    for file in $files_flv; do _convert_audio_mp3 "$file"; done
+    for file in $files_flv; do _convert_audio_flvTOmp3 "$file"; done
 fi
 
 exit

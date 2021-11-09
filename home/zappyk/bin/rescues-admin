@@ -28,10 +28,13 @@ EC_n_xxx_2='\033[0;39m' ; EC_l_xxx_2='\033[0;39m'
 EC_n_xxx_3='\033[0;40m' ; EC_l_xxx_3='\033[0;40m'
 EC_NoC____='\033[0m'
 
+STRING_SEP='________________________________________________________________________________'
+STRING_SEP='================================================================================'
+
 _file_get_mime_type() { file -i "$1" | cut -d':' -f2-; }
 
 _error() { echo "${1//?/_}" ; echo "$1"; }
-_print() { echo "$NAME: execute $1"; }
+_print() { printf "$EC_nRED___$STRING_SEP\n" ; echo "$NAME: execute $1 (path: $DIR_OFMOUNT)"; printf "$EC_NoC____"; }
 _write() {
     local file=$1 ; shift
     local last="${file:${#file}-1:1}"
@@ -113,17 +116,22 @@ TAG_BACKUP_="$DIR_OFMOUNT.backup_$(date +'%Y%m%d').7z"
 mount=false
 umount=false
 search=false
+gettxt=false
 backup=false
 case "$EXEC" in
-  -h) echo -e "Usage:\n\t$NAME [ -m | -u | -s <search-name> | -b ]" ; exit 1 ;;
-  -m) mount=true  ;;
-  -u) umount=true ;;
-  -s) search=true ;;
-  -b) backup=true ;;
-  -p) _write "$FILE" "$FINE" ; exit ;; 
-  * ) "$THIS" -h ; [ -n "$EXEC" ] && _error "First parameter \"$EXEC\" non valid!" ; exit 1 ;;
+  -h ) echo -e "Usage:\n\t$NAME [ -m | -u | -s <search-name-any-files> | -st <search-name-files.TXT> | -b ]" ; exit 1 ;;
+  -m ) mount=true  ;;
+  -u ) umount=true ;;
+  -s ) search=true ;;
+  -st) search=true
+       gettxt=true ;;
+  -b ) backup=true ;;
+  -p ) _write "$FILE" "$FINE" ; exit ;;
+  *  ) "$THIS" -h ; [ -n "$EXEC" ] && _error "First parameter \"$EXEC\" non valid!" ; exit 1 ;;
 esac
 ismount=$(ls "$DIR_OFMOUNT/") ; [ -z "$ismount" ] && ( ! $umount ) && mount=true
+
+( $gettxt ) && FILE="${FILE}txt"
 
  ( $mount  ) && _print 'mount...'  && "$CMD_ENCFS" "$PATH_SOURCE" "$DIR_OFMOUNT" && _create_targz
  ( $umount ) && _print 'umount...' && _create_targz && sudo "$CMD_UMOUNT" "$DIR_OFMOUNT"
