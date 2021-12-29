@@ -17,14 +17,15 @@ QUERYONEROW=true
 QUERYONEROW=false
 #
 case "$CONNECT_tag" in
-    hrpp ) CONNECT_set='HRPP   zetarw s3rv1c3s' ;;
-    hrpt ) CONNECT_set='HRPT   zetarw s3rv1c3s' ;;
-    prjp ) CONNECT_set='PRJP   zetarw s3rv1c3s' ;;
-    prjt ) CONNECT_set='PRJT   zetarw s3rv1c3s' ;;
-    gate ) CONNECT_set='GATE   zetarw s3rv1c3s' ;;
-    ibpj ) CONNECT_set='PJ_DWH zetarw s3rv1c3s' ;;
-    ibpw ) CONNECT_set='PW_DWH zetarw s3rv1c3s' ;;
-    *    ) echo "Connessione DB '$CONNECT_tag' non configurata!"; exit 1 ;;
+    hrpp  ) CONNECT_set='HRPP   zetarw    s3rv1c3s'   ;;
+    hrpt  ) CONNECT_set='HRPT   zetarw    s3rv1c3s'   ;;
+    prjp  ) CONNECT_set='PRJP   zetarw    s3rv1c3s'   ;;
+    prjt  ) CONNECT_set='PRJT   zetarw    s3rv1c3s'   ;;
+    gate  ) CONNECT_set='GATE   zetarw    s3rv1c3s'   ;;
+    ibpj  ) CONNECT_set='PJ_DWH zetarw    s3rv1c3s'   ;;
+    ibpw  ) CONNECT_set='PW_DWH zetarw    s3rv1c3s'   ;;
+    tools ) CONNECT_set='TOOLS  sqlserver !S3rv1c3s!' ;;
+    *     ) echo "Connessione DB '$CONNECT_tag' non configurata!"; exit 1 ;;
 esac
 #
 #_run_query_() { LANG=C iusql -b -v $CONNECT_set; }

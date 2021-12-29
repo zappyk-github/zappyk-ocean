@@ -2,21 +2,34 @@
 # FilterOptions setting, the order is: separator(s),text-delimiter,encoding,first-row,column-format
 
 _FORMAT_='xlsx'
-FILE_CSV=$1 ; shift
-FILE_XLS=$1 ; [ -z "$FILE_XLS" ] && FILE_XLS="$(dirname "$FILE_CSV")/$(basename "$FILE_CSV" ".csv").$_FORMAT_"
-_FORMAT_=${FILE_XLS##*.}
+_CUSTOM_=false
+_OPTION_=
 
-PROGNAME='unoconv'
+FILE_CSV=$1 ; shift
+FILE_XLS=$1 ; shift ; [ -z "$FILE_XLS" ] && FILE_XLS="$(dirname "$FILE_CSV")/$(basename "$FILE_CSV" ".csv").$_FORMAT_"
+_FORMAT_=${FILE_XLS##*.}
+while test -n "$1"; do
+    case "$1" in
+        -c | --custom ) _CUSTOM_=true ;;
+        *             ) _OPTION_="$_OPTION_ $1" ;;
+    esac
+    shift
+done
+
+PROGNAME_CMD='unoconv' ; ( $_CUSTOM_ ) && PROGNAME_CMD="$PROGNAME_CMD-custom"
+PROGNAME_PID=
 
 ################################################################################
-which "$PROGNAME" 2>&1 >/dev/null || { echo "Programma $PROGNAME non trovato!"; exit 1; }
+which "$PROGNAME_CMD" 2>&1 >/dev/null || { echo "Programma $PROGNAME_CMD non trovato!"; exit 1; }
 
-unoconv --listener --no-launch& sleep 5
+$PROGNAME_CMD --listener --no-launch& PROGNAME_PID=$! ; sleep 5
 
-    #                                                                  # 59=;
-    # lang=it formatta il numero con separatore ,                      # 44=,
-    #                                                                  #    34=" 
-LANG=it_IT.UTF-8 unoconv -f "$_FORMAT_" -o "$FILE_XLS" -i FilterOptions="59,34,0,1" "$FILE_CSV"
+    #                                                                    # 59=;
+    # lang=it formatta il numero con separatore ,                        # 44=,
+    #                                                                    # 34=" 
+LANG=it_IT.UTF-8 $PROGNAME_CMD -f "$_FORMAT_" -o "$FILE_XLS" -i FilterOptions="59,34,0,1" $_OPTION_ "$FILE_CSV"
+
+ps --pid $PROGNAME_PID --no-headers && kill -15 $PROGNAME_PID
 ################################################################################
 #echo "Libreoffice convert $_FORMAT_ init:"
 #PATH_OUT=$(dirname "$FILE_CSV")
@@ -24,5 +37,13 @@ LANG=it_IT.UTF-8 unoconv -f "$_FORMAT_" -o "$FILE_XLS" -i FilterOptions="59,34,0
 #--headless --invisible --nocrashreport --nodefault --nologo --nofirststartwizard --norestore \
 #--convert-to "$_FORMAT_" --outdr "$PATH_OUT" "$FILE_CSV" 
 #echo "Libreoffice convert $_FORMAT_ done!"
+################################################################################
+#unoconv --listener &
+#sleep 20
+#unoconv -f pdf *.odt
+#unoconv -f doc *.odt
+#unoconv -f html *.odt
+#kill -15 %-
+################################################################################
 
 exit

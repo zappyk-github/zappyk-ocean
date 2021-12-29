@@ -1,11 +1,13 @@
 #!/bin/env bash
+################################################################################
 
- rpm-list.sh
+#rpm-list.sh
 
  dnf-list.sh
 
  dnf check-update ; rt=$? ; echo $rt
 
+################################################################################
 if [ $rt -eq 0 ]; then
     read -p '========== processo terminato, premi un pulsante per chiudere ==========' answare
 fi
@@ -19,5 +21,6 @@ if [ $rt -eq 100 ]; then
         [ "$answare" == "r" ] && $0
     }
 fi
+################################################################################
 
 exit
