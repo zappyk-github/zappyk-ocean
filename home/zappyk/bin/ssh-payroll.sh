@@ -32,6 +32,7 @@ esac
 [ -n "$USER_NAME" ] && SSH_USER_NAME="$USER_NAME@"
 
 _COMMAND_="ssh -X $SSH_USER_NAME$SSH_HOST_NAME"
+_COMMAND_="ssh -oKexAlgorithms=+diffie-hellman-group1-sha1 -X $SSH_USER_NAME$SSH_HOST_NAME"
 
 echo "$_COMMAND_"
 eval "$_COMMAND_"

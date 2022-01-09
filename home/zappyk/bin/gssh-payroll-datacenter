@@ -5,6 +5,7 @@ remote=${1} ; shift
 project='payroll-datacenter'
 thezone='europe-west1-d'
 
-gcloud beta compute --project "$project" "$@" ssh --zone "$thezone" "$remote"
+#gcloud beta compute --project "$project" "$@" ssh                                      --zone "$thezone" "$remote"
+ gcloud beta compute --project "$project" "$@" ssh --ssh-flag="-ServerAliveInterval=30" --zone "$thezone" "$remote"
 
 exit

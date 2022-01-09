@@ -35,6 +35,7 @@ IFS=$s read h d < <(echo "$directory")
 [ -n "$directory" ] && directory="\"$directory\""
 
 command="scp -r $local_filenames $user@$host:$directory $remote_filenames"
+command="scp -oKexAlgorithms=+diffie-hellman-group1-sha1 -r $local_filenames $user@$host:$directory $remote_filenames"
 
 echo "$command"
 eval "$command"
